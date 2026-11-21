@@ -28,7 +28,7 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-label={mounted ? (isLight ? "Switch to dark mode" : "Switch to light mode") : "Toggle color theme"}
+      aria-label={mounted ? (isLight ? "מעבר למצב כהה" : "מעבר למצב בהיר") : "החלפת ערכת צבעים"}
       aria-pressed={mounted ? isLight : undefined}
       className="flex size-9 shrink-0 items-center justify-center rounded-full border border-[var(--color-border-hairline)] bg-[var(--color-surface-hover-a)] text-[var(--color-mist)] transition-colors hover:bg-[var(--color-surface-hover-b)]"
     >

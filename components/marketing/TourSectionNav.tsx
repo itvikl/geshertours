@@ -83,7 +83,7 @@ export default function TourSectionNav({ sections }: { sections: TourSectionLink
   return (
     <nav
       ref={navRef}
-      aria-label="Tour sections"
+      aria-label="חלקי עמוד הטיול"
       style={{ top }}
       className="sticky z-40 border-b border-[var(--color-border-hairline)] bg-[var(--color-surface-elevated)] backdrop-blur-xl supports-[backdrop-filter]:bg-[var(--color-surface-elevated-hover)]"
     >

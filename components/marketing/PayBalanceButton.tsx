@@ -16,7 +16,7 @@ export default function PayBalanceButton({
   if (paid) {
     return (
       <p className="text-sm font-semibold text-[var(--color-success)]">
-        Payment received — thank you! Your balance is now paid in full.
+        התשלום התקבל — תודה! היתרה שולמה במלואה.
       </p>
     );
   }

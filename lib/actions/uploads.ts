@@ -112,20 +112,20 @@ export type UploadPassportResult = { ok: true; path: string } | { ok: false; err
 export async function uploadPassportScan(formData: FormData): Promise<UploadPassportResult> {
   const file = formData.get("file");
   if (!(file instanceof File)) {
-    return { ok: false, error: "No file provided." };
+    return { ok: false, error: "לא נבחר קובץ." };
   }
 
   const extension = PASSPORT_ALLOWED_TYPES[file.type];
   if (!extension) {
-    return { ok: false, error: "Only JPEG, PNG, WebP images or PDF files are allowed." };
+    return { ok: false, error: "ניתן להעלות רק תמונות JPEG, PNG, WebP או קובצי PDF." };
   }
   if (file.size > PASSPORT_MAX_BYTES) {
-    return { ok: false, error: "File is too large (max 10MB)." };
+    return { ok: false, error: "הקובץ גדול מדי (עד 10MB)." };
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
   if (!hasMatchingSignature(buffer, extension)) {
-    return { ok: false, error: "That file doesn't look like a valid image or PDF." };
+    return { ok: false, error: "הקובץ אינו נראה כתמונה או PDF תקינים." };
   }
 
   const path = `${PASSPORT_SCANS_PREFIX}${randomUUID()}.${extension}`;

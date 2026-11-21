@@ -24,12 +24,12 @@ async function createPaymentIntentForAmount(
   paymentType: "initial" | "balance"
 ): Promise<CreatePaymentIntentResult> {
   if (!process.env.STRIPE_SECRET_KEY) {
-    return { ok: false, error: "Online payment isn't configured yet." };
+    return { ok: false, error: "תשלום באתר עדיין לא הוגדר." };
   }
   // A tour with no deposit can be reserved for $0 — there is nothing to charge,
   // and Stripe rejects amounts under 50 cents.
   if (amount <= 0) {
-    return { ok: false, error: "There's no payment due for this booking." };
+    return { ok: false, error: "אין יתרה לתשלום בהזמנה הזו." };
   }
 
   try {
@@ -56,7 +56,7 @@ async function createPaymentIntentForAmount(
     });
 
     if (!paymentIntent.client_secret) {
-      return { ok: false, error: "Could not start payment. Please try again." };
+      return { ok: false, error: "לא ניתן היה להתחיל את התשלום. אנא נסו שוב." };
     }
 
     await bookingRef.update({
@@ -68,7 +68,7 @@ async function createPaymentIntentForAmount(
     return { ok: true, clientSecret: paymentIntent.client_secret, amount };
   } catch (err) {
     console.error("Stripe PaymentIntent creation failed:", err);
-    return { ok: false, error: "Could not start payment. Please try again." };
+    return { ok: false, error: "לא ניתן היה להתחיל את התשלום. אנא נסו שוב." };
   }
 }
 
@@ -83,12 +83,12 @@ export async function createDepositPaymentIntent(
   const bookingRef = adminDb().collection("bookings").doc(bookingId);
   const snap = await bookingRef.get();
   if (!snap.exists) {
-    return { ok: false, error: "Booking not found." };
+    return { ok: false, error: "ההזמנה לא נמצאה." };
   }
 
   const booking = snap.data() as Booking;
   if (booking.status !== "pending_payment") {
-    return { ok: false, error: "This booking is no longer awaiting payment." };
+    return { ok: false, error: "ההזמנה הזו כבר אינה ממתינה לתשלום." };
   }
 
   return createPaymentIntentForAmount(bookingRef, booking, booking.initialPaymentAmount, "initial");
@@ -108,15 +108,15 @@ export async function createAdminPaymentIntent(
   const bookingRef = adminDb().collection("bookings").doc(bookingId);
   const snap = await bookingRef.get();
   if (!snap.exists) {
-    return { ok: false, error: "Booking not found." };
+    return { ok: false, error: "ההזמנה לא נמצאה." };
   }
 
   const booking = snap.data() as Booking;
   if (booking.status === "cancelled" || booking.status === "refunded") {
-    return { ok: false, error: "This booking is no longer active." };
+    return { ok: false, error: "ההזמנה הזו כבר אינה פעילה." };
   }
   if (booking.balanceAmount <= 0) {
-    return { ok: false, error: "This booking is already paid in full." };
+    return { ok: false, error: "ההזמנה הזו כבר שולמה במלואה." };
   }
   if (!Number.isFinite(amount) || amount < 1 || amount > booking.balanceAmount) {
     return {
@@ -145,18 +145,18 @@ export async function createBalancePaymentIntent(
   const bookingRef = adminDb().collection("bookings").doc(bookingId);
   const snap = await bookingRef.get();
   if (!snap.exists) {
-    return { ok: false, error: "This payment link is invalid or has expired." };
+    return { ok: false, error: "קישור התשלום אינו תקין או שפג תוקפו." };
   }
 
   const booking = snap.data() as Booking;
   if (booking.paymentLinkToken !== token) {
-    return { ok: false, error: "This payment link is invalid or has expired." };
+    return { ok: false, error: "קישור התשלום אינו תקין או שפג תוקפו." };
   }
   if (booking.status === "cancelled" || booking.status === "refunded") {
-    return { ok: false, error: "This booking is no longer active." };
+    return { ok: false, error: "ההזמנה הזו כבר אינה פעילה." };
   }
   if (booking.balanceAmount <= 0) {
-    return { ok: false, error: "This booking is already paid in full." };
+    return { ok: false, error: "ההזמנה הזו כבר שולמה במלואה." };
   }
 
   return createPaymentIntentForAmount(bookingRef, booking, booking.balanceAmount, "balance");

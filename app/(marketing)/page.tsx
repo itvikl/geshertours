@@ -30,8 +30,8 @@ import {
 export const metadata: Metadata = {
   // The old WordPress homepage ranked on "kosher tours" / "Jewish travel" in its
   // title and carries ~19% of search clicks — keep those words in the title.
-  // `absolute` skips the "| Keshertours" template since the brand is already in it.
-  title: { absolute: "Kosher Tours & Jewish Travel Worldwide | Keshertours" },
+  // `absolute` skips the "| טיולי גשר" template since the brand is already in it.
+  title: { absolute: "טיולי גשר | טיולים מאורגנים ברחבי העולם" },
   alternates: { canonical: "/" },
 };
 
@@ -110,13 +110,13 @@ export default async function HomePage() {
             {
               "@context": "https://schema.org",
               "@type": "TravelAgency",
-              name: "Keshertours",
+              name: "טיולי גשר",
               url: SITE_URL,
               logo: `${SITE_URL}/gesher-logo.png`,
               description:
-                "Escorted, fully kosher group tours to destinations worldwide, built for travelers who want to see the world without compromise.",
+                "טיולים מאורגנים בקבוצות ליעדים ברחבי העולם, עם ליווי צמוד וכשרות מלאה.",
             },
-            { "@context": "https://schema.org", "@type": "WebSite", name: "Keshertours", url: SITE_URL },
+            { "@context": "https://schema.org", "@type": "WebSite", name: "טיולי גשר", url: SITE_URL },
           ]}
         />
         <section className="relative isolate overflow-hidden">
@@ -125,7 +125,7 @@ export default async function HomePage() {
                 (the source JPEG is ~490KB), and priority preloads it. */}
             <Image
               src={content.heroImage || DEFAULT_HOME_HERO_IMAGE}
-              alt="Luxury travel destination with dramatic coastal views"
+              alt="נוף חופי מרהיב באחד מיעדי הטיולים"
               fill
               priority
               sizes="100vw"
@@ -179,7 +179,7 @@ export default async function HomePage() {
 
           <a
             href="#featured-tours"
-            aria-label="Scroll to featured tours"
+            aria-label="גלילה לטיולים הנבחרים"
             className="absolute bottom-8 left-1/2 -translate-x-1/2 text-white/70 transition-colors hover:text-white [animation:scroll-cue-bounce_2s_ease-in-out_infinite]"
           >
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -203,17 +203,17 @@ export default async function HomePage() {
               <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
                 <div>
                   <p className="text-sm font-semibold uppercase tracking-[0.3em] text-[var(--color-ice)]">
-                    From the Journal
+                    מהבלוג
                   </p>
                   <h2 className="mt-2 font-display text-2xl font-bold tracking-tight text-[var(--color-mist)] sm:text-3xl">
-                    Fresh off the road
+                    חדש מהדרך
                   </h2>
                 </div>
                 <Link
                   href="/blog"
                   className="flex items-center gap-1 pb-1 text-sm font-bold text-[var(--color-ice)] transition-all hover:gap-2"
                 >
-                  View all posts <span aria-hidden="true">←</span>
+                  לכל הפוסטים <span aria-hidden="true">←</span>
                 </Link>
               </div>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

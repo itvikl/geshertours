@@ -18,41 +18,41 @@ export interface PaymentReceiptData {
 
 export function paymentReceiptEmail(data: PaymentReceiptData): EmailContent {
   const dates = formatDateRange(data.startDate, data.endDate);
-  const heading = data.paidInFull ? "Payment received — paid in full" : "Payment received";
+  const heading = data.paidInFull ? "התשלום התקבל — שולם במלואו" : "התשלום התקבל";
   const statusLine = data.paidInFull
-    ? "Your trip is paid in full — no balance remaining."
-    : `Remaining balance of ${formatUsd(data.balanceRemaining)} is due before departure.`;
+    ? "הטיול שולם במלואו — אין יתרה לתשלום."
+    : `היתרה בסך ${formatUsd(data.balanceRemaining)} לתשלום לפני היציאה.`;
 
   const rows =
-    summaryRow("Booking reference", data.bookingId) +
-    summaryRow("Amount charged", formatUsd(data.amountPaid)) +
-    (data.paymentRef ? summaryRow("Payment reference", data.paymentRef) : "") +
-    summaryRow("Total paid to date", formatUsd(data.totalPaid)) +
-    summaryRow("Trip total", formatUsd(data.grandTotal)) +
-    summaryRow("Balance remaining", formatUsd(data.balanceRemaining));
+    summaryRow("מספר הזמנה", data.bookingId) +
+    summaryRow("סכום שחויב", formatUsd(data.amountPaid)) +
+    (data.paymentRef ? summaryRow("אסמכתת תשלום", data.paymentRef) : "") +
+    summaryRow("שולם עד כה", formatUsd(data.totalPaid)) +
+    summaryRow("סה״כ לטיול", formatUsd(data.grandTotal)) +
+    summaryRow("יתרה לתשלום", formatUsd(data.balanceRemaining));
 
   const html = wrapEmail(
-    `Receipt for your payment on ${data.tourTitle}.`,
+    `קבלה על התשלום עבור ${data.tourTitle}.`,
     `<h1 style="margin:0 0 16px;font-size:20px;color:#1b3a5c;">${heading}</h1>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escapeHtml(data.contactName)},</p>
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">שלום ${escapeHtml(data.contactName)},</p>
     <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">
-      Thanks — we've charged your card ${formatUsd(data.amountPaid)} for <strong>${escapeHtml(data.tourTitle)}</strong> (${dates}). This email is your receipt.
+      תודה — חייבנו את הכרטיס שלכם ב-${formatUsd(data.amountPaid)} עבור <strong>${escapeHtml(data.tourTitle)}</strong> (${dates}). הודעה זו משמשת כקבלה.
     </p>
     ${summaryTable(rows)}
     <p style="margin:0;font-size:15px;line-height:1.6;">${statusLine}</p>`
   );
 
-  const text = `Hi ${data.contactName},
+  const text = `שלום ${data.contactName},
 
-Thanks — we've charged your card ${formatUsd(data.amountPaid)} for ${data.tourTitle} (${dates}). This email is your receipt.
+תודה — חייבנו את הכרטיס שלכם ב-${formatUsd(data.amountPaid)} עבור ${data.tourTitle} (${dates}). הודעה זו משמשת כקבלה.
 
-Booking reference: ${data.bookingId}
-Amount charged: ${formatUsd(data.amountPaid)}${data.paymentRef ? `\nPayment reference: ${data.paymentRef}` : ""}
-Total paid to date: ${formatUsd(data.totalPaid)}
-Trip total: ${formatUsd(data.grandTotal)}
-Balance remaining: ${formatUsd(data.balanceRemaining)}
+מספר הזמנה: ${data.bookingId}
+סכום שחויב: ${formatUsd(data.amountPaid)}${data.paymentRef ? `\nאסמכתת תשלום: ${data.paymentRef}` : ""}
+שולם עד כה: ${formatUsd(data.totalPaid)}
+סה״כ לטיול: ${formatUsd(data.grandTotal)}
+יתרה לתשלום: ${formatUsd(data.balanceRemaining)}
 
 ${statusLine}`;
 
-  return { subject: `Payment receipt — ${data.tourTitle}`, html, text };
+  return { subject: `קבלה על תשלום — ${data.tourTitle}`, html, text };
 }

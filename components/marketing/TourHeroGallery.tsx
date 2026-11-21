@@ -3,6 +3,7 @@
 import { useState } from "react";
 import SafeImage from "@/components/ui/SafeImage";
 import { focusPosition } from "@/lib/imageFocus";
+import { countryLabel } from "@/lib/countryNames";
 import { fillCopy } from "@/lib/siteCopy";
 import type { ImageFocus } from "@/lib/types";
 
@@ -66,7 +67,7 @@ export default function TourHeroGallery({
             {title}
           </h1>
           <p className="text-sm font-medium text-[#a0b4c4] sm:text-base">
-            {countries.join(" & ")}
+            {countries.map(countryLabel).join(" · ")}
             <span className="mx-2 text-white/30" aria-hidden="true">
               ·
             </span>
@@ -84,7 +85,7 @@ export default function TourHeroGallery({
                 key={src}
                 type="button"
                 onClick={() => setSelectedSrc(src)}
-                aria-label={`Show photo ${safe.indexOf(src) + 1} of ${safe.length}: ${alt}`}
+                aria-label={`הצגת תמונה ${safe.indexOf(src) + 1} מתוך ${safe.length}: ${alt}`}
                 className="group relative min-h-0 flex-1 cursor-pointer overflow-hidden rounded-xl"
               >
                 <SafeImage
@@ -116,7 +117,7 @@ export default function TourHeroGallery({
               key={`m-${src}`}
               type="button"
               onClick={() => setSelectedSrc(src)}
-              aria-label={`Show photo ${safe.indexOf(src) + 1} of ${safe.length}: ${alt}`}
+              aria-label={`הצגת תמונה ${safe.indexOf(src) + 1} מתוך ${safe.length}: ${alt}`}
               className="relative h-24 flex-1 cursor-pointer overflow-hidden rounded-lg"
             >
               <SafeImage src={src} alt="" sizes="33vw" loading="eager" objectPosition={focusPosition(focus, src)} className="object-cover" />

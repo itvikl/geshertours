@@ -3,8 +3,8 @@ import PageHeader from "@/components/marketing/PageHeader";
 import { getSiteContent } from "@/lib/data/siteContent";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions",
-  description: "Booking, payment, and cancellation terms for Keshertours kosher tours.",
+  title: "תקנון",
+  description: "תנאי הזמנה, תשלום וביטול בטיולי גשר.",
   alternates: { canonical: "/legal/terms-conditions" },
 };
 
@@ -13,7 +13,7 @@ export default async function TermsConditionsPage() {
 
   return (
     <div>
-      <PageHeader eyebrow="Legal" title={content.title} image={content.heroImage} />
+      <PageHeader eyebrow="מידע משפטי" title={content.title} image={content.heroImage} />
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 lg:px-8">
         <section className="glass-panel rounded-2xl p-6 sm:p-8">
           <p className="whitespace-pre-line text-[15px] leading-7 text-[var(--color-slate)]">

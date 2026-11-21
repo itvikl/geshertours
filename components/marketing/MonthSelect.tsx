@@ -42,7 +42,7 @@ export default function MonthSelect({
   onClose,
   disabled = false,
   icon,
-  label = "When do you want to travel?",
+  label = "מתי תרצו לטייל?",
   hideLabel = false,
 }: {
   value?: string[];
@@ -67,7 +67,7 @@ export default function MonthSelect({
   const selected = new Set(value);
   const summary =
     value.length === 0
-      ? "Choose date"
+      ? "בחרו מועד"
       : months
           .filter((m) => selected.has(m.value))
           .map((m) => m.label)
@@ -199,7 +199,7 @@ export default function MonthSelect({
                   : "text-[var(--color-mist)] hover:bg-[var(--color-surface-hover-a)]",
               ].join(" ")}
             >
-              <span className="font-medium">Choose date</span>
+              <span className="font-medium">בחרו מועד</span>
             </button>
 
             {months.map(({ value: monthValue, label }) => {

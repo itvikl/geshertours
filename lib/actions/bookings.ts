@@ -71,13 +71,13 @@ async function createBookingCore(
   const departureRef = adminDb().collection("departures").doc(data.departureId);
   const departurePreviewSnap = await departureRef.get();
   if (!departurePreviewSnap.exists) {
-    return { ok: false, errors: { departureId: ["This departure is no longer available."] } };
+    return { ok: false, errors: { departureId: ["מועד היציאה הזה כבר אינו זמין."] } };
   }
   const departurePreview = departurePreviewSnap.data() as Departure;
 
   const tourSnap = await adminDb().collection("tours").doc(departurePreview.tourId).get();
   if (!tourSnap.exists) {
-    return { ok: false, errors: { departureId: ["This tour is no longer available."] } };
+    return { ok: false, errors: { departureId: ["הטיול הזה כבר אינו זמין."] } };
   }
   const tour = tourSnap.data() as Tour;
 
@@ -152,21 +152,21 @@ async function createBookingCore(
     await adminDb().runTransaction(async (tx) => {
       const departureSnap = await tx.get(departureRef);
       if (!departureSnap.exists) {
-        throw new BookingError("departureId", "This departure is no longer available.");
+        throw new BookingError("departureId", "מועד היציאה הזה כבר אינו זמין.");
       }
       const departure = departureSnap.data() as Departure;
       const seatsLeft =
         departure.capacityTotal - departure.capacityBooked - departure.capacityHeld;
 
       if (departure.status !== "open" || new Date(departure.startDate).getTime() < Date.now()) {
-        throw new BookingError("departureId", "This departure is no longer open for registration.");
+        throw new BookingError("departureId", "ההרשמה למועד הזה נסגרה.");
       }
       if (seatsLeft < travelerCount) {
         throw new BookingError(
           "departureId",
           seatsLeft <= 0
-            ? "This departure is sold out."
-            : `Only ${seatsLeft} spot${seatsLeft === 1 ? "" : "s"} left on this departure — reduce the party size or choose another date.`
+            ? "המועד הזה אזל."
+            : `נותרו רק ${seatsLeft} ${seatsLeft === 1 ? "מקום" : "מקומות"} במועד הזה — הפחיתו את מספר המשתתפים או בחרו מועד אחר.`
         );
       }
 
@@ -300,7 +300,7 @@ export async function getBookingTravelers(bookingId: string): Promise<GetBooking
   if (snapshot.empty) {
     const bookingSnap = await adminDb().collection("bookings").doc(bookingId).get();
     if (!bookingSnap.exists) {
-      return { ok: false, error: "This booking no longer exists." };
+      return { ok: false, error: "ההזמנה הזו כבר אינה קיימת." };
     }
   }
 
@@ -324,11 +324,11 @@ export async function getBookingByPaymentLink(
 ): Promise<GetBookingByPaymentLinkResult> {
   const bookingSnap = await adminDb().collection("bookings").doc(bookingId).get();
   if (!bookingSnap.exists) {
-    return { ok: false, error: "This payment link is invalid or has expired." };
+    return { ok: false, error: "קישור התשלום אינו תקין או שפג תוקפו." };
   }
   const booking = bookingSnap.data() as Booking;
   if (booking.paymentLinkToken !== token) {
-    return { ok: false, error: "This payment link is invalid or has expired." };
+    return { ok: false, error: "קישור התשלום אינו תקין או שפג תוקפו." };
   }
 
   const [tourSnap, departureSnap] = await Promise.all([
@@ -336,7 +336,7 @@ export async function getBookingByPaymentLink(
     adminDb().collection("departures").doc(booking.departureId).get(),
   ]);
   if (!tourSnap.exists || !departureSnap.exists) {
-    return { ok: false, error: "This booking's tour or departure is no longer available." };
+    return { ok: false, error: "הטיול או מועד היציאה של ההזמנה הזו כבר אינם זמינים." };
   }
 
   return {

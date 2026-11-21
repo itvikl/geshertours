@@ -521,3 +521,11 @@ html[data-theme="light"] .destination-search-select::picker(select) {
 .brand-logo-light { display: none; }
 html[data-theme="light"] .brand-logo-dark { display: none; }
 html[data-theme="light"] .brand-logo-light { display: inline-block; }
+
+/* Emails, phone numbers and URLs read left-to-right even on the RTL site. */
+input[type="email"],
+input[type="tel"],
+input[type="url"] {
+  direction: ltr;
+  text-align: right;
+}

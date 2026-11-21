@@ -4,8 +4,8 @@ import AboutSections from "@/components/marketing/AboutSections";
 import { getSiteContent } from "@/lib/data/siteContent";
 
 export const metadata: Metadata = {
-  title: "About Us",
-  description: "The story, standards, and people behind Keshertours.",
+  title: "אודות",
+  description: "הסיפור, הסטנדרטים והאנשים שמאחורי טיולי גשר.",
   alternates: { canonical: "/about" },
 };
 

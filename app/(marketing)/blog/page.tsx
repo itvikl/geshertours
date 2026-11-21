@@ -7,7 +7,7 @@ import { getSiteContent } from "@/lib/data/siteContent";
 export async function generateMetadata(): Promise<Metadata> {
   const copy = await getSiteContent("blog");
   return {
-    title: "Blog",
+    title: "בלוג",
     description: copy.metaDescription,
     alternates: { canonical: "/blog" },
   };

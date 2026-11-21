@@ -9,7 +9,7 @@ export default function TestimonialCard({ review }: { review: Review }) {
         <div className="relative mb-5 aspect-[3/2] overflow-hidden rounded-2xl">
           <Image
             src={review.photo}
-            alt={`${review.customerName} on a Keshertours trip`}
+            alt={`${review.customerName} בטיול של טיולי גשר`}
             fill
             sizes="(min-width: 1024px) 360px, (min-width: 640px) 45vw, 90vw"
             className="object-cover"

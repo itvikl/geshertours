@@ -7,7 +7,7 @@ import { formatUsd } from "@/lib/pricing";
 import type { Booking, Departure, Tour } from "@/lib/types";
 import { PhoneLink } from "@/components/marketing/SitePhone";
 
-export const metadata: Metadata = { title: "Complete your payment", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: "השלמת תשלום", robots: { index: false, follow: false } };
 
 /**
  * Token-gated balance-payment page — not part of a customer account system
@@ -29,7 +29,7 @@ export default async function PayBookingPage({
 
   return (
     <div>
-      <PageHeader eyebrow="Payment" title="Complete your payment" />
+      <PageHeader eyebrow="תשלום" title="השלמת תשלום" />
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 lg:px-8">
         <div className="glass-panel-elevated rounded-3xl p-8 shadow-2xl sm:p-10">
           {!lookup.ok ? (
@@ -79,28 +79,28 @@ async function PaymentSummary({
       </h2>
 
       <dl className="mx-auto mt-8 grid max-w-sm gap-3 text-start text-[15px]">
-        <Row label="Trip total" value={formatUsd(booking.priceBreakdown.grandTotal)} />
-        <Row label="Paid so far" value={formatUsd(booking.amountPaid)} />
-        <Row label="Balance due" value={formatUsd(booking.balanceAmount)} accent />
+        <Row label="סה״כ לטיול" value={formatUsd(booking.priceBreakdown.grandTotal)} />
+        <Row label="שולם עד כה" value={formatUsd(booking.amountPaid)} />
+        <Row label="יתרה לתשלום" value={formatUsd(booking.balanceAmount)} accent />
       </dl>
 
       <div className="mt-8">
         {!isActive ? (
-          <p className="text-sm text-[var(--color-slate)]">This booking is no longer active.</p>
+          <p className="text-sm text-[var(--color-slate)]">ההזמנה הזו כבר אינה פעילה.</p>
         ) : !canPay ? (
-          <p className="text-sm font-semibold text-[var(--color-success)]">Paid in full — thank you!</p>
+          <p className="text-sm font-semibold text-[var(--color-success)]">שולם במלואו — תודה!</p>
         ) : intentResult?.ok ? (
           <PayBalanceButton clientSecret={intentResult.clientSecret} amount={intentResult.amount} />
         ) : (
           <p className="text-sm text-[var(--color-danger-text)]">
             {intentResult && !intentResult.ok
               ? intentResult.error
-              : "Couldn't start payment — please try again in a moment."}
+              : "לא הצלחנו להתחיל את התשלום — נסו שוב בעוד רגע."}
           </p>
         )}
       </div>
 
-      <PhoneLink className="mt-8 inline-block text-sm font-bold text-[var(--color-ice)] transition hover:brightness-110" prefix="Questions? Call " />
+      <PhoneLink className="mt-8 inline-block text-sm font-bold text-[var(--color-ice)] transition hover:brightness-110" prefix="שאלות? התקשרו " />
     </div>
   );
 }

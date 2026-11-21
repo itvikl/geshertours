@@ -14,10 +14,10 @@ export default function CustomTourForm() {
     return (
       <div className="glass-panel rounded-2xl p-8 text-center">
         <p className="text-lg font-bold text-[var(--color-mist)]">
-          Thank you — your request was received.
+          תודה — הבקשה שלכם התקבלה.
         </p>
         <p className="mt-2 text-[15px] leading-7 text-[var(--color-slate)]">
-          A member of our team will call you to start planning your trip.
+          נציג מהצוות שלנו יתקשר אליכם כדי להתחיל לתכנן את הטיול.
         </p>
       </div>
     );
@@ -28,18 +28,18 @@ export default function CustomTourForm() {
   return (
     <form action={formAction} className="glass-panel grid gap-5 rounded-2xl p-6 sm:p-8">
       <h2 className="text-xl font-bold tracking-tight text-[var(--color-mist)]">
-        Tell us about your group
+        ספרו לנו על הקבוצה שלכם
       </h2>
       <div className="grid gap-4 sm:grid-cols-2">
         <div>
           <label className="block text-sm font-medium text-[var(--color-slate)]" htmlFor="destination">
-            Destination
+            יעד
           </label>
           <input id="destination" name="destination" className="glacier-field mt-1.5 w-full" />
         </div>
         <div>
           <label className="block text-sm font-medium text-[var(--color-slate)]" htmlFor="groupSize">
-            Approximate group size
+            גודל קבוצה משוער
           </label>
           <input
             id="groupSize"
@@ -54,7 +54,7 @@ export default function CustomTourForm() {
         </div>
         <div>
           <label className="block text-sm font-medium text-[var(--color-slate)]" htmlFor="travelStartDate">
-            Travel from
+            תאריך יציאה
           </label>
           <input
             id="travelStartDate"
@@ -71,7 +71,7 @@ export default function CustomTourForm() {
         </div>
         <div>
           <label className="block text-sm font-medium text-[var(--color-slate)]" htmlFor="travelEndDate">
-            Travel until
+            תאריך חזרה
           </label>
           <input
             id="travelEndDate"
@@ -89,7 +89,7 @@ export default function CustomTourForm() {
       </div>
       <div>
         <label className="block text-sm font-medium text-[var(--color-slate)]" htmlFor="phone">
-          Phone
+          טלפון
         </label>
         <input
           id="phone"
@@ -105,7 +105,7 @@ export default function CustomTourForm() {
         disabled={pending}
         className="justify-self-start rounded-full bg-[var(--color-ice)] px-7 py-3 text-sm font-bold text-[var(--color-ice-ink)] transition hover:brightness-110 active:scale-95 disabled:opacity-60"
       >
-        {pending ? "Sending…" : "Request a Custom Tour"}
+        {pending ? "שולח…" : "לבקשת טיול בהתאמה אישית"}
       </button>
     </form>
   );

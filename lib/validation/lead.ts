@@ -9,7 +9,7 @@ function optionalText() {
 function optionalDate() {
   return z.preprocess(
     (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
-    z.iso.date({ error: "Enter a valid date." }).optional()
+    z.iso.date({ error: "יש להזין תאריך תקין." }).optional()
   );
 }
 
@@ -18,13 +18,13 @@ function travelDatesInOrder(data: { travelStartDate?: string; travelEndDate?: st
   return !data.travelStartDate || !data.travelEndDate || data.travelEndDate >= data.travelStartDate;
 }
 const TRAVEL_DATES_ORDER_ERROR = {
-  error: "The end date can't be before the start date.",
+  error: "תאריך החזרה לא יכול להיות לפני תאריך היציאה.",
   path: ["travelEndDate"],
 };
 
 export const ContactLeadInputSchema = z.object({
-  name: z.string().min(1, { error: "Name is required." }),
-  email: z.email({ error: "Enter a valid email." }),
+  name: z.string().min(1, { error: "יש למלא שם." }),
+  email: z.email({ error: "יש להזין כתובת אימייל תקינה." }),
   phone: optionalText(),
   country: optionalText(),
   message: optionalText(),
@@ -39,7 +39,7 @@ export const CustomTourLeadInputSchema = z.object({
   ),
   travelStartDate: optionalDate(),
   travelEndDate: optionalDate(),
-  phone: z.string().min(1, { error: "Phone is required." }),
+  phone: z.string().min(1, { error: "יש למלא מספר טלפון." }),
 }).refine(travelDatesInOrder, TRAVEL_DATES_ORDER_ERROR);
 export type CustomTourLeadInput = z.infer<typeof CustomTourLeadInputSchema>;
 
@@ -48,7 +48,7 @@ export const ManualLeadInputSchema = z.object({
   name: optionalText(),
   email: z.preprocess(
     (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
-    z.email({ error: "Enter a valid email." }).optional()
+    z.email({ error: "יש להזין כתובת אימייל תקינה." }).optional()
   ),
   phone: optionalText(),
   country: optionalText(),

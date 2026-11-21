@@ -7,8 +7,8 @@ import { getSiteContent } from "@/lib/data/siteContent";
 import { getSiteSettings } from "@/lib/data/admin/settings";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
-  description: "Questions about a kosher tour or a custom trip? Call, email, or send the Keshertours team a message.",
+  title: "צור קשר",
+  description: "שאלות על טיול או על טיול בהתאמה אישית? התקשרו, כתבו לנו או השאירו הודעה לצוות טיולי גשר.",
   alternates: { canonical: "/contact" },
 };
 
@@ -21,7 +21,7 @@ export default async function ContactPage() {
       <div className="mx-auto grid max-w-3xl gap-8 px-4 py-16 sm:px-6 lg:px-8">
         <div className="glass-panel flex flex-col items-center gap-2 rounded-2xl p-8 text-center">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[var(--color-ice)]">
-            Prefer to talk?
+            מעדיפים לדבר?
           </p>
           <a
             href={`tel:${settings.phone.replace(/\D/g, "")}`}
@@ -34,7 +34,7 @@ export default async function ContactPage() {
               href={`tel:${settings.phoneAlt.replace(/\D/g, "")}`}
               className="text-sm text-[var(--color-slate)] transition hover:text-[var(--color-ice)]"
             >
-              or {settings.phoneAlt}
+              או {settings.phoneAlt}
             </a>
           )}
         </div>

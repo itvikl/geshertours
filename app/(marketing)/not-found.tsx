@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import NotFoundContent from "@/components/marketing/NotFoundContent";
 
 export const metadata: Metadata = {
-  title: "Page not found",
+  title: "הדף לא נמצא",
   robots: { index: false, follow: true },
 };
 

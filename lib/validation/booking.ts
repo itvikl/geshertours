@@ -16,28 +16,28 @@ export const RoomConfigurationSchema = z.object({
 export const TravelerInputSchema = z.object({
   firstName: z
     .string()
-    .min(1, { error: "First name is required." })
+    .min(1, { error: "יש למלא שם פרטי." })
     .max(NAME_MAX_LENGTH)
-    .regex(NAME_PATTERN, { error: "First name can only contain letters." }),
+    .regex(NAME_PATTERN, { error: "השם הפרטי יכול להכיל אותיות בלבד." }),
   lastName: z
     .string()
-    .min(1, { error: "Last name is required." })
+    .min(1, { error: "יש למלא שם משפחה." })
     .max(NAME_MAX_LENGTH)
-    .regex(NAME_PATTERN, { error: "Last name can only contain letters." }),
+    .regex(NAME_PATTERN, { error: "שם המשפחה יכול להכיל אותיות בלבד." }),
   dob: z
     .string()
     .optional()
     .refine((v) => !v || v <= new Date().toISOString().slice(0, 10), {
-      error: "Date of birth can't be in the future.",
+      error: "תאריך הלידה לא יכול להיות בעתיד.",
     }),
   passport: z
     .string()
-    .regex(PASSPORT_PATTERN, { error: "Passport number can only contain letters and digits (up to 10)." })
+    .regex(PASSPORT_PATTERN, { error: "מספר הדרכון יכול להכיל אותיות באנגלית וספרות בלבד (עד 10)." })
     .optional(),
   // Only a path uploadPassportScan itself produces — never a client-chosen URL.
   passportScanPath: z
     .string()
-    .refine(isPassportScanPath, { error: "Invalid passport scan upload." })
+    .refine(isPassportScanPath, { error: "העלאת צילום הדרכון אינה תקינה." })
     .optional(),
   occupancy: z.enum(["double", "single", "triple", "child"]),
   roomWith: z.string().optional(),
@@ -51,20 +51,20 @@ export const TravelerInputSchema = z.object({
  * a total sent by the client.
  */
 export const BookingInputSchema = z.object({
-  departureId: z.string().min(1, { error: "Choose a departure date." }),
+  departureId: z.string().min(1, { error: "יש לבחור מועד יציאה." }),
   roomConfiguration: RoomConfigurationSchema,
   childCount: z.number().int().min(0),
   travelers: z
     .array(TravelerInputSchema)
-    .min(1, { error: "At least one traveler is required." }),
-  contactName: z.string().min(1, { error: "Name is required." }),
-  contactEmail: z.email({ error: "Enter a valid email." }),
+    .min(1, { error: "נדרש לפחות מטייל אחד." }),
+  contactName: z.string().min(1, { error: "יש למלא שם." }),
+  contactEmail: z.email({ error: "יש להזין כתובת אימייל תקינה." }),
   contactPhone: z
     .string()
-    .regex(PHONE_PATTERN, { error: "Enter a valid phone number." })
+    .regex(PHONE_PATTERN, { error: "יש להזין מספר טלפון תקין." })
     .optional(),
   contactPreference: z.enum(["callback", "pay_online"], {
-    error: "Choose how you'd like to complete payment.",
+    error: "יש לבחור איך תרצו להשלים את התשלום.",
   }),
 });
 
@@ -80,7 +80,7 @@ export type BookingInput = z.infer<typeof BookingInputSchema>;
  */
 export const PublicBookingInputSchema = BookingInputSchema.extend({
   // 0 is valid: a tour with no deposit can be reserved without paying anything now.
-  paymentAmount: z.number().min(0, { error: "Choose a payment amount." }),
+  paymentAmount: z.number().min(0, { error: "יש לבחור סכום לתשלום." }),
 });
 export type PublicBookingInput = z.infer<typeof PublicBookingInputSchema>;
 

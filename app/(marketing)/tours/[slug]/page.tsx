@@ -78,7 +78,7 @@ export default async function TourDetailPage({
             url,
             image: tour.heroImage || undefined,
             touristType: "Kosher-observant travelers",
-            provider: { "@type": "TravelAgency", name: "Keshertours", url: SITE_URL },
+            provider: { "@type": "TravelAgency", name: "טיולי גשר", url: SITE_URL },
           },
           {
             "@context": "https://schema.org",

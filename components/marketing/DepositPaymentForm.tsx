@@ -73,6 +73,7 @@ export default function DepositPaymentForm({
       options={{
         clientSecret,
         appearance,
+        locale: "he",
       }}
     >
       <PaymentFields amount={amount} onSuccess={onSuccess} />
@@ -93,7 +94,7 @@ function PaymentFields({ amount, onSuccess }: { amount: number; onSuccess: () =>
 
     const { error: submitError } = await elements.submit();
     if (submitError) {
-      setError(submitError.message ?? "Please check your payment details.");
+      setError(submitError.message ?? "אנא בדקו את פרטי התשלום.");
       setSubmitting(false);
       return;
     }
@@ -104,7 +105,7 @@ function PaymentFields({ amount, onSuccess }: { amount: number; onSuccess: () =>
     });
 
     if (confirmError) {
-      setError(confirmError.message ?? "Payment failed. Please try again.");
+      setError(confirmError.message ?? "התשלום נכשל. אנא נסו שוב.");
       setSubmitting(false);
       return;
     }
@@ -114,7 +115,7 @@ function PaymentFields({ amount, onSuccess }: { amount: number; onSuccess: () =>
       return;
     }
 
-    setError("Payment could not be completed. Please try a different payment method.");
+    setError("לא ניתן היה להשלים את התשלום. אנא נסו אמצעי תשלום אחר.");
     setSubmitting(false);
   }
 
@@ -132,7 +133,7 @@ function PaymentFields({ amount, onSuccess }: { amount: number; onSuccess: () =>
         onClick={handlePay}
         className="w-full rounded-full bg-[var(--color-ice)] px-8 py-3.5 text-sm font-bold text-[var(--color-ice-ink)] shadow-lg transition hover:brightness-110 active:scale-95 disabled:opacity-60"
       >
-        {submitting ? "Processing…" : `Pay ${formatUsd(amount)}`}
+        {submitting ? "מעבד…" : `תשלום ${formatUsd(amount)}`}
       </button>
     </div>
   );

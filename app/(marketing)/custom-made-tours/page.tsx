@@ -4,8 +4,8 @@ import CustomTourForm from "@/components/marketing/CustomTourForm";
 import { getSiteContent } from "@/lib/data/siteContent";
 
 export const metadata: Metadata = {
-  title: "Custom Made Tours",
-  description: "Private kosher tours for your family, friends, or community group.",
+  title: "טיול בהתאמה אישית",
+  description: "טיולים פרטיים למשפחה, לחברים או לקהילה.",
   alternates: { canonical: "/custom-made-tours" },
 };
 

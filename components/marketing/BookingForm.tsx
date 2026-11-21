@@ -313,7 +313,7 @@ export default function BookingForm({
 
             {totalTravelers > seatsLeft && (
               <p className="rounded-xl border border-[var(--color-danger-border)] bg-[var(--color-danger-bg)] p-3 text-sm text-[var(--color-danger-text)]">
-                {fillCopy(copy.seatsWarning, { seats: seatsLeft, spots: seatsLeft === 1 ? "spot" : "spots" })}
+                {fillCopy(copy.seatsWarning, { seats: seatsLeft, spots: seatsLeft === 1 ? "מקום" : "מקומות" })}
               </p>
             )}
 
@@ -347,7 +347,7 @@ export default function BookingForm({
                     onBlur={() => touch(`traveler-${index}-firstName`)}
                     error={
                       touched[`traveler-${index}-firstName`] && !traveler.firstName.trim()
-                        ? "First name is required."
+                        ? "יש למלא שם פרטי."
                         : undefined
                     }
                     name={`traveler-${index}-firstName`}
@@ -361,7 +361,7 @@ export default function BookingForm({
                     onBlur={() => touch(`traveler-${index}-lastName`)}
                     error={
                       touched[`traveler-${index}-lastName`] && !traveler.lastName.trim()
-                        ? "Last name is required."
+                        ? "יש למלא שם משפחה."
                         : undefined
                     }
                     name={`traveler-${index}-lastName`}
@@ -377,7 +377,7 @@ export default function BookingForm({
                     onBlur={() => touch(`traveler-${index}-dob`)}
                     error={
                       touched[`traveler-${index}-dob`] && traveler.dob > todayIso
-                        ? "Date of birth can't be in the future."
+                        ? "תאריך הלידה לא יכול להיות בעתיד."
                         : undefined
                     }
                     name={`traveler-${index}-dob`}
@@ -437,7 +437,7 @@ export default function BookingForm({
               onChange={(v) => setContactName(sanitizeName(v))}
               maxLength={NAME_MAX_LENGTH}
               onBlur={() => touch("contactName")}
-              error={touched.contactName && !contactName.trim() ? "Name is required." : undefined}
+              error={touched.contactName && !contactName.trim() ? "יש למלא שם." : undefined}
               name="contactName"
               autoComplete="name"
               required
@@ -450,7 +450,7 @@ export default function BookingForm({
               onBlur={() => touch("contactEmail")}
               error={
                 touched.contactEmail && !EMAIL_PATTERN.test(contactEmail.trim())
-                  ? "Enter a valid email."
+                  ? "יש להזין כתובת אימייל תקינה."
                   : undefined
               }
               name="contactEmail"

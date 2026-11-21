@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useTourFilter } from "@/components/marketing/TourFilterProvider";
 import TourCard from "@/components/marketing/TourCard";
 import { PhoneLink } from "@/components/marketing/SitePhone";
+import { countryLabel } from "@/lib/countryNames";
 
 const INITIAL_VISIBLE = 12;
 
@@ -35,19 +36,19 @@ export default function FeaturedToursGrid() {
 
   const heading =
     selectedCountries.length === 0
-      ? "Featured Tours"
+      ? "טיולים נבחרים"
       : selectedCountries.length === 1
-        ? `Tours to ${selectedCountries[0]}`
+        ? `טיולים ל${countryLabel(selectedCountries[0])}`
         : selectedCountries.length === 2
-          ? `Tours to ${selectedCountries[0]} & ${selectedCountries[1]}`
-          : `Tours to ${selectedCountries.length} countries`;
+          ? `טיולים ל${countryLabel(selectedCountries[0])} ול${countryLabel(selectedCountries[1])}`
+          : `טיולים ל-${selectedCountries.length} מדינות`;
 
   return (
     <div>
       <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
         <div>
           <p className="text-sm font-bold uppercase tracking-[0.3em] text-[var(--color-ice)]">
-            Curated Selections
+            בחירה שלנו
           </p>
           <h2 className="mt-3 font-display text-3xl font-bold sm:text-4xl md:text-5xl">
             {heading}
@@ -59,15 +60,15 @@ export default function FeaturedToursGrid() {
               className="mt-3 inline-flex items-center gap-1.5 rounded-full border border-[var(--color-border-hairline)] px-3 py-1.5 text-xs font-bold uppercase tracking-wider text-[var(--color-slate)] transition-colors hover:border-[var(--color-border-ice-strong)] hover:text-[var(--color-ice)]"
             >
               <ChangeSearchIcon />
-              Change Search
+              שינוי החיפוש
             </button>
           )}
         </div>
         <div className="flex flex-col items-start gap-3 md:items-end">
           <p className="max-w-md text-[15px] leading-7 text-[var(--color-slate)] md:text-end">
             {isFiltered
-              ? `${tours.length} kosher tour${tours.length === 1 ? "" : "s"} matching your search.`
-              : "Hand-selected journeys that balance comfort, kashrut, and discovery — shaped around your family and your travel style."}
+              ? tours.length === 1 ? "טיול אחד תואם לחיפוש שלכם." : `${tours.length} טיולים תואמים לחיפוש שלכם.`
+              : "טיולים שנבחרו בקפידה, המשלבים נוחות, כשרות וגילוי — ומותאמים לכם ולסגנון הטיול שלכם."}
           </p>
           {canExpand && (
             <button
@@ -75,7 +76,7 @@ export default function FeaturedToursGrid() {
               onClick={() => setExpanded((v) => !v)}
               className="text-sm font-bold text-[var(--color-ice)] transition hover:brightness-110"
             >
-              {expanded ? "Show less" : `Show more (${tours.length - INITIAL_VISIBLE})`}
+              {expanded ? "הצג פחות" : `הצג עוד (${tours.length - INITIAL_VISIBLE})`}
             </button>
           )}
         </div>
@@ -84,8 +85,8 @@ export default function FeaturedToursGrid() {
       {tours.length === 0 ? (
         <p className="mt-12 text-[var(--color-slate)]">
           {hasMonthFilter
-            ? "No tours depart in those months right now"
-            : "No tours match that country right now"} — call us at{" "}
+            ? "אין כרגע טיולים שיוצאים בחודשים האלה"
+            : "אין כרגע טיולים ליעד הזה"} — התקשרו אלינו{" "}
           <PhoneLink className="font-semibold text-[var(--color-ice)]" />
           .
         </p>

@@ -12,21 +12,21 @@ export default function NotFoundContent() {
     <>
       <PageHeader
         eyebrow="404"
-        title="We couldn't find that page"
-        lede="It may have moved, or the tour may no longer be running. Browse our current tours or get in touch."
+        title="לא מצאנו את הדף הזה"
+        lede="ייתכן שהדף הועבר, או שהטיול כבר לא פעיל. עיינו בטיולים הנוכחיים או צרו איתנו קשר."
       />
       <div className="flex flex-wrap justify-center gap-4 px-4 py-14">
         <Link
           href="/#featured-tours"
           className="rounded-full bg-[var(--color-ice)] px-6 py-3 text-sm font-semibold text-[var(--color-glacier)] transition hover:opacity-90"
         >
-          Browse tours
+          לכל הטיולים
         </Link>
         <Link
           href="/contact"
           className="rounded-full border border-[var(--color-border-ice-strong)] px-6 py-3 text-sm font-semibold text-[var(--color-mist)] transition hover:border-[var(--color-ice)]"
         >
-          Contact us
+          צרו קשר
         </Link>
       </div>
     </>

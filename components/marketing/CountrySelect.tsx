@@ -12,11 +12,12 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import type { CountryOption } from "@/lib/data/tours";
+import { countryLabel } from "@/lib/countryNames";
 
 const AVAILABILITY_LABEL = {
   available: null,
-  sold_out: "Sold out",
-  unavailable: "Unavailable",
+  sold_out: "אזל",
+  unavailable: "לא זמין",
 } as const;
 
 /** True on touch/no-hover devices, where there's no mouse-out to close a menu with. */
@@ -38,7 +39,7 @@ export default function CountrySelect({
   multiple = true,
   disabled = false,
   icon,
-  label = "Where do you want to travel?",
+  label = "לאן תרצו לטייל?",
   hideLabel = false,
 }: {
   countries: CountryOption[];
@@ -60,13 +61,14 @@ export default function CountrySelect({
 
   const selected = new Set(value);
   const summary =
-    value.length === 0 ? "Choose destination" : value.join(", ");
+    value.length === 0 ? "בחרו יעד" : value.map(countryLabel).join(", ");
   // Available destinations first, sold-out/unavailable ones pushed to the
   // bottom rather than interleaved alphabetically.
   const sortedCountries = [...countries].sort(
     (a, b) =>
       Number(a.availability !== "available") -
-      Number(b.availability !== "available")
+        Number(b.availability !== "available") ||
+      countryLabel(a.name).localeCompare(countryLabel(b.name), "he")
   );
 
   useEffect(() => {
@@ -204,7 +206,7 @@ export default function CountrySelect({
                   : "text-[var(--color-mist)] hover:bg-[var(--color-surface-hover-a)]",
               ].join(" ")}
             >
-              <span className="font-medium">Choose destination</span>
+              <span className="font-medium">בחרו יעד</span>
             </button>
 
             {sortedCountries.map(({ name, availability }) => {
@@ -250,7 +252,7 @@ export default function CountrySelect({
                       ) : null}
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate font-medium">{name}</span>
+                      <span className="block truncate font-medium">{countryLabel(name)}</span>
                       {tag ? (
                         <span className="mt-0.5 inline-block rounded-full border border-[var(--color-border-hairline)] bg-[var(--color-surface-hover-a)] px-1.5 py-px text-[9px] font-semibold uppercase tracking-wider text-[var(--color-slate)]">
                           {tag}

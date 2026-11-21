@@ -23,43 +23,43 @@ export interface EmailContent {
 
 export function bookingConfirmationEmail(data: BookingConfirmationData): EmailContent {
   const dates = formatDateRange(data.startDate, data.endDate);
-  const travelerLabel = `${data.travelerCount} traveler${data.travelerCount === 1 ? "" : "s"}`;
+  const travelerLabel = data.travelerCount === 1 ? "מטייל אחד" : `${data.travelerCount} מטיילים`;
 
   const noDeposit = data.depositAmount <= 0;
   const nextStep = noDeposit
-    ? "No deposit is needed to hold your spot. Our team will be in touch shortly to confirm your booking and arrange payment."
+    ? "אין צורך במקדמה כדי לשריין את מקומכם. הצוות שלנו ייצור איתכם קשר בקרוב לאישור ההזמנה ולהסדרת התשלום."
     : data.contactPreference === "pay_online"
-      ? `Complete your deposit of ${formatUsd(data.depositAmount)} online to secure your spot.`
-      : `Our team will call you shortly to collect your deposit of ${formatUsd(data.depositAmount)} and confirm your spot.`;
+      ? `השלימו את תשלום המקדמה בסך ${formatUsd(data.depositAmount)} באתר כדי להבטיח את מקומכם.`
+      : `הצוות שלנו יתקשר אליכם בקרוב לגביית המקדמה בסך ${formatUsd(data.depositAmount)} ולאישור מקומכם.`;
 
   const rows =
-    summaryRow("Booking reference", data.bookingId) +
-    summaryRow("Trip total", formatUsd(data.grandTotal)) +
-    summaryRow("Deposit due", noDeposit ? "None" : formatUsd(data.depositAmount)) +
-    summaryRow("Balance due", formatUsd(data.balanceAmount));
+    summaryRow("מספר הזמנה", data.bookingId) +
+    summaryRow("סה״כ לטיול", formatUsd(data.grandTotal)) +
+    summaryRow("מקדמה לתשלום", noDeposit ? "ללא" : formatUsd(data.depositAmount)) +
+    summaryRow("יתרה לתשלום", formatUsd(data.balanceAmount));
 
   const html = wrapEmail(
-    `Your booking for ${data.tourTitle} is received.`,
-    `<h1 style="margin:0 0 16px;font-size:20px;color:#1b3a5c;">Booking received</h1>
-    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">Hi ${escapeHtml(data.contactName)},</p>
+    `ההרשמה שלכם ל${data.tourTitle} התקבלה.`,
+    `<h1 style="margin:0 0 16px;font-size:20px;color:#1b3a5c;">ההרשמה התקבלה</h1>
+    <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">שלום ${escapeHtml(data.contactName)},</p>
     <p style="margin:0 0 16px;font-size:15px;line-height:1.6;">
-      We've received your registration for <strong>${escapeHtml(data.tourTitle)}</strong> (${dates}).
-      This confirms your spot is on hold for ${travelerLabel} — it isn't paid yet.
+      קיבלנו את ההרשמה שלכם ל<strong>${escapeHtml(data.tourTitle)}</strong> (${dates}).
+      המקום שמור עבור ${travelerLabel} — ההזמנה עדיין לא שולמה.
     </p>
     ${summaryTable(rows)}
     <p style="margin:0;font-size:15px;line-height:1.6;">${nextStep}</p>`
   );
 
-  const text = `Hi ${data.contactName},
+  const text = `שלום ${data.contactName},
 
-We've received your registration for ${data.tourTitle} (${dates}). This confirms your spot is on hold for ${travelerLabel} — it isn't paid yet.
+קיבלנו את ההרשמה שלכם ל${data.tourTitle} (${dates}). המקום שמור עבור ${travelerLabel} — ההזמנה עדיין לא שולמה.
 
-Booking reference: ${data.bookingId}
-Trip total: ${formatUsd(data.grandTotal)}
-Deposit due: ${noDeposit ? "None" : formatUsd(data.depositAmount)}
-Balance due: ${formatUsd(data.balanceAmount)}
+מספר הזמנה: ${data.bookingId}
+סה״כ לטיול: ${formatUsd(data.grandTotal)}
+מקדמה לתשלום: ${noDeposit ? "ללא" : formatUsd(data.depositAmount)}
+יתרה לתשלום: ${formatUsd(data.balanceAmount)}
 
 ${nextStep}`;
 
-  return { subject: `Booking received — ${data.tourTitle}`, html, text };
+  return { subject: `ההרשמה התקבלה — ${data.tourTitle}`, html, text };
 }

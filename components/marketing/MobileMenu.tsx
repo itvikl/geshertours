@@ -26,7 +26,7 @@ export default function MobileMenu({ links }: { links: { href: string; label: st
     <div className="lg:hidden">
       <button
         type="button"
-        aria-label={open ? "Close menu" : "Open menu"}
+        aria-label={open ? "סגירת התפריט" : "פתיחת התפריט"}
         aria-expanded={open}
         aria-controls="mobile-menu"
         onClick={() => setOpen((v) => !v)}
@@ -42,7 +42,7 @@ export default function MobileMenu({ links }: { links: { href: string; label: st
       {open && (
         <nav
           id="mobile-menu"
-          aria-label="Main navigation"
+          aria-label="ניווט ראשי"
           className="absolute inset-x-0 top-full z-40 h-[calc(100dvh-100%)] overflow-y-auto border-t border-[var(--color-border-hairline)] bg-[var(--color-glacier)] px-4 py-4"
         >
           <ul className="mx-auto max-w-7xl divide-y divide-[var(--color-border-hairline)]">

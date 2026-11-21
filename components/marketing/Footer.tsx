@@ -8,21 +8,21 @@ import { telHref } from "@/lib/sitePhone";
 // destinations change.
 const COLUMNS = [
   {
-    title: "Destinations",
+    title: "יעדים",
     links: [
-      { href: "/?country=Italy#featured-tours", label: "Italy" },
-      { href: "/?country=Costa%20Rica#featured-tours", label: "Costa Rica" },
-      { href: "/?country=Morocco#featured-tours", label: "Morocco" },
+      { href: "/?country=Italy#featured-tours", label: "איטליה" },
+      { href: "/?country=Costa%20Rica#featured-tours", label: "קוסטה ריקה" },
+      { href: "/?country=Morocco#featured-tours", label: "מרוקו" },
     ],
   },
   {
-    title: "Company",
+    title: "החברה",
     links: [
-      { href: "/about", label: "About Us" },
-      { href: "/blog", label: "Blog" },
-      { href: "/testimonials", label: "Testimonials" },
+      { href: "/about", label: "אודות" },
+      { href: "/blog", label: "בלוג" },
+      { href: "/testimonials", label: "המלצות" },
       { href: "/faq", label: "FAQ" },
-      { href: "/contact", label: "Contact Us" },
+      { href: "/contact", label: "צור קשר" },
     ],
   },
 ];
@@ -40,7 +40,7 @@ export default function Footer({
       ? [
           COLUMNS[0],
           {
-            title: "Popular Tours",
+            title: "טיולים פופולריים",
             links: tours.map((t) => ({ href: `/tours/${t.slug}`, label: t.title })),
           },
           ...COLUMNS.slice(1),
@@ -54,7 +54,7 @@ export default function Footer({
           <div className="col-span-2 sm:col-span-3 lg:col-span-1">
             <BrandLogo className="h-12 w-auto object-contain" />
             <p className="mt-3 text-sm text-[var(--color-slate)]">
-              Travel the world the Jewish way.
+              טיולים מאורגנים ברחבי העולם.
             </p>
             <a
               href={telHref(phone)}
@@ -87,20 +87,20 @@ export default function Footer({
 
         <div className="mt-12 flex flex-col gap-4 border-t border-[var(--color-border-hairline-faint)] pt-6 text-xs text-[var(--color-slate)]/60 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
-            <p>&copy; {new Date().getFullYear()} Keshertours. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} טיולי גשר. כל הזכויות שמורות.</p>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/logo-shai-header-fial.jpg"
-              alt="Shai Bar Ilan Geographical Tours"
+              alt="שי בר-אילן טיולים גיאוגרפיים"
               className="h-8 w-auto rounded-md object-contain opacity-90"
             />
           </div>
           <div className="flex gap-4">
             <Link href="/legal/terms-conditions" className="transition-colors hover:text-[var(--color-ice)]">
-              Terms &amp; Conditions
+              תקנון
             </Link>
             <Link href="/legal/privacy" className="transition-colors hover:text-[var(--color-ice)]">
-              Privacy
+              מדיניות פרטיות
             </Link>
           </div>
         </div>

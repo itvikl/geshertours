@@ -15,14 +15,14 @@ const heebo = Heebo({
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Keshertours — Travel the World the Jewish Way",
-    template: "%s | Keshertours",
+    default: "טיולי גשר — טיולים מאורגנים בעולם",
+    template: "%s | טיולי גשר",
   },
   description:
-    "Kosher tours to destinations worldwide — escorted, fully kosher, and built for travelers who want to see the world without compromise.",
+    "טיולים מאורגנים ליעדים ברחבי העולם — עם ליווי צמוד, כשרות מלאה ומדריכים דוברי עברית.",
   openGraph: {
     type: "website",
-    siteName: "Keshertours",
+    siteName: "טיולי גשר",
     locale: "he_IL",
   },
   twitter: { card: "summary_large_image" },

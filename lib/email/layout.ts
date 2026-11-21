@@ -27,7 +27,7 @@ export function wrapEmail(preheader: string, bodyHtml: string): string {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
-  <body style="margin:0;padding:0;background:${SAND};font-family:Georgia,'Times New Roman',serif;color:${INK};">
+  <body style="margin:0;padding:0;background:${SAND};font-family:Arial,'Helvetica Neue',sans-serif;direction:rtl;text-align:right;color:${INK};">
     <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escapeHtml(preheader)}</div>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${SAND};padding:32px 16px;">
       <tr>
@@ -35,7 +35,7 @@ export function wrapEmail(preheader: string, bodyHtml: string): string {
           <table role="presentation" width="100%" style="max-width:560px;background:#ffffff;border:1px solid ${LINE};border-radius:8px;overflow:hidden;">
             <tr>
               <td style="background:${NAVY};padding:24px 32px;">
-                <span style="color:${GOLD};font-size:20px;font-weight:700;letter-spacing:0.02em;">Keshertours</span>
+                <span style="color:${GOLD};font-size:20px;font-weight:700;">טיולי גשר</span>
               </td>
             </tr>
             <tr>
@@ -45,7 +45,7 @@ export function wrapEmail(preheader: string, bodyHtml: string): string {
             </tr>
             <tr>
               <td style="padding:20px 32px;border-top:1px solid ${LINE};color:${INK_MUTED};font-size:12px;">
-                Keshertours — Travel the World the Jewish Way
+                טיולי גשר — טיולים מאורגנים ברחבי העולם
               </td>
             </tr>
           </table>
@@ -57,7 +57,7 @@ export function wrapEmail(preheader: string, bodyHtml: string): string {
 }
 
 export function summaryRow(label: string, value: string): string {
-  return `<tr><td style="padding:6px 0;color:${INK_MUTED};font-size:14px;">${escapeHtml(label)}</td><td style="padding:6px 0;text-align:right;font-size:14px;">${escapeHtml(value)}</td></tr>`;
+  return `<tr><td style="padding:6px 0;color:${INK_MUTED};font-size:14px;">${escapeHtml(label)}</td><td style="padding:6px 0;text-align:left;font-size:14px;">${escapeHtml(value)}</td></tr>`;
 }
 
 export function summaryTable(rows: string): string {

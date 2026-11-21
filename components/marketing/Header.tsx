@@ -5,14 +5,14 @@ import MobileMenu from "@/components/marketing/MobileMenu";
 import { telHref } from "@/lib/sitePhone";
 
 const NAV_LINKS = [
-  { href: "/#featured-tours", label: "Tours" },
-  { href: "/about", label: "About" },
-  { href: "/custom-made-tours", label: "Custom Tours" },
-  { href: "/special-offers", label: "Special Offers" },
-  { href: "/blog", label: "Blog" },
-  { href: "/testimonials", label: "Testimonials" },
+  { href: "/#featured-tours", label: "טיולים" },
+  { href: "/about", label: "אודות" },
+  { href: "/custom-made-tours", label: "טיול בהתאמה אישית" },
+  { href: "/special-offers", label: "מבצעים" },
+  { href: "/blog", label: "בלוג" },
+  { href: "/testimonials", label: "המלצות" },
   { href: "/faq", label: "FAQ" },
-  { href: "/contact", label: "Contact" },
+  { href: "/contact", label: "צור קשר" },
 ];
 
 export default function Header({ phone }: { phone: string }) {
@@ -22,7 +22,7 @@ export default function Header({ phone }: { phone: string }) {
         <BrandLogo className="h-11 w-auto object-contain sm:h-12 lg:h-14" />
 
         <nav
-          aria-label="Main navigation"
+          aria-label="ניווט ראשי"
           className="hidden items-center gap-7 lg:flex"
         >
           {NAV_LINKS.map((link) => (
@@ -44,7 +44,7 @@ export default function Header({ phone }: { phone: string }) {
           >
             <span aria-hidden="true">☎</span>
             <span className="hidden sm:inline">{phone}</span>
-            <span className="sm:hidden">Call</span>
+            <span className="sm:hidden">חייגו</span>
           </a>
           <MobileMenu links={NAV_LINKS} />
         </div>

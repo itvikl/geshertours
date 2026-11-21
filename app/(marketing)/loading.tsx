@@ -8,7 +8,7 @@ export default function MarketingLoading() {
   return (
     <div className="flex min-h-[60vh] w-full items-center justify-center">
       <div
-        aria-label="Loading"
+        aria-label="טוען"
         className="size-10 animate-spin rounded-full border-2 border-[#7dd3fc]/20 border-t-[#7dd3fc]"
       />
     </div>

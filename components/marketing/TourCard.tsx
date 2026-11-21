@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { Departure, Tour } from "@/lib/types";
 import SafeImage from "@/components/ui/SafeImage";
 import { focusPosition } from "@/lib/imageFocus";
+import { countryLabel } from "@/lib/countryNames";
+import { formatUsd } from "@/lib/pricing";
 
 function formatDepartureDate(departure: Departure): string {
   return new Date(departure.startDate).toLocaleDateString("he-IL", {
@@ -19,7 +21,7 @@ export default function TourCard({
   eager = false,
 }: {
   tour: Tour;
-  /** Up to two upcoming dates, soonest first; empty shows "Flexible dates". */
+  /** Up to two upcoming dates, soonest first; empty shows "מועדים גמישים". */
   nextDepartures: Departure[];
   image: string;
   /** Replaces the Special Offer badge — there's nothing left to offer. */
@@ -32,11 +34,11 @@ export default function TourCard({
     <div className="relative h-full">
       {soldOut ? (
         <div className="absolute -top-3 start-6 z-10 rounded-full border border-[var(--color-border-hairline)] bg-[var(--color-glacier-elevated)] px-4 py-1 text-xs font-bold uppercase tracking-widest text-[var(--color-slate)] shadow-lg">
-          Sold Out
+          אזל
         </div>
       ) : tour.isSpecialOffer && (
         <div className="absolute -top-3 start-6 z-10 rounded-full bg-[var(--color-offer-gold)] px-4 py-1 text-xs font-bold uppercase tracking-widest text-[#0f1524] shadow-lg">
-          Special Offer
+          מבצע
         </div>
       )}
       <Link
@@ -53,7 +55,7 @@ export default function TourCard({
             className="object-cover transition duration-700 group-hover:scale-110"
           />
           <div className="absolute start-4 top-4 rounded-full border border-[var(--color-border-ice)] bg-[var(--color-surface)] px-4 py-1 text-xs font-bold uppercase tracking-widest text-[var(--color-mist)] backdrop-blur-lg">
-            {tour.countries.join(" & ")}
+            {tour.countries.map(countryLabel).join(" · ")}
           </div>
         </div>
 
@@ -61,7 +63,7 @@ export default function TourCard({
           <div className="mb-4 flex items-start justify-between gap-3">
             <h3 className="text-xl font-bold text-[var(--color-mist)]">{tour.title}</h3>
             <span className="shrink-0 text-sm font-bold text-[var(--color-ice)]">
-              From ${tour.pricing.pricePerPersonDouble.toLocaleString()}
+              החל מ-{formatUsd(tour.pricing.pricePerPersonDouble)}
             </span>
           </div>
 
@@ -85,11 +87,11 @@ export default function TourCard({
                   ))}
                 </>
               ) : (
-                "Flexible dates"
+                "מועדים גמישים"
               )}
             </div>
             <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-sm font-bold text-[var(--color-ice)] transition-all group-hover:gap-2">
-              View Details <span aria-hidden="true">←</span>
+              לפרטים <span aria-hidden="true">←</span>
             </span>
           </div>
         </div>

@@ -7,8 +7,8 @@ import { hasBookableDeparture, pickNextDepartures } from "@/lib/departureAvailab
 import { getSiteContent } from "@/lib/data/siteContent";
 
 export const metadata: Metadata = {
-  title: "Special Offers",
-  description: "Current deals and limited-time offers on Keshertours kosher tours.",
+  title: "מבצעים",
+  description: "מבצעים והטבות לזמן מוגבל בטיולי גשר.",
   alternates: { canonical: "/special-offers" },
 };
 
@@ -43,9 +43,8 @@ export default async function SpecialOffersPage() {
         {isEmpty ? (
           <div className="glass-panel rounded-2xl border-dashed p-10 text-center">
             <p className="text-lg leading-8 text-[var(--color-slate)]">
-              No special offers are live right now — check back soon, or
-              leave your email and we&apos;ll let you know the moment one
-              is published.
+              אין כרגע מבצעים פעילים — חזרו בקרוב, או השאירו פרטים ונעדכן
+              אתכם ברגע שיתפרסם מבצע חדש.
             </p>
           </div>
         ) : (

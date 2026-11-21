@@ -4,8 +4,8 @@ import FaqList from "@/components/marketing/FaqList";
 import { getSiteContent } from "@/lib/data/siteContent";
 
 export const metadata: Metadata = {
-  title: "Frequently Asked Questions",
-  description: "Answers about Keshertours kosher tours — kashrut on the road, Shabbat, rooms, payments, cancellations and more.",
+  title: "שאלות נפוצות",
+  description: "תשובות על טיולי גשר — כשרות בדרך, שבת, חדרים, תשלומים, ביטולים ועוד.",
   alternates: { canonical: "/faq" },
 };
 

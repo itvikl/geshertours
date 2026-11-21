@@ -76,7 +76,7 @@ export default function DestinationSearch() {
             ? "pointer-events-none opacity-40"
             : "hover:bg-[var(--color-surface-hover-a)]",
         ].join(" ")}
-        title={dateActive ? "Clear the date to search by destination instead" : undefined}
+        title={dateActive ? "נקו את המועד כדי לחפש לפי יעד" : undefined}
       >
         <CountrySelect
           countries={countries}
@@ -84,7 +84,7 @@ export default function DestinationSearch() {
           multiple={false}
           disabled={dateActive}
           icon={<PinIcon />}
-          label="Destination"
+          label="יעד"
           hideLabel
           onChange={(next) => applyFilters({ countries: next, months: [] })}
         />
@@ -95,7 +95,7 @@ export default function DestinationSearch() {
           <button
             type="button"
             onClick={clearAndSwitch}
-            title="Clear and search the other way"
+            title="ניקוי וחיפוש בדרך השנייה"
             className="flex h-7 w-9 items-center justify-center rounded-full border border-[var(--color-border-ice-strong)] bg-[var(--color-surface-hover-a)] text-[var(--color-ice)] transition-colors hover:bg-[var(--color-ice)] hover:text-[var(--color-ice-ink)]"
           >
             <SwapIcon />
@@ -105,7 +105,7 @@ export default function DestinationSearch() {
             aria-hidden="true"
             className="flex h-7 w-9 items-center justify-center rounded-full border border-[var(--color-border-hairline)] text-[10px] font-bold uppercase tracking-widest text-[var(--color-slate)]"
           >
-            or
+            או
           </span>
         )}
       </div>
@@ -117,13 +117,13 @@ export default function DestinationSearch() {
             ? "pointer-events-none opacity-40"
             : "hover:bg-[var(--color-surface-hover-a)]",
         ].join(" ")}
-        title={countryActive ? "Clear the destination to search by date instead" : undefined}
+        title={countryActive ? "נקו את היעד כדי לחפש לפי מועד" : undefined}
       >
         <MonthSelect
           value={selectedMonths}
           disabled={countryActive}
           icon={<CalendarIcon />}
-          label="Date"
+          label="מועד"
           hideLabel
           onChange={(next) =>
             applyFilters({ countries: [], months: next }, { scroll: false })

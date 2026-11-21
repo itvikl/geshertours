@@ -9,6 +9,7 @@ import TestimonialCard from "@/components/marketing/TestimonialCard";
 import DepartureStatusPill from "@/components/marketing/DepartureStatusPill";
 import GuideAvatar from "@/components/marketing/GuideAvatar";
 import { formatUsd, singleSupplementOf } from "@/lib/pricing";
+import { countryLabel } from "@/lib/countryNames";
 import TextReveal from "@/components/ui/TextReveal";
 import { PhoneLink } from "@/components/marketing/SitePhone";
 import { TOUR_PAGE_COPY_DEFAULTS, fillCopy, type TourPageCopy } from "@/lib/siteCopy";
@@ -108,7 +109,7 @@ export default function TourPageView({
     <article className="bg-[var(--color-glacier)] text-[var(--color-mist)] selection:bg-[var(--color-ice)]/30 transition-colors">
       {previewMode && (
         <div className="bg-[var(--color-lilac)]/20 px-4 py-2 text-center text-sm font-semibold text-[var(--color-lilac)]">
-          PREVIEW MODE — Not Published
+          מצב תצוגה מקדימה — לא פורסם
         </div>
       )}
 
@@ -155,7 +156,7 @@ export default function TourPageView({
               <QuickFact
                 icon="public"
                 label={copy.countriesLabel}
-                value={tour.countries.join(", ")}
+                value={tour.countries.map(countryLabel).join(", ")}
               />
             </div>
           </div>

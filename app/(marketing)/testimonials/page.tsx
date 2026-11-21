@@ -8,7 +8,7 @@ import { destinationSlug, reviewDestination } from "@/lib/testimonials";
 export async function generateMetadata(): Promise<Metadata> {
   const content = await getSiteContent("testimonials");
   return {
-    title: "Testimonials",
+    title: "המלצות",
     description: content.metaDescription,
     alternates: { canonical: "/testimonials" },
   };
