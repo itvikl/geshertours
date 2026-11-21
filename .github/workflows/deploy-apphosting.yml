@@ -2,8 +2,8 @@
 # Actions → "Deploy App Hosting" → "Use workflow from" (pick branch) → Run workflow.
 #
 # Prerequisites:
-# 1. App Hosting backend "mainprod" (Blaze, us-east4).
-# 2. GitHub secret FIREBASE_SERVICE_ACCOUNT — already set.
+# 1. App Hosting backend "mainprod" in Firebase project gesher-tours (Blaze).
+# 2. GitHub secret FIREBASE_SERVICE_ACCOUNT — a gesher-tours service-account JSON key.
 # 3. Secret Manager secrets in apphosting.yaml.
 # 4. Disable App Hosting automatic rollouts from GitHub (avoid surprise/double deploys).
 
@@ -42,4 +42,4 @@ jobs:
         run: npm ci
 
       - name: Deploy to Firebase App Hosting
-        run: npx firebase-tools@latest deploy --only apphosting --project kesertors --non-interactive
+        run: npx firebase-tools@latest deploy --only apphosting --project gesher-tours --non-interactive

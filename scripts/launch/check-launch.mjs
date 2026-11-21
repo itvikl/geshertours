@@ -2,8 +2,8 @@
 /**
  * Launch readiness check — what Google and visitors will see.
  *
- *   node scripts/launch/check-launch.mjs                                  # production: https://keshertours.com
- *   node scripts/launch/check-launch.mjs https://staging.keshertours.com --staging
+ *   node scripts/launch/check-launch.mjs                                  # production: https://geshertours.co.il
+ *   node scripts/launch/check-launch.mjs https://staging.geshertours.co.il --staging
  *
  * Options
  *   --staging     Expect a test copy: crawling blocked, canonicals not yet on the
@@ -20,12 +20,12 @@ import path from "node:path";
 
 const args = process.argv.slice(2);
 const flags = new Set(args.filter((a) => a.startsWith("--")));
-const BASE = (args.find((a) => !a.startsWith("--")) ?? "https://keshertours.com").replace(/\/+$/, "");
+const BASE = (args.find((a) => !a.startsWith("--")) ?? "https://geshertours.co.il").replace(/\/+$/, "");
 const STAGING = flags.has("--staging");
 const QUICK = flags.has("--quick");
 const OLD_COUNT = Number((args.find((a) => a.startsWith("--old=")) ?? "").split("=")[1]) || (QUICK ? 25 : 80);
 
-const PROD_ORIGIN = "https://keshertours.com";
+const PROD_ORIGIN = "https://geshertours.co.il";
 const HOST = new URL(BASE).host;
 const AUDIT_CSV = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../docs/gsc-redirect-audit.csv");
 // Search Console ownership tokens (app/layout.tsx) — losing them at launch unverifies the existing properties.
@@ -128,7 +128,7 @@ async function crawlability() {
     check(S, blocked, "staging blocks crawling (robots.txt Disallow: /)", "staging is open to Google — duplicate-content risk");
   } else {
     check(S, !blocked, "robots.txt allows crawling", "robots.txt says Disallow: / — Google would drop the whole site");
-    check(S, /sitemap:\s*https:\/\/keshertours\.com\/sitemap\.xml/i.test(robots.body), "robots.txt lists https://keshertours.com/sitemap.xml", robots.body.match(/sitemap:.*/i)?.[0] ?? "no Sitemap line");
+    check(S, /sitemap:\s*https:\/\/geshertours\.co\.il\/sitemap\.xml/i.test(robots.body), "robots.txt lists https://geshertours.co.il/sitemap.xml", robots.body.match(/sitemap:.*/i)?.[0] ?? "no Sitemap line");
     check(S, /disallow:\s*\/admin/i.test(robots.body) && /disallow:\s*\/api\//i.test(robots.body), "robots.txt hides /admin and /api/", "back-office paths are crawlable");
   }
 }
@@ -142,7 +142,7 @@ async function sitemap() {
   sitemapUrls = [...res.body.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1].replace(/&amp;/g, "&"));
   check(S, sitemapUrls.length >= 30, `sitemap lists ${sitemapUrls.length} URLs`, "far fewer than expected (~76) — are tours/blog missing?");
   const wrongHost = sitemapUrls.filter((u) => new URL(u).origin !== PROD_ORIGIN);
-  check(S, wrongHost.length === 0, "every sitemap URL is on https://keshertours.com", `${wrongHost.length} on another host, e.g. ${wrongHost[0]} — set NEXT_PUBLIC_SITE_URL`, "todo");
+  check(S, wrongHost.length === 0, "every sitemap URL is on https://geshertours.co.il", `${wrongHost.length} on another host, e.g. ${wrongHost[0]} — set NEXT_PUBLIC_SITE_URL`, "todo");
   // Fetch each URL on the host being tested (the sitemap's own host may not be live yet in staging).
   const targets = sitemapUrls.map((u) => BASE + new URL(u).pathname);
   const sample = QUICK ? targets.slice(0, 20) : targets;
@@ -254,7 +254,7 @@ async function errorsAndAdmin() {
 // ---------------------------------------------------------------- 6. DNS & email
 async function dnsAndEmail() {
   const S = "DNS & email";
-  const domain = "keshertours.com";
+  const domain = "geshertours.co.il";
   const txt = async (name) => (await dns.resolveTxt(name).catch(() => [])).map((r) => r.join(""));
   const apex = await txt(domain);
   const spf = apex.filter((t) => t.toLowerCase().startsWith("v=spf1"));
@@ -262,9 +262,9 @@ async function dnsAndEmail() {
   if (spf[0]) check(S, /_spf\.google\.com/.test(spf[0]), "root SPF covers Google mail", spf[0], "warn");
   // Resend keeps its own SPF and bounce records on the send. subdomain, so the root record stays untouched.
   const sendSpf = await txt(`send.${domain}`);
-  check(S, sendSpf.some((t) => /amazonses\.com/.test(t)), "Resend SPF on send.keshertours.com", "no amazonses SPF on send. — receipts may land in spam");
+  check(S, sendSpf.some((t) => /amazonses\.com/.test(t)), "Resend SPF on send.geshertours.co.il", "no amazonses SPF on send. — receipts may land in spam");
   const dkim = await txt(`resend._domainkey.${domain}`);
-  check(S, dkim.some((t) => t.includes("p=")), "Resend DKIM record published", "resend._domainkey.keshertours.com has no key");
+  check(S, dkim.some((t) => t.includes("p=")), "Resend DKIM record published", "resend._domainkey.geshertours.co.il has no key");
   const dmarc = await txt(`_dmarc.${domain}`);
   check(S, dmarc.some((t) => t.toLowerCase().startsWith("v=dmarc1")), "DMARC record published", "none — recommended so Gmail trusts the mail", "warn");
   const mx = await dns.resolveMx(domain).catch(() => []);
@@ -299,8 +299,8 @@ By hand (a script can't do these):
       and that the headers show SPF=pass DKIM=pass and the mail is not in spam
   [ ] Pick the reply-to address for customer emails
   [ ] Backup of the old WordPress site stored somewhere outside Cloudways
-  [ ] Firebase: domain shows Connected with a certificate, then set NEXT_PUBLIC_SITE_URL=https://keshertours.com and push
-  [ ] Search Console: submit https://keshertours.com/sitemap.xml and inspect the home page and two tours
+  [ ] Firebase: domain shows Connected with a certificate, then set NEXT_PUBLIC_SITE_URL=https://geshertours.co.il and push
+  [ ] Search Console: submit https://geshertours.co.il/sitemap.xml and inspect the home page and two tours
   [ ] Turn on admin 2FA (ADMIN_REQUIRE_2FA) once the email test passes
   [ ] Daily for two weeks: Search Console > Pages (not indexed), Crawl stats (5xx), Performance
 `);

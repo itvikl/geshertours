@@ -13,19 +13,19 @@ runConfig:
 
 env:
   - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
-    value: kesertors
+    value: gesher-tours
     availability:
       - BUILD
       - RUNTIME
 
   - variable: NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
-    value: kesertors.firebaseapp.com
+    value: gesher-tours.firebaseapp.com
     availability:
       - BUILD
       - RUNTIME
 
   - variable: NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
-    value: kesertors.firebasestorage.app
+    value: gesher-tours.firebasestorage.app
     availability:
       - BUILD
       - RUNTIME
@@ -51,27 +51,19 @@ env:
       - RUNTIME
 
   - variable: NEXT_PUBLIC_SITE_URL
-    value: https://keshertours.com
-    availability:
-      - BUILD
-      - RUNTIME
-
-  # Old site's GA4 property. Only loads once NEXT_PUBLIC_SITE_URL is the real
-  # domain (app/(marketing)/layout.tsx), so pre-launch traffic isn't counted.
-  - variable: NEXT_PUBLIC_GA_MEASUREMENT_ID
-    value: G-1LP2HHK2XN
+    value: https://geshertours.co.il
     availability:
       - BUILD
       - RUNTIME
 
   - variable: FIREBASE_ADMIN_PROJECT_ID
-    value: kesertors
+    value: gesher-tours
     availability:
       - BUILD
       - RUNTIME
 
   - variable: FIREBASE_ADMIN_CLIENT_EMAIL
-    value: firebase-adminsdk-fbsvc@kesertors.iam.gserviceaccount.com
+    value: firebase-adminsdk-fbsvc@gesher-tours.iam.gserviceaccount.com
     availability:
       - BUILD
       - RUNTIME
@@ -111,24 +103,16 @@ env:
     availability:
       - RUNTIME
 
-  # keshertours.com is verified in Resend (DKIM + send. subdomain in Cloudflare),
-  # so this can reach any recipient.
+  # geshertours.co.il must be verified in Resend (DKIM + SPF records in DNS)
+  # before this sender can reach anyone.
   - variable: EMAIL_FROM
-    value: "Keshertours <bookings@keshertours.com>"
+    value: "טיולי גשר <bookings@geshertours.co.il>"
     availability:
       - RUNTIME
 
-  # Where customers' replies to confirmation / receipt emails go.
-  - variable: EMAIL_REPLY_TO
-    value: keshertours@verizon.net
-    availability:
-      - RUNTIME
-
-  # New-booking / new-lead alerts, comma-separated.
-  - variable: ADMIN_NOTIFY_EMAIL
-    value: keshertours@verizon.net
-    availability:
-      - RUNTIME
+  # New-booking / new-lead alerts go to the inboxes set in Admin → Settings.
+  # To add a fallback for when that is empty, add ADMIN_NOTIFY_EMAIL here
+  # (and EMAIL_REPLY_TO for where customer replies go).
 
   # Admin two-factor enforcement (lib/auth/mfa.ts). When "true", admins without
   # an authenticator app get a sign-in code by email — so keep "false" until

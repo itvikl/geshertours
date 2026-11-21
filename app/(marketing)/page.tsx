@@ -42,10 +42,10 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 const FEATURED_IMAGES = [
-  "https://firebasestorage.googleapis.com/v0/b/kesertors.firebasestorage.app/o/site%2Fstock%2Ffeatured-1-7205ff78.jpg?alt=media&token=360c4321-21b6-4372-8d2f-4045624ae212",
-  "https://firebasestorage.googleapis.com/v0/b/kesertors.firebasestorage.app/o/site%2Fstock%2Ffeatured-2-ff82052e.jpg?alt=media&token=017f0ebe-5ad1-42ef-8226-be1d9256d61e",
-  "https://firebasestorage.googleapis.com/v0/b/kesertors.firebasestorage.app/o/site%2Fstock%2Ffeatured-3-3d7aa00c.jpg?alt=media&token=0004d87c-1962-447d-9813-8e517624ea26",
-  "https://firebasestorage.googleapis.com/v0/b/kesertors.firebasestorage.app/o/site%2Fstock%2Ffeatured-4-ee297270.jpg?alt=media&token=d6b29aee-b5ef-46f4-a015-c824e10b5bc4",
+  "/stock/featured-1-7205ff78.jpg",
+  "/stock/featured-2-ff82052e.jpg",
+  "/stock/featured-3-3d7aa00c.jpg",
+  "/stock/featured-4-ee297270.jpg",
 ];
 
 /**

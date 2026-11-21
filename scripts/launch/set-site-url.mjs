@@ -7,7 +7,7 @@
  *   node scripts/launch/set-site-url.mjs --apply         # write, commit ONLY apphosting.yaml, push, wait, verify
  *   node scripts/launch/set-site-url.mjs --apply --revert   # put the hosted.app address back (rollback)
  *
- * Run it only after Firebase shows keshertours.com as Connected: the canonical
+ * Run it only after Firebase shows geshertours.co.il as Connected: the canonical
  * tags, sitemap and analytics all follow this value.
  * --force skips the "new site is answering on the domain" precondition.
  */
@@ -24,8 +24,9 @@ const FORCE = args.has("--force");
 const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../..");
 const YAML = path.join(ROOT, "apphosting.yaml");
-const PROD = "https://keshertours.com";
-const STAGING = "https://mainprod--kesertors.us-east4.hosted.app";
+const PROD = "https://geshertours.co.il";
+// TODO: replace REGION with the real address from Firebase → App Hosting once the backend exists.
+const STAGING = "https://mainprod--gesher-tours.REGION.hosted.app";
 const target = REVERT ? STAGING : PROD;
 
 const git = (...a) => execFileSync("git", a, { cwd: ROOT, encoding: "utf8" }).trim();
@@ -70,7 +71,7 @@ writeFileSync(YAML, raw.replace(pattern, `$1${target}`));
 ok("apphosting.yaml updated.");
 const message = REVERT
   ? "revert(launch): point NEXT_PUBLIC_SITE_URL back at the hosted.app address"
-  : "feat(launch): NEXT_PUBLIC_SITE_URL is now https://keshertours.com";
+  : "feat(launch): NEXT_PUBLIC_SITE_URL is now https://geshertours.co.il";
 // `-- apphosting.yaml` commits that file alone, whatever else is modified or staged.
 git("commit", "-m", `${message}\n\nCo-Authored-By: Claude Sonnet 5.5 <noreply@anthropic.com>`, "--", "apphosting.yaml");
 const sha = git("rev-parse", "HEAD");

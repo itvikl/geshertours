@@ -9,7 +9,7 @@ import { formatBlogDate } from "@/lib/blogDate";
 // (app/(marketing)/page.tsx's FEATURED_IMAGES), just a single image since a
 // blog card only ever needs one.
 const FALLBACK_IMAGE =
-  "https://firebasestorage.googleapis.com/v0/b/kesertors.firebasestorage.app/o/site%2Fstock%2Fhome-hero-a18f8b00.jpg?alt=media&token=e03feebc-914d-423c-8b8b-bd7d3761658c";
+  "/stock/home-hero-a18f8b00.jpg";
 
 function excerpt(body: string, maxLength = 150): string {
   const flat = bodyToPlainText(body).replace(/\s+/g, " ").trim();

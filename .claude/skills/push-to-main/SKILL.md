@@ -7,7 +7,7 @@ description: Fast-forward-push origin/dev (or a named branch) to origin/main, pr
 
 Promotes the branch Vercel/Firebase App Hosting deploys as DEV (`dev` by
 default) up to `main`, which Firebase App Hosting serves as PRODUCTION
-(`mainprod--kesertors...`, see `apphosting.yaml`). This is a release action,
+(`mainprod--gesher-tours...`, see `apphosting.yaml`). This is a release action,
 not a feature-branch push — treat it with more caution than `deploy-dev`.
 
 Source branch = `dev`, unless `$ARGUMENTS` names a different one.

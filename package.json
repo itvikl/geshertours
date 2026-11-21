@@ -1,5 +1,5 @@
 {
-  "name": "keshertour",
+  "name": "geshertours",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -18,7 +18,7 @@
     "migrate-legacy-testimonials": "tsx scripts/migrate-legacy-testimonials.ts",
     "index-media-library": "tsx scripts/migrate/index-media-library.ts",
     "import-legacy-testimonials": "tsx scripts/migrate/import-legacy-testimonials.ts",
-    "deploy:apphosting": "firebase deploy --only apphosting --project kesertors"
+    "deploy:apphosting": "firebase deploy --only apphosting --project gesher-tours"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
