@@ -25,7 +25,7 @@ export default async function AdminLoginPage({
     <div className="flex min-h-screen items-center justify-center bg-sand-warm px-4 py-12">
       <div className="w-full max-w-sm rounded-2xl border border-line bg-white p-8 shadow-[0_20px_50px_rgba(36,31,24,0.08)]">
         <div className="mb-8 flex flex-col items-center gap-3 text-center">
-          <BrandLogo />
+          <BrandLogo onLightBackground />
           <p className="text-sm font-medium text-ink-muted">Admin sign in</p>
         </div>
         <LoginForm initialNotice={initialNotice} />

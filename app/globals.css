@@ -516,3 +516,8 @@ html[data-theme="light"] .destination-search-select::picker(select) {
 @media (prefers-reduced-motion: reduce) {
   .admin-toast, .admin-toast-out, .admin-dialog-backdrop, .admin-dialog { animation-duration: 0.01ms; }
 }
+
+/* Gesher logo: white-lettering variant on the dark theme, original in light mode. */
+.brand-logo-light { display: none; }
+html[data-theme="light"] .brand-logo-dark { display: none; }
+html[data-theme="light"] .brand-logo-light { display: inline-block; }

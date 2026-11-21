@@ -60,7 +60,7 @@ export default function AdminShell({
       <div className="flex min-h-screen bg-sand-warm">
         <aside className="hidden w-64 shrink-0 flex-col border-e border-line bg-white md:flex">
           <div className="border-b border-line px-5 py-5">
-            <BrandLogo className="h-9 w-auto object-contain" href="/admin" />
+            <BrandLogo className="h-9 w-auto object-contain" href="/admin" onLightBackground />
           </div>
           <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5">
             {sections.map((section) => (
