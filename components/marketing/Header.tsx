@@ -11,7 +11,7 @@ const NAV_LINKS = [
   { href: "/special-offers", label: "מבצעים" },
   { href: "/blog", label: "בלוג" },
   { href: "/testimonials", label: "המלצות" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/faq", label: "שאלות נפוצות" },
   { href: "/contact", label: "צור קשר" },
 ];
 

@@ -78,10 +78,10 @@ export default function TourCard({
             <div className="min-w-0 text-xs font-semibold leading-5 text-[var(--color-slate)]">
               {nextDepartures.length > 0 ? (
                 <>
-                  Departs{" "}
+                  יציאה:{" "}
                   {nextDepartures.map((departure, i) => (
                     <span key={departure.departureId} className="whitespace-nowrap">
-                      {i > 0 && "& "}
+                      {i > 0 && "· "}
                       {formatDepartureDate(departure)}{" "}
                     </span>
                   ))}

@@ -529,3 +529,9 @@ input[type="url"] {
   direction: ltr;
   text-align: right;
 }
+
+/* Letter-spacing utilities were tuned for Latin capitals; spread-out Hebrew
+   letters read as separate characters, so Hebrew text keeps normal spacing. */
+html[dir="rtl"] [class*="tracking-"] {
+  letter-spacing: normal;
+}
