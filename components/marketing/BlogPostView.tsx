@@ -25,7 +25,7 @@ export default function BlogPostView({
             href="/blog"
             className="text-sm font-semibold text-[var(--color-ice)] transition-colors hover:brightness-110"
           >
-            ← {backLabel}
+            → {backLabel}
           </Link>
           {post.publishedAt && (
             <p className="mt-5 text-sm font-semibold uppercase tracking-[0.3em] text-[var(--color-slate)]">

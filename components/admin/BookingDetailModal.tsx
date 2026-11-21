@@ -29,7 +29,7 @@ const STATUS_LABELS: Record<BookingStatus, string> = {
 
 function formatDateRange(startIso: string, endIso: string) {
   const opts: Intl.DateTimeFormatOptions = { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" };
-  return `${new Date(startIso).toLocaleDateString("en-US", opts)} – ${new Date(endIso).toLocaleDateString("en-US", opts)}`;
+  return `${new Date(startIso).toLocaleDateString("he-IL", opts)} – ${new Date(endIso).toLocaleDateString("he-IL", opts)}`;
 }
 
 function getInitials(name: string): string {
@@ -141,7 +141,7 @@ export default function BookingDetailModal({
           </span>
           <span>
             Submitted{" "}
-            {new Date(booking.createdAt).toLocaleDateString("en-US", {
+            {new Date(booking.createdAt).toLocaleDateString("he-IL", {
               month: "short",
               day: "numeric",
               year: "numeric",
@@ -158,7 +158,7 @@ export default function BookingDetailModal({
                   {departure ? formatDateRange(departure.startDate, departure.endDate) : "No departure on file"}
                 </p>
                 <p className="mt-0.5 text-xs text-ink-muted">
-                  Last updated {new Date(booking.updatedAt).toLocaleString("en-US")}
+                  Last updated {new Date(booking.updatedAt).toLocaleString("he-IL")}
                 </p>
               </div>
               {rooms.length > 0 && (

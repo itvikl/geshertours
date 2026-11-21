@@ -117,7 +117,7 @@ export function ImageGalleryField({
                   onClick={() => onChange(values.filter((_, i) => i !== index))}
                   aria-label={`Remove photo ${index + 1}`}
                   title="Remove"
-                  className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-line bg-white text-xs font-bold text-terracotta-dark shadow transition-colors hover:bg-terracotta hover:text-white"
+                  className="absolute -end-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-line bg-white text-xs font-bold text-terracotta-dark shadow transition-colors hover:bg-terracotta hover:text-white"
                 >
                   ✕
                 </button>
@@ -126,7 +126,7 @@ export function ImageGalleryField({
                     type="button"
                     onClick={() => onSetFocus(src)}
                     aria-label={`Set focus for photo ${index + 1}`}
-                    className="absolute bottom-1 left-1 rounded-md bg-black/65 px-1.5 py-0.5 text-[11px] font-semibold text-white transition-colors hover:bg-black/85"
+                    className="absolute bottom-1 start-1 rounded-md bg-black/65 px-1.5 py-0.5 text-[11px] font-semibold text-white transition-colors hover:bg-black/85"
                   >
                     {focus ? "Focus ✓" : "Set focus"}
                   </button>

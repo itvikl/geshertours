@@ -62,8 +62,8 @@
   --background: var(--color-glacier);
   --foreground: var(--color-mist);
 
-  --font-display: var(--font-inter);
-  --font-body: var(--font-inter);
+  --font-display: var(--font-heebo);
+  --font-body: var(--font-heebo);
 }
 
 /* Light theme — scoped to the marketing site only (admin keeps its own hardcoded palette) */

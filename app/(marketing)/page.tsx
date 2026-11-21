@@ -213,7 +213,7 @@ export default async function HomePage() {
                   href="/blog"
                   className="flex items-center gap-1 pb-1 text-sm font-bold text-[var(--color-ice)] transition-all hover:gap-2"
                 >
-                  View all posts <span aria-hidden="true">→</span>
+                  View all posts <span aria-hidden="true">←</span>
                 </Link>
               </div>
               <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

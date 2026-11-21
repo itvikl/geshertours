@@ -161,7 +161,7 @@ function EditorMenus({ editor, imageFolder }: { editor: Editor; imageFolder: str
         <ToolButton label="Redo" disabled={!state.canRedo} onClick={() => editor.chain().focus().redo().run()}>
           ↷
         </ToolButton>
-        <span className="ml-auto pr-1 text-[11px] text-ink-muted">
+        <span className="ms-auto pe-1 text-[11px] text-ink-muted">
           Select text to format it · on an empty line for headings and lists
         </span>
       </div>
@@ -285,7 +285,7 @@ function EditorMenus({ editor, imageFolder }: { editor: Editor; imageFolder: str
                           onMouseDown={(e) => e.preventDefault()}
                           onMouseEnter={() => setHighlight(i)}
                           onClick={() => applyLink(post.href)}
-                          className={`flex w-full items-baseline justify-between gap-3 px-2.5 py-1.5 text-left ${
+                          className={`flex w-full items-baseline justify-between gap-3 px-2.5 py-1.5 text-start ${
                             i === highlight ? "bg-sand-warm" : ""
                           }`}
                         >

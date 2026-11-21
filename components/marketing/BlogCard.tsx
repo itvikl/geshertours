@@ -42,7 +42,7 @@ export default function BlogCard({ post, readMoreLabel }: { post: BlogPost; read
         <p className="text-sm leading-relaxed text-[var(--color-slate)]">{excerpt(post.body)}</p>
 
         <span className="mt-auto flex items-center gap-1 pt-2 text-sm font-bold text-[var(--color-ice)] transition-all group-hover:gap-2">
-          {readMoreLabel} <span aria-hidden="true">→</span>
+          {readMoreLabel} <span aria-hidden="true">←</span>
         </span>
       </div>
     </Link>

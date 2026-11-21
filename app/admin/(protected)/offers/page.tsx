@@ -33,7 +33,7 @@ export default async function AdminOffersPage() {
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
-          <table className="w-full min-w-[600px] text-left text-sm">
+          <table className="w-full min-w-[600px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
                 <th className="px-4 py-3">Offer</th>
@@ -50,7 +50,7 @@ export default async function AdminOffersPage() {
                     <StatusBadge status={offer.status} />
                   </td>
                   <td className="px-4 py-3 text-ink-muted">{offer.validUntil ?? "—"}</td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-end">
                     <IconLink href={`/admin/offers/${offer.offerId}`} icon="edit" label="Edit" />
                   </td>
                 </tr>

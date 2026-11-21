@@ -5,7 +5,7 @@ export default function FaqList({ items }: { items: SiteContentFaqItem[] }) {
     <div className="space-y-3">
       {items.map((item) => (
         <details key={item.itemId} className="glass-panel group overflow-hidden rounded-xl">
-          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-left text-lg font-semibold text-[var(--color-mist)] transition-colors hover:bg-[var(--color-surface-hover-a)] sm:p-6 [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-start text-lg font-semibold text-[var(--color-mist)] transition-colors hover:bg-[var(--color-surface-hover-a)] sm:p-6 [&::-webkit-details-marker]:hidden">
             <span>{item.question}</span>
             <span
               aria-hidden="true"

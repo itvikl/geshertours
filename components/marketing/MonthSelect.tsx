@@ -18,7 +18,7 @@ export type MonthOption = { value: string; label: string };
 /** The next 12 calendar months starting this month, as "YYYY-MM" values. */
 export function getNextTwelveMonths(): MonthOption[] {
   const now = new Date();
-  const formatter = new Intl.DateTimeFormat("en-US", {
+  const formatter = new Intl.DateTimeFormat("he-IL", {
     month: "long",
     year: "numeric",
     timeZone: "UTC",
@@ -193,7 +193,7 @@ export default function MonthSelect({
               aria-selected={value.length === 0}
               onClick={() => onChange?.([])}
               className={[
-                "flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-left text-[15px] transition-colors",
+                "flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-start text-[15px] transition-colors",
                 value.length === 0
                   ? "bg-[var(--color-surface-hover-a)] text-[var(--color-ice)]"
                   : "text-[var(--color-mist)] hover:bg-[var(--color-surface-hover-a)]",
@@ -214,7 +214,7 @@ export default function MonthSelect({
                     aria-selected={isSelected}
                     onClick={() => toggleMonth(monthValue)}
                     className={[
-                      "mt-0.5 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] transition-colors",
+                      "mt-0.5 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-start text-[15px] transition-colors",
                       isSelected
                         ? "bg-[var(--color-surface-hover-a)] text-[var(--color-ice)]"
                         : "text-[var(--color-mist)] hover:bg-[var(--color-surface-hover-a)]",
@@ -278,7 +278,7 @@ export default function MonthSelect({
           onClick={() => setOpen((v) => !v)}
           onKeyDown={onTriggerKeyDown}
           className={[
-            "flex w-full min-w-0 items-center gap-1.5 bg-transparent p-0 text-left text-[15px] font-medium text-[var(--color-mist)] outline-none focus-visible:outline-none disabled:cursor-not-allowed",
+            "flex w-full min-w-0 items-center gap-1.5 bg-transparent p-0 text-start text-[15px] font-medium text-[var(--color-mist)] outline-none focus-visible:outline-none disabled:cursor-not-allowed",
             hideLabel ? "" : "mt-0.5",
           ].join(" ")}
         >

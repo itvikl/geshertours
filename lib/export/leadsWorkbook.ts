@@ -4,7 +4,7 @@ import type { AdminLeadRow } from "@/lib/data/admin/leads";
 import { LEAD_SOURCE_LABELS, LEAD_STATUS_LABELS } from "@/lib/leadLabels";
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US");
+  return new Date(iso).toLocaleDateString("he-IL");
 }
 
 /** Leads export — one row per lead, newest first (same order as the admin table). */

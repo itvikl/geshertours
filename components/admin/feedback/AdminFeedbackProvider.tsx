@@ -387,7 +387,7 @@ function ToastCard({ toast, onDismiss }: { toast: Toast; onDismiss: (id: number)
         </button>
       </div>
       <span
-        className={`admin-toast-progress absolute bottom-0 left-0 h-0.5 ${style.bar}`}
+        className={`admin-toast-progress absolute bottom-0 start-0 h-0.5 ${style.bar}`}
         style={{ animationDuration: `${toast.duration}ms`, animationPlayState: paused ? "paused" : "running" }}
       />
     </div>

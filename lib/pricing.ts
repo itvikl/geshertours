@@ -49,7 +49,7 @@ export function singleSupplementOf(pricing: TourPricing): number {
 }
 
 export function formatUsd(amount: number): string {
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("he-IL", {
     style: "currency",
     currency: "USD",
     maximumFractionDigits: 0,

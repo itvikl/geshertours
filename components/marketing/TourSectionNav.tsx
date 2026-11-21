@@ -64,8 +64,13 @@ export default function TourSectionNav({ sections }: { sections: TourSectionLink
     const list = listRef.current;
     const button = list?.querySelector<HTMLElement>(`[data-section="${activeId}"]`);
     if (!list || !button) return;
-    const left = button.offsetLeft - list.clientWidth / 2 + button.offsetWidth / 2;
-    list.scrollTo({ left, behavior: "smooth" });
+    // Scroll by the on-screen distance between the two centers: unlike an
+    // absolute scrollLeft from offsetLeft, this is right in RTL too (where
+    // scrollLeft runs from 0 down to negative values).
+    const listRect = list.getBoundingClientRect();
+    const buttonRect = button.getBoundingClientRect();
+    const delta = buttonRect.left + buttonRect.width / 2 - (listRect.left + listRect.width / 2);
+    list.scrollBy({ left: delta, behavior: "smooth" });
   }, [activeId]);
 
   function goTo(id: string) {

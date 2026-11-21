@@ -12,7 +12,7 @@ export default function BookingsTable({ rows }: { rows: AdminBookingRow[] }) {
   return (
     <>
       <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
-        <table className="w-full min-w-[900px] text-left text-sm">
+        <table className="w-full min-w-[900px] text-start text-sm">
           <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
             <tr>
               <th className="px-4 py-3">Contact</th>
@@ -45,7 +45,7 @@ export default function BookingsTable({ rows }: { rows: AdminBookingRow[] }) {
                   <td className="px-4 py-3 text-ink-muted">{tour?.title ?? "—"}</td>
                   <td className="px-4 py-3 text-ink-muted">
                     {departure
-                      ? new Date(departure.startDate).toLocaleDateString("en-US", {
+                      ? new Date(departure.startDate).toLocaleDateString("he-IL", {
                           timeZone: "UTC",
                           month: "short",
                           day: "numeric",
@@ -67,7 +67,7 @@ export default function BookingsTable({ rows }: { rows: AdminBookingRow[] }) {
                     <ContactPreferenceBadge preference={booking.contactPreference} />
                   </td>
                   <td className="px-4 py-3 text-ink-muted">
-                    {new Date(booking.createdAt).toLocaleDateString("en-US", {
+                    {new Date(booking.createdAt).toLocaleDateString("he-IL", {
                       month: "short",
                       day: "numeric",
                     })}

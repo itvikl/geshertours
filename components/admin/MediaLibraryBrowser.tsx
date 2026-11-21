@@ -509,7 +509,7 @@ function Folder({
     <button
       type="button"
       onClick={onClick}
-      className="flex items-center gap-3 rounded-xl border border-line bg-white px-4 py-3 text-left transition-colors hover:border-navy hover:bg-sand-warm/40"
+      className="flex items-center gap-3 rounded-xl border border-line bg-white px-4 py-3 text-start transition-colors hover:border-navy hover:bg-sand-warm/40"
     >
       <span className="text-xl" aria-hidden="true">
         {country ? "🌍" : "📁"}
@@ -552,7 +552,7 @@ function ImageTile({
         type="button"
         onClick={onToggle}
         title={tooltip}
-        className={`block w-full overflow-hidden rounded-lg border-2 text-left transition-colors ${
+        className={`block w-full overflow-hidden rounded-lg border-2 text-start transition-colors ${
           isSelected ? "border-navy" : "border-transparent hover:border-line"
         }`}
       >

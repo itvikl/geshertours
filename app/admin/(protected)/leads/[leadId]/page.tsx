@@ -28,7 +28,7 @@ export default async function EditLeadPage({ params }: { params: Promise<{ leadI
   tours.sort((a, b) => a.title.localeCompare(b.title));
 
   const formatDate = (iso: string) =>
-    new Date(iso).toLocaleString("en-US", {
+    new Date(iso).toLocaleString("he-IL", {
       month: "short",
       day: "numeric",
       year: "numeric",

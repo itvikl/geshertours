@@ -64,7 +64,7 @@ export default function FeaturedToursGrid() {
           )}
         </div>
         <div className="flex flex-col items-start gap-3 md:items-end">
-          <p className="max-w-md text-[15px] leading-7 text-[var(--color-slate)] md:text-right">
+          <p className="max-w-md text-[15px] leading-7 text-[var(--color-slate)] md:text-end">
             {isFiltered
               ? `${tours.length} kosher tour${tours.length === 1 ? "" : "s"} matching your search.`
               : "Hand-selected journeys that balance comfort, kashrut, and discovery — shaped around your family and your travel style."}

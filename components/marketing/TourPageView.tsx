@@ -173,7 +173,7 @@ export default function TourPageView({
                     open={index === 0}
                     className="glass-panel group overflow-hidden rounded-xl"
                   >
-                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-left transition-colors hover:bg-[var(--color-surface-hover-a)] sm:p-6 [&::-webkit-details-marker]:hidden">
+                    <summary className="flex cursor-pointer list-none items-center justify-between gap-4 p-5 text-start transition-colors hover:bg-[var(--color-surface-hover-a)] sm:p-6 [&::-webkit-details-marker]:hidden">
                       <div className="flex min-w-0 flex-1 items-center gap-4 sm:gap-6">
                         <span className="shrink-0 text-2xl font-bold text-[var(--color-ice)]/40">
                           {String(day.dayNumber).padStart(2, "0")}
@@ -429,7 +429,7 @@ export default function TourPageView({
                   >
                     <div className="min-w-0 space-y-1">
                       <p className="text-[var(--color-mist)]">
-                        {new Date(dep.startDate).toLocaleDateString("en-US", {
+                        {new Date(dep.startDate).toLocaleDateString("he-IL", {
                           timeZone: "UTC",
                           month: "short",
                           day: "numeric",
@@ -569,7 +569,7 @@ function GuideCard({ guide, ledDates, leadingLabel }: { guide: Staff; ledDates: 
           {leadingLabel}{" "}
           {ledDates
             .map((dep) =>
-              new Date(dep.startDate).toLocaleDateString("en-US", {
+              new Date(dep.startDate).toLocaleDateString("he-IL", {
                 timeZone: "UTC",
                 month: "short",
                 day: "numeric",

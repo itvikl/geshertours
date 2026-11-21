@@ -41,7 +41,7 @@ export default async function AdminReviewsPage() {
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
-          <table className="w-full min-w-[760px] text-left text-sm">
+          <table className="w-full min-w-[760px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
                 <th className="px-4 py-3">Customer</th>

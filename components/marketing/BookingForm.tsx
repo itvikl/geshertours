@@ -244,7 +244,7 @@ export default function BookingForm({
                         onChange={() => setDepartureId(d.departureId)}
                         className="accent-[var(--color-ice)]"
                       />
-                      {new Date(d.startDate).toLocaleDateString("en-US", {
+                      {new Date(d.startDate).toLocaleDateString("he-IL", {
                         timeZone: "UTC",
                         month: "long",
                         day: "numeric",
@@ -485,7 +485,7 @@ export default function BookingForm({
             <dl className="grid gap-3 rounded-xl border border-[var(--color-border-ice)] bg-[var(--color-surface)] p-5 text-[15px]">
               <Row
                 label={copy.reviewDeparture}
-                value={new Date(departure.startDate).toLocaleDateString("en-US", {
+                value={new Date(departure.startDate).toLocaleDateString("he-IL", {
                   timeZone: "UTC",
                   month: "long",
                   day: "numeric",
@@ -624,7 +624,7 @@ export default function BookingForm({
                 onClick={() => setStep(4)}
                 className="text-sm font-semibold text-[var(--color-slate)] transition hover:text-[var(--color-ice)]"
               >
-                ← {copy.backButton}
+                → {copy.backButton}
               </button>
               <button
                 type="button"
@@ -730,7 +730,7 @@ function StepNav({
           onClick={onBack}
           className="text-sm font-semibold text-[var(--color-slate)] transition hover:text-[var(--color-ice)]"
         >
-          ← {copy.backButton}
+          → {copy.backButton}
         </button>
       ) : (
         <span />
@@ -759,7 +759,7 @@ function Row({
   return (
     <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
       <dt className="text-[var(--color-slate)]">{label}</dt>
-      <dd className={`font-semibold ${accent ? "text-[var(--color-ice)]" : "text-[var(--color-mist)]"} sm:text-right`}>
+      <dd className={`font-semibold ${accent ? "text-[var(--color-ice)]" : "text-[var(--color-mist)]"} sm:text-end`}>
         {value}
       </dd>
     </div>
@@ -978,13 +978,13 @@ function ShieldLockIcon() {
 function AssuranceBadge({ assurance, copy }: { assurance: "conditional" | "guaranteed"; copy: BookingCopy }) {
   if (assurance === "guaranteed") {
     return (
-      <span className="ml-7 inline-flex w-fit items-center gap-1 rounded-full bg-[var(--color-success)]/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-success)]">
+      <span className="ms-7 inline-flex w-fit items-center gap-1 rounded-full bg-[var(--color-success)]/15 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-success)]">
         <span aria-hidden="true">✓</span> {copy.assuranceGuaranteed}
       </span>
     );
   }
   return (
-    <span className="ml-7 inline-flex w-fit items-center rounded-full bg-[var(--color-surface-hover-b)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-slate)]">
+    <span className="ms-7 inline-flex w-fit items-center rounded-full bg-[var(--color-surface-hover-b)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--color-slate)]">
       {copy.assuranceConditional}
     </span>
   );

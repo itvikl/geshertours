@@ -198,7 +198,7 @@ export default function CountrySelect({
               aria-selected={value.length === 0}
               onClick={clearSelection}
               className={[
-                "flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-left text-[15px] transition-colors",
+                "flex w-full items-center justify-between gap-3 rounded-xl px-4 py-3 text-start text-[15px] transition-colors",
                 value.length === 0
                   ? "bg-[var(--color-surface-hover-a)] text-[var(--color-ice)]"
                   : "text-[var(--color-mist)] hover:bg-[var(--color-surface-hover-a)]",
@@ -223,7 +223,7 @@ export default function CountrySelect({
                     disabled={disabled}
                     onClick={() => toggleCountry(name, disabled)}
                     className={[
-                      "mt-0.5 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-left text-[15px] transition-colors",
+                      "mt-0.5 flex w-full items-center gap-3 rounded-xl px-4 py-3 text-start text-[15px] transition-colors",
                       disabled
                         ? "cursor-not-allowed text-[var(--color-slate)]/55"
                         : isSelected
@@ -299,7 +299,7 @@ export default function CountrySelect({
           onClick={() => setOpen((v) => !v)}
           onKeyDown={onTriggerKeyDown}
           className={[
-            "flex w-full min-w-0 items-center gap-1.5 bg-transparent p-0 text-left text-[15px] font-medium text-[var(--color-mist)] outline-none focus-visible:outline-none disabled:cursor-not-allowed",
+            "flex w-full min-w-0 items-center gap-1.5 bg-transparent p-0 text-start text-[15px] font-medium text-[var(--color-mist)] outline-none focus-visible:outline-none disabled:cursor-not-allowed",
             hideLabel ? "" : "mt-0.5",
           ].join(" ")}
         >

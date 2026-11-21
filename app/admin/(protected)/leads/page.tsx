@@ -59,7 +59,7 @@ export default async function AdminLeadsPage({
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
-          <table className="w-full min-w-[1180px] text-left text-sm">
+          <table className="w-full min-w-[1180px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
                 <th className="px-4 py-3">Contact</th>
@@ -103,13 +103,13 @@ export default async function AdminLeadsPage({
                     </p>
                   </td>
                   <td className="px-4 py-3 text-ink-muted">
-                    {new Date(lead.createdAt).toLocaleDateString("en-US", {
+                    {new Date(lead.createdAt).toLocaleDateString("he-IL", {
                       month: "short",
                       day: "numeric",
                       year: "numeric",
                     })}
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-end">
                     <IconLink href={`/admin/leads/${lead.leadId}`} icon="edit" label="Edit" />
                   </td>
                 </tr>

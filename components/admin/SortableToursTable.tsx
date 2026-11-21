@@ -146,7 +146,7 @@ export default function SortableToursTable({
               screen-reader live-region <div>s as siblings — a <div> inside a
               <table> is invalid HTML and caused a hydration error. */}
           <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-            <table className="w-full min-w-[760px] text-left text-sm">
+            <table className="w-full min-w-[760px] text-start text-sm">
               <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
                 <tr>
                   <th className="w-8 px-2 py-3" />
@@ -245,7 +245,7 @@ function SortableTourRow({
           </div>
         )}
       </td>
-      <td className="px-4 py-3 text-right">
+      <td className="px-4 py-3 text-end">
         <div className="flex items-center justify-end gap-1">
           <IconLink href={`/admin/tours/${tour.tourId}/preview`} icon="eye" label="Preview" newTab />
           {!limited && (

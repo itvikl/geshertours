@@ -70,7 +70,7 @@ async function PaymentSummary({
     <div className="text-center">
       <p className="text-xs font-bold uppercase tracking-[0.3em] text-[var(--color-ice)]">{tour.title}</p>
       <h2 className="mt-2 font-display text-2xl font-bold text-[var(--color-mist)] sm:text-3xl">
-        {new Date(departure.startDate).toLocaleDateString("en-US", {
+        {new Date(departure.startDate).toLocaleDateString("he-IL", {
           timeZone: "UTC",
           month: "long",
           day: "numeric",
@@ -78,7 +78,7 @@ async function PaymentSummary({
         })}
       </h2>
 
-      <dl className="mx-auto mt-8 grid max-w-sm gap-3 text-left text-[15px]">
+      <dl className="mx-auto mt-8 grid max-w-sm gap-3 text-start text-[15px]">
         <Row label="Trip total" value={formatUsd(booking.priceBreakdown.grandTotal)} />
         <Row label="Paid so far" value={formatUsd(booking.amountPaid)} />
         <Row label="Balance due" value={formatUsd(booking.balanceAmount)} accent />

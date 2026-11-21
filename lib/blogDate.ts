@@ -8,7 +8,7 @@ export function formatBlogDate(iso: string | undefined, month: "long" | "short" 
   if (!iso) return "";
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return "";
-  return date.toLocaleDateString("en-US", { month, day: "numeric", year: "numeric", timeZone: "UTC" });
+  return date.toLocaleDateString("he-IL", { month, day: "numeric", year: "numeric", timeZone: "UTC" });
 }
 
 /** ISO → "YYYY-MM-DD" for an <input type="date">. */

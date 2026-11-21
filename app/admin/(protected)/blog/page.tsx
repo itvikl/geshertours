@@ -37,7 +37,7 @@ export default async function AdminBlogPage() {
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
-          <table className="w-full min-w-[600px] text-left text-sm">
+          <table className="w-full min-w-[600px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
                 <th className="px-4 py-3">Post</th>
@@ -59,7 +59,7 @@ export default async function AdminBlogPage() {
                   <td className="px-4 py-3 text-ink-muted">
                     {formatBlogDate(post.publishedAt, "short") || "—"}
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-end">
                     <IconLink href={`/admin/blog/${post.postId}`} icon="edit" label="Edit" />
                   </td>
                 </tr>

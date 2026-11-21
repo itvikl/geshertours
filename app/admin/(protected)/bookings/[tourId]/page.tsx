@@ -48,7 +48,7 @@ export default async function TourDeparturesBookingsPage({
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
-          <table className="w-full min-w-[640px] text-left text-sm">
+          <table className="w-full min-w-[640px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
                 <th className="px-4 py-3">Dates</th>
@@ -65,14 +65,14 @@ export default async function TourDeparturesBookingsPage({
                     <div className="flex flex-col">
                       <NewBookingsBadge count={newCount} />
                       <span>
-                        {new Date(departure.startDate).toLocaleDateString("en-US", {
+                        {new Date(departure.startDate).toLocaleDateString("he-IL", {
                           timeZone: "UTC",
                           month: "short",
                           day: "numeric",
                           year: "numeric",
                         })}{" "}
                         –{" "}
-                        {new Date(departure.endDate).toLocaleDateString("en-US", {
+                        {new Date(departure.endDate).toLocaleDateString("he-IL", {
                           timeZone: "UTC",
                           month: "short",
                           day: "numeric",
@@ -86,7 +86,7 @@ export default async function TourDeparturesBookingsPage({
                   </td>
                   <td className="px-4 py-3 text-ink-muted">{registrantCount}</td>
                   <td className="px-4 py-3 text-ink-muted">{travelerCount}</td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-end">
                     <Link
                       href={`/admin/bookings/${tourId}/${departure.departureId}`}
                       className="text-sm font-medium text-navy hover:text-navy-light"

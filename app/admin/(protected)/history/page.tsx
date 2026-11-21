@@ -8,7 +8,7 @@ import { dateRangeQuery } from "@/lib/dateRangeFilter";
 export const metadata: Metadata = { title: "History" };
 
 function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
+  return new Date(iso).toLocaleDateString("he-IL", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
 }
 
 export default async function AdminHistoryPage({
@@ -49,7 +49,7 @@ export default async function AdminHistoryPage({
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
-          <table className="w-full min-w-[640px] text-left text-sm">
+          <table className="w-full min-w-[640px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
                 <th className="px-4 py-3">Tour</th>
@@ -66,7 +66,7 @@ export default async function AdminHistoryPage({
                     {formatDate(departure.startDate)} – {formatDate(departure.endDate)}
                   </td>
                   <td className="px-4 py-3 text-ink-muted">{registrantCount}</td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-4 py-3 text-end">
                     <Link
                       href={`/admin/history/${departure.departureId}`}
                       className="text-sm font-medium text-navy hover:text-navy-light"

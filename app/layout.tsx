@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import { preconnect } from "react-dom";
-import { Inter } from "next/font/google";
+import { Heebo } from "next/font/google";
 import "./globals.css";
 import { SITE_URL } from "@/lib/siteUrl";
 
-const inter = Inter({
-  variable: "--font-inter",
-  subsets: ["latin"],
+// Heebo covers Hebrew and Latin in one family, so mixed Hebrew/English text
+// (tour names, prices) stays in a single typeface.
+const heebo = Heebo({
+  variable: "--font-heebo",
+  subsets: ["hebrew", "latin"],
   weight: ["300", "400", "500", "600", "700", "800"],
 });
 
@@ -21,7 +23,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: "Keshertours",
-    locale: "en_US",
+    locale: "he_IL",
   },
   twitter: { card: "summary_large_image" },
 };
@@ -35,7 +37,7 @@ export default function RootLayout({
   preconnect("https://firebasestorage.googleapis.com");
 
   return (
-    <html lang="en" className={`${inter.variable} h-full antialiased`} suppressHydrationWarning>
+    <html lang="he" dir="rtl" className={`${heebo.variable} h-full antialiased`} suppressHydrationWarning>
       <body className="flex min-h-full flex-col bg-[var(--color-glacier)] font-body text-[var(--color-mist)]">
         <script
           dangerouslySetInnerHTML={{

@@ -853,7 +853,7 @@ export default function TourEditorForm({
             <StatusBadge status={draft.status} />
             {savedAt && (
               <span className="ms-2 text-ink-muted">
-                Saved {savedAt.toLocaleTimeString("en-US")}
+                Saved {savedAt.toLocaleTimeString("he-IL")}
               </span>
             )}
             {isDirty && <span className="ms-2"><UnsavedIndicator /></span>}
@@ -896,7 +896,7 @@ export default function TourEditorForm({
               </button>
             </div>
             {!readyToPublish && (
-              <p id="publish-blocked-reason" className="max-w-md text-right text-xs font-medium text-terracotta-dark">
+              <p id="publish-blocked-reason" className="max-w-md text-end text-xs font-medium text-terracotta-dark">
                 Can&apos;t {blockedWhat} yet — missing: {missing.map((m) => m.label).join(", ")}.
                 {isPublished && " A live tour must stay complete; fill these in, or unpublish it to save as a draft."}
               </p>

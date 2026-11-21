@@ -4,7 +4,7 @@ import SafeImage from "@/components/ui/SafeImage";
 import { focusPosition } from "@/lib/imageFocus";
 
 function formatDepartureDate(departure: Departure): string {
-  return new Date(departure.startDate).toLocaleDateString("en-US", {
+  return new Date(departure.startDate).toLocaleDateString("he-IL", {
     timeZone: "UTC",
     month: "short",
     day: "numeric",
@@ -31,11 +31,11 @@ export default function TourCard({
     // h-full on both wrappers so every card stretches to its grid row's height.
     <div className="relative h-full">
       {soldOut ? (
-        <div className="absolute -top-3 left-6 z-10 rounded-full border border-[var(--color-border-hairline)] bg-[var(--color-glacier-elevated)] px-4 py-1 text-xs font-bold uppercase tracking-widest text-[var(--color-slate)] shadow-lg">
+        <div className="absolute -top-3 start-6 z-10 rounded-full border border-[var(--color-border-hairline)] bg-[var(--color-glacier-elevated)] px-4 py-1 text-xs font-bold uppercase tracking-widest text-[var(--color-slate)] shadow-lg">
           Sold Out
         </div>
       ) : tour.isSpecialOffer && (
-        <div className="absolute -top-3 left-6 z-10 rounded-full bg-[var(--color-offer-gold)] px-4 py-1 text-xs font-bold uppercase tracking-widest text-[#0f1524] shadow-lg">
+        <div className="absolute -top-3 start-6 z-10 rounded-full bg-[var(--color-offer-gold)] px-4 py-1 text-xs font-bold uppercase tracking-widest text-[#0f1524] shadow-lg">
           Special Offer
         </div>
       )}
@@ -52,7 +52,7 @@ export default function TourCard({
             objectPosition={focusPosition(tour.imageFocus, image)}
             className="object-cover transition duration-700 group-hover:scale-110"
           />
-          <div className="absolute left-4 top-4 rounded-full border border-[var(--color-border-ice)] bg-[var(--color-surface)] px-4 py-1 text-xs font-bold uppercase tracking-widest text-[var(--color-mist)] backdrop-blur-lg">
+          <div className="absolute start-4 top-4 rounded-full border border-[var(--color-border-ice)] bg-[var(--color-surface)] px-4 py-1 text-xs font-bold uppercase tracking-widest text-[var(--color-mist)] backdrop-blur-lg">
             {tour.countries.join(" & ")}
           </div>
         </div>
@@ -89,7 +89,7 @@ export default function TourCard({
               )}
             </div>
             <span className="flex shrink-0 items-center gap-1 whitespace-nowrap text-sm font-bold text-[var(--color-ice)] transition-all group-hover:gap-2">
-              View Details <span aria-hidden="true">→</span>
+              View Details <span aria-hidden="true">←</span>
             </span>
           </div>
         </div>

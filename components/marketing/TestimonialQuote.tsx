@@ -26,13 +26,13 @@ export default function TestimonialQuote({
     >
       <span
         aria-hidden="true"
-        className="absolute left-4 top-4 font-display text-5xl leading-none text-[var(--color-ice)] sm:left-6 sm:top-6"
+        className="absolute start-4 top-4 font-display text-5xl leading-none text-[var(--color-ice)] sm:start-6 sm:top-6"
       >
         &ldquo;
       </span>
       <span
         aria-hidden="true"
-        className="absolute right-4 top-4 font-display text-5xl leading-none text-[var(--color-ice)] sm:right-6 sm:top-6"
+        className="absolute end-4 top-4 font-display text-5xl leading-none text-[var(--color-ice)] sm:end-6 sm:top-6"
       >
         &rdquo;
       </span>

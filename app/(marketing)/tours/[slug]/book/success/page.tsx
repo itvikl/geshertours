@@ -44,7 +44,7 @@ export default async function BookingSuccessPage({
             {copy.successHeading}
           </h2>
 
-          <dl className="mx-auto mt-8 grid max-w-sm gap-3 text-left text-[15px]">
+          <dl className="mx-auto mt-8 grid max-w-sm gap-3 text-start text-[15px]">
             <div className="flex items-center justify-between gap-4">
               <dt className="text-[var(--color-slate)]">{copy.successPaid}</dt>
               <dd className="font-semibold text-[var(--color-mist)]">{formatUsd(summary.amountPaid)}</dd>

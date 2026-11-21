@@ -22,7 +22,7 @@ export default function PayBalanceButton({
   }
 
   return (
-    <div className="text-left">
+    <div className="text-start">
       <DepositPaymentForm clientSecret={clientSecret} amount={amount} onSuccess={() => setPaid(true)} />
     </div>
   );

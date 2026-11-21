@@ -48,7 +48,7 @@ export default async function DepartureBookingsPage({
             {departure && (
               <span className="text-ink-muted">
                 {" — "}
-                {new Date(departure.startDate).toLocaleDateString("en-US", {
+                {new Date(departure.startDate).toLocaleDateString("he-IL", {
                   timeZone: "UTC",
                   month: "short",
                   day: "numeric",

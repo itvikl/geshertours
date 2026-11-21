@@ -38,14 +38,14 @@ export async function buildBookingsWorkbook(
       contactName: booking.contactName,
       contactEmail: booking.contactEmail,
       contactPhone: booking.contactPhone ?? "",
-      departureDate: departure ? new Date(departure.startDate).toLocaleDateString("en-US", { timeZone: "UTC" }) : "",
+      departureDate: departure ? new Date(departure.startDate).toLocaleDateString("he-IL", { timeZone: "UTC" }) : "",
       travelerCount: booking.travelerCount,
       status: STATUS_LABELS[booking.status] ?? booking.status,
       deposit: booking.depositAmount,
       paid: booking.amountPaid,
       total: booking.priceBreakdown.grandTotal,
       contactPreference: booking.contactPreference === "callback" ? "Call back" : "Pay online",
-      submitted: new Date(booking.createdAt).toLocaleDateString("en-US"),
+      submitted: new Date(booking.createdAt).toLocaleDateString("he-IL"),
     });
   }
 

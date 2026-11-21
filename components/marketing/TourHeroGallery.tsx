@@ -58,7 +58,7 @@ export default function TourHeroGallery({
           className="object-cover transition-transform duration-700 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0a0e1a]/80 via-transparent to-transparent" />
-        <div className="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8">
+        <div className="absolute bottom-6 start-6 end-6 sm:bottom-8 sm:start-8 sm:end-8">
           <span className="mb-3 inline-block rounded-full border border-[#c8a0f0]/30 bg-[#c8a0f0]/20 px-3 py-1 text-xs font-bold uppercase tracking-widest text-[#c8a0f0]">
             {badge}
           </span>

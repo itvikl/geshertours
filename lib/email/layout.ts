@@ -16,13 +16,13 @@ export function escapeHtml(value: string): string {
 
 export function formatDateRange(startIso: string, endIso: string): string {
   const opts: Intl.DateTimeFormatOptions = { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" };
-  return `${new Date(startIso).toLocaleDateString("en-US", opts)} – ${new Date(endIso).toLocaleDateString("en-US", opts)}`;
+  return `${new Date(startIso).toLocaleDateString("he-IL", opts)} – ${new Date(endIso).toLocaleDateString("he-IL", opts)}`;
 }
 
 /** Shared HTML shell for transactional email — inline styles only, per email client constraints. */
 export function wrapEmail(preheader: string, bodyHtml: string): string {
   return `<!DOCTYPE html>
-<html lang="en">
+<html lang="he" dir="rtl">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
