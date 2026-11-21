@@ -112,7 +112,7 @@ export default async function HomePage() {
               "@type": "TravelAgency",
               name: "Keshertours",
               url: SITE_URL,
-              logo: `${SITE_URL}/kesher-logo2.png`,
+              logo: `${SITE_URL}/gesher-logo.png`,
               description:
                 "Escorted, fully kosher group tours to destinations worldwide, built for travelers who want to see the world without compromise.",
             },

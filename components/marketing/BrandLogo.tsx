@@ -10,8 +10,8 @@ export default function BrandLogo({
   const image = (
     // eslint-disable-next-line @next/next/no-img-element
     <img
-      src="/kesher-logo2.png"
-      alt="Kesher Kosher Tours"
+      src="/gesher-logo.png"
+      alt="טיולי גשר – Gesher Tours"
       className={className}
     />
   );
