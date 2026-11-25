@@ -8,7 +8,7 @@
   },
   "apphosting": [
     {
-      "backendId": "mainprod",
+      "backendId": "geshertours",
       "rootDir": "/",
       "ignore": [
         "node_modules",

@@ -50,8 +50,10 @@ env:
       - BUILD
       - RUNTIME
 
+  # Staging address until geshertours.co.il is connected; switch with
+  # scripts/launch/set-site-url.mjs at launch.
   - variable: NEXT_PUBLIC_SITE_URL
-    value: https://geshertours.co.il
+    value: https://geshertours--gesher-tours.europe-west4.hosted.app
     availability:
       - BUILD
       - RUNTIME
@@ -75,33 +77,37 @@ env:
       - BUILD
       - RUNTIME
 
-  # Create once: npx firebase apphosting:secrets:set STRIPE_SECRET_KEY
+  # DISABLED until the secrets exist — App Hosting fails the build when a
+  # referenced secret is missing. The app runs without them (payments off,
+  # emails skipped). To enable: create the secret, grant the backend access
+  #   npx firebase apphosting:secrets:set <NAME> --project gesher-tours
+  #   npx firebase apphosting:secrets:grantaccess <NAME> --backend geshertours --location europe-west4 --project gesher-tours
+  # then uncomment its block below.
+
   # Use a TEST MODE key (sk_test_...) until ready to go live.
-  - variable: STRIPE_SECRET_KEY
-    secret: STRIPE_SECRET_KEY
-    availability:
-      - RUNTIME
+  # - variable: STRIPE_SECRET_KEY
+  #   secret: STRIPE_SECRET_KEY
+  #   availability:
+  #     - RUNTIME
 
-  # Create once: npx firebase apphosting:secrets:set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
   # Use a TEST MODE key (pk_test_...) until ready to go live.
-  - variable: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-    secret: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-    availability:
-      - BUILD
-      - RUNTIME
+  # - variable: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  #   secret: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
+  #   availability:
+  #     - BUILD
+  #     - RUNTIME
 
-  # Create once: npx firebase apphosting:secrets:set STRIPE_WEBHOOK_SECRET
   # From a TEST MODE webhook endpoint (Stripe dashboard, in test mode) until ready to go live.
-  - variable: STRIPE_WEBHOOK_SECRET
-    secret: STRIPE_WEBHOOK_SECRET
-    availability:
-      - RUNTIME
+  # - variable: STRIPE_WEBHOOK_SECRET
+  #   secret: STRIPE_WEBHOOK_SECRET
+  #   availability:
+  #     - RUNTIME
 
-  # Email (lib/email). Create once: npx firebase apphosting:secrets:set RESEND_API_KEY
-  - variable: RESEND_API_KEY
-    secret: RESEND_API_KEY
-    availability:
-      - RUNTIME
+  # Email (lib/email).
+  # - variable: RESEND_API_KEY
+  #   secret: RESEND_API_KEY
+  #   availability:
+  #     - RUNTIME
 
   # geshertours.co.il must be verified in Resend (DKIM + SPF records in DNS)
   # before this sender can reach anyone.

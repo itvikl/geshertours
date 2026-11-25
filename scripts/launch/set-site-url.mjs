@@ -25,8 +25,7 @@ const HERE = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(HERE, "../..");
 const YAML = path.join(ROOT, "apphosting.yaml");
 const PROD = "https://geshertours.co.il";
-// TODO: replace REGION with the real address from Firebase → App Hosting once the backend exists.
-const STAGING = "https://mainprod--gesher-tours.REGION.hosted.app";
+const STAGING = "https://geshertours--gesher-tours.europe-west4.hosted.app";
 const target = REVERT ? STAGING : PROD;
 
 const git = (...a) => execFileSync("git", a, { cwd: ROOT, encoding: "utf8" }).trim();
