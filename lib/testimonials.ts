@@ -1,3 +1,4 @@
+import { countryLabel } from "@/lib/countryNames";
 import type { Review, Tour } from "@/lib/types";
 
 /** Firestore collection of per-destination settings (TestimonialDestination). */
@@ -19,6 +20,22 @@ export function destinationSlug(name: string): string {
 /** The group a review is shown under on /testimonials. */
 export function reviewDestination(review: Review, tour?: Tour): string {
   return review.destination?.trim() || tour?.countries?.[0] || "Other destinations";
+}
+
+/**
+ * A destination as shown to visitors, in Hebrew: "Spain & Portugal" →
+ * "ספרד ופורטוגל". The stored value stays English, since tour pages and the
+ * /testimonials anchors match on it. Parts that aren't known countries are
+ * shown as stored.
+ */
+export function destinationLabel(destination: string): string {
+  if (destination === "Other destinations") return "יעדים נוספים";
+  const labels = destination
+    .split(/\s*(?:&|,)\s*/)
+    .filter(Boolean)
+    .map(countryLabel);
+  if (labels.length < 2) return labels[0] ?? destination;
+  return `${labels.slice(0, -1).join(", ")} ו${labels[labels.length - 1]}`;
 }
 
 /**

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Review, Tour } from "@/lib/types";
-import { reviewDestination } from "@/lib/testimonials";
+import { destinationLabel, reviewDestination } from "@/lib/testimonials";
 
 /**
  * One traveler letter on /testimonials: a quote panel with large quote marks
@@ -54,7 +54,7 @@ export default function TestimonialQuote({
           </Link>
         ) : (
           <span className="mt-1 block text-sm italic text-[var(--color-ice)]">
-            {reviewDestination(review, tour)}
+            {destinationLabel(reviewDestination(review, tour))}
           </span>
         )}
       </figcaption>

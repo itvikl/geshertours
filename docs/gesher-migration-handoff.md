@@ -1,6 +1,6 @@
 # Gesher Tours: migration handoff
 
-Status as of 2026-11-22 (updated the same day, after the admin translation). Read this first to continue the work, for
+Status as of 2026-11-25 (testimonials and blog import scripts, logo). Read this first to continue the work, for
 example by pointing Claude Code at this file ("read
 docs/gesher-migration-handoff.md and continue").
 
@@ -70,10 +70,55 @@ docs/gesher-migration-handoff.md and continue").
   `components/marketing/Footer.tsx`. Adjust them to Gesher's
   destinations.
 
-## Not done yet
+## Logo and favicon (2026-11-25)
 
-- **Header logo size:** the square logo is small at header height. Use a
-  wide version if one exists, or make the header taller.
+- The site shows `public/gesher-logo-wordmark.png` and
+  `public/gesher-logo-wordmark-on-dark.png`: the logo cut down to the globe
+  and lettering, without the white disk or padding, so the letters fill the
+  header at its original height. The full originals stay for the home
+  page's structured data.
+- Favicon: `app/favicon.ico`, `app/icon.png` and `app/apple-icon.png`, made
+  from the original logo (the old site had none).
+
+## Testimonials and blog import (2026-11-25)
+
+Both written and dry-run tested; **not committed to Firebase yet**. Run on
+your own machine with the gesher-tours key in `.env.local`, after the tours
+(both read the imported tours and `gesher-redirects.json`):
+
+```bash
+npx tsx scripts/migrate/import-gesher-testimonials.ts --commit
+NODE_OPTIONS=--conditions=react-server npx tsx scripts/migrate/import-gesher-blog.ts --commit
+npx tsx scripts/migrate/index-media-library.ts   # adds the copied photos to the image library
+```
+
+- **Testimonials** (`import-gesher-testimonials.ts`): 80 of the 83 letters,
+  46 with a photo, written approved and unrated. Each gets the tour that
+  best matches its title and an English `destination` ("Germany & France");
+  the public page shows it in Hebrew (`destinationLabel` in
+  `lib/testimonials.ts`). Check after import:
+  - **Names** are guessed from each letter's signature; 20 letters had none
+    and show "מטיילי גשר". Every name is in
+    `output/gesher-testimonials-preview.json` (`signatureFound: false` marks
+    the fallbacks). Fix them in Admin → Reviews.
+  - 6 letters (Russia ×4, Switzerland, Malta) have no Gesher tour; they're
+    imported with no tour and show under their destination.
+  - 3 letters are only a photo of a handwritten page (Portugal,
+    Scandinavia, Black Forest families); not imported, listed in the preview.
+  - A review holds one photo; 25 letters had more on the old page (the
+    first one is imported).
+- **Blog** (`import-gesher-blog.ts`): all 72 posts, published, with their
+  original dates, headings, links and 366 in-text pictures; 68 have a
+  featured picture as hero. English slugs are hand-written in
+  `scripts/migrate/gesher-blog-slugs.json` (by WordPress post id; a new post
+  on the old site needs a line there). All 184 links to the old site map to
+  new paths: tours, other posts, the fixed pages, and destination/listing
+  pages → `/#featured-tours`. Preview each post in a browser:
+  `output/gesher-blog-preview/<slug>.html`.
+- **Redirects** written, not yet wired into `next.config.ts` (plan step 6):
+  `output/gesher-blog-redirects.json` (old post → `/blog/<slug>`) and
+  `output/gesher-testimonials-redirects.json` (old letter →
+  `/testimonials#<destination>`), next to the tours' `gesher-redirects.json`.
 
 ## Tour import: `scripts/migrate/import-gesher-tours.ts`
 
@@ -128,7 +173,8 @@ Plan, based on `scripts/migrate-legacy-tours.ts` and the
 2. Past tours become `archived`. The 10 tours with upcoming dates get
    their departures, and a person decides which to publish.
 3. Copy images into Gesher's Firebase Storage.
-4. Import the testimonials and blog posts.
+4. Import the testimonials and blog posts. Scripts done, see above;
+   `--commit` still to run.
 5. Replace the About and terms text.
 6. Generate redirects from the old URLs.
 7. Running with `--commit` needs the `gesher-tours` service-account key
@@ -140,7 +186,6 @@ Plan, based on `scripts/migrate-legacy-tours.ts` and the
 - **Euro tours:** two tours with dates are priced in EUR on the old site
   (Naples/Amalfi, Italy carnivals). The import converts them at 1.08 —
   confirm the USD prices, or ask for per-tour currency support.
-- Is there a wide (horizontal) version of the logo?
 
 ## Owner setup checklist (Firebase and services)
 
