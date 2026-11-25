@@ -2,7 +2,7 @@
 # Actions → "Deploy App Hosting" → "Use workflow from" (pick branch) → Run workflow.
 #
 # Prerequisites:
-# 1. App Hosting backend "mainprod" in Firebase project gesher-tours (Blaze).
+# 1. App Hosting backend "geshertours" in Firebase project gesher-tours (Blaze, europe-west4).
 # 2. GitHub secret FIREBASE_SERVICE_ACCOUNT — a gesher-tours service-account JSON key.
 # 3. Secret Manager secrets in apphosting.yaml.
 # 4. Disable App Hosting automatic rollouts from GitHub (avoid surprise/double deploys).
@@ -13,7 +13,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: apphosting-mainprod
+  group: apphosting-geshertours
   cancel-in-progress: true
 
 jobs:

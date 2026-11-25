@@ -148,8 +148,9 @@ Plan, based on `scripts/migrate-legacy-tours.ts` and the
    and Authentication with Email/Password.
 2. Deploy the rules:
    `npx firebase-tools deploy --only firestore,storage --project gesher-tours`
-3. Create an App Hosting backend named `mainprod` connected to
-   `zvimoe/gesher_tours`, with automatic rollouts off.
+3. Done (2026-11-25): App Hosting backend `geshertours` in europe-west4,
+   connected to `itvikl/geshertours` —
+   https://geshertours--gesher-tours.europe-west4.hosted.app
 4. Store these secrets with
    `npx firebase-tools apphosting:secrets:set <NAME> --project gesher-tours`:
    - `NEXT_PUBLIC_FIREBASE_API_KEY`
