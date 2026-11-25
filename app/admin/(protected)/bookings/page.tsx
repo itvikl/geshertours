@@ -8,7 +8,7 @@ import { isDateRangeActive, isInDateRange, parseDateRangeFilter } from "@/lib/da
 
 const LATEST_COUNT = 10;
 
-export const metadata: Metadata = { title: "Bookings" };
+export const metadata: Metadata = { title: "הזמנות" };
 
 export default async function AdminBookingsPage({
   searchParams,
@@ -31,48 +31,48 @@ export default async function AdminBookingsPage({
     <div>
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">Bookings</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">הזמנות</h1>
           <p className="mt-1 text-sm text-ink-muted">
-            {totalRegistrants} registration{totalRegistrants === 1 ? "" : "s"} across{" "}
-            {rows.length} tour{rows.length === 1 ? "" : "s"}
-            {isFiltered ? " booked in the selected range" : ""} — select a tour to see its planned
-            departures
+            {totalRegistrants === 1 ? "הרשמה אחת" : `${totalRegistrants} הרשמות`}
+            {rows.length === 1 ? " בטיול אחד" : ` ב-${rows.length} טיולים`}
+            {isFiltered ? " בטווח התאריכים שנבחר" : ""} — בחרו טיול כדי לראות את מועדי היציאה
+            שלו
           </p>
         </div>
         <Link
           href="/admin/bookings/new"
           className="shrink-0 rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
         >
-          + New booking
+          + הזמנה חדשה
         </Link>
       </div>
 
-      <DateRangeFilterForm filter={filter} clearHref="/admin/bookings" fromLabel="Booked from" />
+      <DateRangeFilterForm filter={filter} clearHref="/admin/bookings" fromLabel="הוזמן מ-" />
 
       {rows.length === 0 ? (
         <p className="rounded-xl border border-dashed border-line bg-white p-10 text-center text-ink-muted">
-          {isFiltered ? "No bookings in this date range." : "No registrations yet."}
+          {isFiltered ? "אין הזמנות בטווח התאריכים הזה." : "עדיין אין הרשמות."}
         </p>
       ) : (
         <>
           <section className="mb-10">
             <div className="mb-3 flex items-baseline justify-between gap-4">
               <h2 className="text-lg font-bold text-ink">
-                {isFiltered ? "Bookings in range" : showAll ? "All bookings" : "Latest bookings"}
+                {isFiltered ? "הזמנות בטווח" : showAll ? "כל ההזמנות" : "הזמנות אחרונות"}
               </h2>
               {!isFiltered && bookings.length > LATEST_COUNT && (
                 <Link
                   href={showAll ? "/admin/bookings" : "/admin/bookings?latest=all"}
                   className="text-sm font-medium text-navy hover:text-navy-light"
                 >
-                  {showAll ? `Show latest ${LATEST_COUNT}` : `Show all ${bookings.length}`}
+                  {showAll ? `הצגת ${LATEST_COUNT} האחרונות` : `הצגת כל ${bookings.length}`}
                 </Link>
               )}
             </div>
             <BookingsTable rows={latestBookings} />
           </section>
 
-          <h2 className="mb-3 text-lg font-bold text-ink">By tour</h2>
+          <h2 className="mb-3 text-lg font-bold text-ink">לפי טיול</h2>
           <BookingsTourList rows={rows} />
         </>
       )}

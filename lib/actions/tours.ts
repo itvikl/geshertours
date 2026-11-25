@@ -45,7 +45,7 @@ async function isTakingLiveTourOffline(session: AdminSession, tourId: string | u
   return current?.status === "published";
 }
 
-const OFFLINE_ERROR = "Only an admin can unpublish or archive a live tour.";
+const OFFLINE_ERROR = "רק מנהל/ת יכול/ה להסיר מהאתר או להעביר לארכיון טיול שמוצג באתר.";
 
 export async function saveTour(input: unknown, tourId?: string): Promise<SaveTourResult> {
   const session = await requireContentSession();
@@ -61,7 +61,7 @@ export async function saveTour(input: unknown, tourId?: string): Promise<SaveTou
   // satisfy the publish checklist (a published tour with no deposit, say,
   // could take bookings it can't charge for).
   if (data.status === "published" && !isReadyToPublish(data as unknown as Tour)) {
-    return { ok: false, errors: { status: ["A published tour must have everything on the publish checklist."] } };
+    return { ok: false, errors: { status: ["טיול שמפורסם חייב לעמוד בכל רשימת הבדיקה לפרסום."] } };
   }
 
   if (await isTakingLiveTourOffline(session, tourId, data.status)) {
@@ -69,7 +69,7 @@ export async function saveTour(input: unknown, tourId?: string): Promise<SaveTou
   }
 
   if (await isSlugTaken(data.slug, tourId)) {
-    return { ok: false, errors: { slug: ["This slug is already used by another tour."] } };
+    return { ok: false, errors: { slug: ["הכתובת (slug) כבר בשימוש בטיול אחר."] } };
   }
 
   const savedId = tourId ? await updateTourDoc(tourId, data) : await createTourDoc(data);
@@ -118,7 +118,7 @@ export async function reorderTours(orderedTourIds: string[]): Promise<{ ok: bool
 export async function duplicateTour(tourId: string): Promise<{ ok: false; error: string }> {
   await requireContentSession();
   const newTourId = await duplicateTourDoc(tourId);
-  if (!newTourId) return { ok: false, error: "Tour not found." };
+  if (!newTourId) return { ok: false, error: "הטיול לא נמצא." };
   await syncContentMediaSafely("tours", newTourId);
   revalidatePath("/admin/tours");
   redirect(`/admin/tours/${newTourId}`);

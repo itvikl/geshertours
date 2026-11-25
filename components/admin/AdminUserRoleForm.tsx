@@ -29,15 +29,15 @@ export default function AdminUserRoleForm({ roles }: { roles: AdminRole[] }) {
       result = await addAdminAccount({ email, password, role });
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
     setSaving(false);
     if (!result.ok) {
       setErrors(result.errors);
       toast.error({
-        title: "Account not saved",
-        description: result.errors.email?.[0] ?? result.errors.password?.[0] ?? result.errors.role?.[0] ?? "Please check the details and try again.",
+        title: "החשבון לא נשמר",
+        description: result.errors.email?.[0] ?? result.errors.password?.[0] ?? result.errors.role?.[0] ?? "בדקו את הפרטים ונסו שוב.",
       });
       return;
     }
@@ -45,11 +45,11 @@ export default function AdminUserRoleForm({ roles }: { roles: AdminRole[] }) {
     toast.success(
       result.created
         ? {
-            title: "Account created",
-            description: `Account created for ${email}. Share the password with them — they sign in at /admin/login.`,
+            title: "החשבון נוצר",
+            description: `נוצר חשבון עבור ${email}. העבירו להם את הסיסמה — הכניסה בכתובת /admin/login.`,
             duration: 8000,
           }
-        : { title: "Access updated", description: `${email} already had a login — their access is now set to ${ROLE_LABELS[role]}.` }
+        : { title: "ההרשאה עודכנה", description: `ל-${email} כבר היה חשבון — התפקיד שלו עכשיו: ${ROLE_LABELS[role]}.` }
     );
     setEmail("");
     setPassword("");
@@ -58,15 +58,15 @@ export default function AdminUserRoleForm({ roles }: { roles: AdminRole[] }) {
 
   return (
     <form onSubmit={handleSubmit} className="rounded-xl border border-line bg-white p-5">
-      <h2 className="text-base font-bold text-ink">Add account</h2>
+      <h2 className="text-base font-bold text-ink">הוספת חשבון</h2>
       <p className="mt-0.5 text-xs text-ink-muted">
-        New email: creates the login with this password. Existing login: only changes the role
-        (password can stay blank).
+        מייל חדש: יוצר חשבון עם הסיסמה הזו. חשבון קיים: משנה רק את התפקיד
+        (אפשר להשאיר את הסיסמה ריקה).
       </p>
       <div className="mt-4 flex flex-wrap items-start gap-4">
         <div>
           <label className="block text-sm font-medium text-ink" htmlFor="email">
-            Email
+            אימייל
           </label>
           <input
             id="email"
@@ -79,7 +79,7 @@ export default function AdminUserRoleForm({ roles }: { roles: AdminRole[] }) {
         </div>
         <div>
           <label className="block text-sm font-medium text-ink" htmlFor="password">
-            Password
+            סיסמה
           </label>
           <input
             id="password"
@@ -87,7 +87,7 @@ export default function AdminUserRoleForm({ roles }: { roles: AdminRole[] }) {
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            placeholder="min. 8 characters"
+            placeholder="לפחות 8 תווים"
             className="mt-1.5 w-52 rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
           />
           {errors.password && (
@@ -96,7 +96,7 @@ export default function AdminUserRoleForm({ roles }: { roles: AdminRole[] }) {
         </div>
         <div>
           <label className="block text-sm font-medium text-ink" htmlFor="role">
-            Role
+            תפקיד
           </label>
           <select
             id="role"
@@ -116,7 +116,7 @@ export default function AdminUserRoleForm({ roles }: { roles: AdminRole[] }) {
           disabled={saving}
           className="mt-7 rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light disabled:opacity-60"
         >
-          {saving ? "Saving…" : "Add account"}
+          {saving ? "שומר…" : "הוספת חשבון"}
         </button>
       </div>
     </form>

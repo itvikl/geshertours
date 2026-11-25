@@ -1,6 +1,8 @@
 import * as z from "zod";
+import "@/lib/validation/zodLocale";
 import { isPassportScanPath } from "@/lib/passportScans";
 import {
+  LATIN_NAME_PATTERN,
   NAME_MAX_LENGTH,
   NAME_PATTERN,
   PASSPORT_PATTERN,
@@ -12,6 +14,10 @@ export const RoomConfigurationSchema = z.object({
   singleRooms: z.number().int().min(0),
   triples: z.number().int().min(0),
 });
+
+function latinName(error: string) {
+  return z.string().trim().max(NAME_MAX_LENGTH).regex(LATIN_NAME_PATTERN, { error });
+}
 
 export const TravelerInputSchema = z.object({
   firstName: z
@@ -30,6 +36,10 @@ export const TravelerInputSchema = z.object({
     .refine((v) => !v || v <= new Date().toISOString().slice(0, 10), {
       error: "תאריך הלידה לא יכול להיות בעתיד.",
     }),
+  // Optional here so staff can enter a phone booking before they have the
+  // passport; the public form requires them (PublicTravelerInputSchema).
+  passportFirstName: latinName("השם הפרטי באנגלית יכול להכיל אותיות באנגלית בלבד, כמו בדרכון.").optional(),
+  passportLastName: latinName("שם המשפחה באנגלית יכול להכיל אותיות באנגלית בלבד, כמו בדרכון.").optional(),
   passport: z
     .string()
     .regex(PASSPORT_PATTERN, { error: "מספר הדרכון יכול להכיל אותיות באנגלית וספרות בלבד (עד 10)." })
@@ -42,6 +52,12 @@ export const TravelerInputSchema = z.object({
   occupancy: z.enum(["double", "single", "triple", "child"]),
   roomWith: z.string().optional(),
   dietary: z.string().optional(),
+});
+
+/** A traveler booked online: the English name as in the passport is required. */
+export const PublicTravelerInputSchema = TravelerInputSchema.extend({
+  passportFirstName: latinName("יש למלא שם פרטי באנגלית, כמו בדרכון."),
+  passportLastName: latinName("יש למלא שם משפחה באנגלית, כמו בדרכון."),
 });
 
 /**
@@ -79,6 +95,9 @@ export type BookingInput = z.infer<typeof BookingInputSchema>;
  * pricing, which isn't available until the server action loads it).
  */
 export const PublicBookingInputSchema = BookingInputSchema.extend({
+  travelers: z
+    .array(PublicTravelerInputSchema)
+    .min(1, { error: "נדרש לפחות מטייל אחד." }),
   // 0 is valid: a tour with no deposit can be reserved without paying anything now.
   paymentAmount: z.number().min(0, { error: "יש לבחור סכום לתשלום." }),
 });
@@ -91,7 +110,7 @@ export type PublicBookingInput = z.infer<typeof PublicBookingInputSchema>;
  */
 export const ManualBookingInputSchema = BookingInputSchema.extend({
   status: z.enum(["pending_payment", "partial_paid", "paid_in_full"], {
-    error: "Choose a status.",
+    error: "יש לבחור סטטוס.",
   }),
 });
 export type ManualBookingInput = z.infer<typeof ManualBookingInputSchema>;

@@ -78,14 +78,14 @@ export default function SeoPageEditorForm({
       result = await saveSeoPage(payload, savedPageId);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
 
     if (!result.ok) {
       setErrors(result.errors);
       setSaving(false);
-      toast.error({ title: "Landing page not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "דף הנחיתה לא נשמר", description: "תקנו את השדות המסומנים ונסו שוב." });
       return;
     }
 
@@ -98,23 +98,23 @@ export default function SeoPageEditorForm({
     setSaving(false);
     toast.success(
       status === "published"
-        ? { title: "Landing page published", description: "Your changes are now live on the site." }
-        : { title: "Draft saved", description: "The page was saved as a draft." }
+        ? { title: "דף הנחיתה פורסם", description: "השינויים מוצגים עכשיו באתר." }
+        : { title: "הטיוטה נשמרה", description: "הדף נשמר כטיוטה." }
     );
   }
 
   return (
     <div className="max-w-2xl space-y-6">
-      <Section title="Page">
+      <Section title="הדף">
         <div className="space-y-4">
-          <Field label="Title" required error={errors.title}>
+          <Field label="כותרת" required error={errors.title}>
             <input
               value={draft.title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             />
           </Field>
-          <Field label="Slug" required hint="e.g. kosher-tour-to-greece" error={errors.slug}>
+          <Field label="כתובת (slug)" required hint="באנגלית, למשל kosher-tour-to-greece" error={errors.slug}>
             <input
               value={draft.slug}
               onChange={(e) => {
@@ -124,7 +124,7 @@ export default function SeoPageEditorForm({
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             />
           </Field>
-          <Field label="Body" required error={errors.body}>
+          <Field label="תוכן" required error={errors.body}>
             <textarea
               value={draft.body}
               onChange={(e) => set("body", e.target.value)}
@@ -135,7 +135,7 @@ export default function SeoPageEditorForm({
         </div>
       </Section>
 
-      <Section title="Linked tours">
+      <Section title="טיולים מקושרים">
         <div className="grid max-h-64 gap-1 overflow-y-auto sm:grid-cols-2">
           {tours.map((tour) => (
             <label key={tour.tourId} className="flex items-center gap-2 rounded-lg px-2 py-1.5 text-sm text-ink hover:bg-sand-warm">
@@ -152,14 +152,14 @@ export default function SeoPageEditorForm({
 
       <Section title="SEO">
         <div className="space-y-4">
-          <Field label="SEO title">
+          <Field label="כותרת SEO">
             <input
               value={draft.seoTitle ?? ""}
               onChange={(e) => set("seoTitle", e.target.value || undefined)}
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             />
           </Field>
-          <Field label="SEO description">
+          <Field label="תיאור SEO">
             <textarea
               value={draft.seoDescription ?? ""}
               onChange={(e) => set("seoDescription", e.target.value || undefined)}
@@ -177,7 +177,7 @@ export default function SeoPageEditorForm({
           onClick={() => handleSave("draft")}
           className="rounded-lg border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-sand-warm disabled:opacity-60"
         >
-          Save draft
+          שמירת טיוטה
         </button>
         <button
           type="button"
@@ -185,7 +185,7 @@ export default function SeoPageEditorForm({
           onClick={() => handleSave("published")}
           className="rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light disabled:opacity-60"
         >
-          Publish
+          פרסום
         </button>
         {isDirty && <span className="self-center"><UnsavedIndicator /></span>}
       </div>

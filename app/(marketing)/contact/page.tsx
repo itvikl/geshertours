@@ -5,6 +5,13 @@ import { getSiteContent } from "@/lib/data/siteContent";
 // Phone numbers are the site's single Settings doc (already admin-editable
 // at /admin/settings), not duplicated as their own site-content fields.
 import { getSiteSettings } from "@/lib/data/admin/settings";
+import {
+  DEFAULT_SITE_EMAIL,
+  SITE_ADDRESS,
+  SITE_FACEBOOK_URL,
+  whatsappDisplay,
+  whatsappHref,
+} from "@/lib/siteContact";
 
 export const metadata: Metadata = {
   title: "צור קשר",
@@ -37,6 +44,31 @@ export default async function ContactPage() {
               או {settings.phoneAlt}
             </a>
           )}
+          <div className="mt-4 flex flex-col items-center gap-1.5 text-sm text-[var(--color-slate)]">
+            <a
+              href={whatsappHref()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-[var(--color-ice)]"
+            >
+              וואטסאפ: <span dir="ltr">{whatsappDisplay()}</span>
+            </a>
+            <a
+              href={`mailto:${settings.email || DEFAULT_SITE_EMAIL}`}
+              className="transition hover:text-[var(--color-ice)]"
+            >
+              דוא&quot;ל: <span dir="ltr">{settings.email || DEFAULT_SITE_EMAIL}</span>
+            </a>
+            <span>{SITE_ADDRESS}</span>
+            <a
+              href={SITE_FACEBOOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-[var(--color-ice)]"
+            >
+              בקרו אותנו בפייסבוק
+            </a>
+          </div>
         </div>
 
         <ContactForm />

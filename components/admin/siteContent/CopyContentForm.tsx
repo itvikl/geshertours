@@ -31,18 +31,18 @@ export default function CopyContentForm({
       result = await saveAction(draft);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
     setSaving(false);
     if (!result.ok) {
       setErrors(result.errors);
-      toast.error({ title: "Not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "לא נשמר", description: "תקנו את השדות המסומנים ונסו שוב." });
       return;
     }
     setErrors({});
     markSaved(draft);
-    toast.success({ title: "Changes saved", description: "The page content was updated successfully." });
+    toast.success({ title: "השינויים נשמרו", description: "תוכן הדף עודכן בהצלחה." });
   }
 
   const errorCount = Object.values(errors).filter(Boolean).length;
@@ -86,14 +86,14 @@ export default function CopyContentForm({
               return (
                 <div key={field.key} className={field.multiline ? "md:col-span-2" : undefined}>
                   <Field
-                    label={field.optional ? `${field.label} (optional)` : field.label}
+                    label={field.optional ? `${field.label} (לא חובה)` : field.label}
                     value={draft[field.key] ?? ""}
                     onChange={(value) => setDraft((d) => ({ ...d, [field.key]: value }))}
                     error={errors[field.key]}
                   />
                   {field.placeholders && (
                     <p className="mt-1 text-xs text-ink-muted">
-                      Filled in automatically: {field.placeholders.map((name) => `{${name}}`).join(", ")}
+                      מתמלא אוטומטית: {field.placeholders.map((name) => `{${name}}`).join(", ")}
                     </p>
                   )}
                 </div>
@@ -107,7 +107,7 @@ export default function CopyContentForm({
         <SaveBar saving={saving} dirty={isDirty} onSave={handleSave} />
         {errorCount > 0 && (
           <p className="text-sm text-terracotta-dark">
-            {errorCount} field{errorCount === 1 ? "" : "s"} need fixing. Nothing was saved.
+            {errorCount === 1 ? "שדה אחד דורש" : `${errorCount} שדות דורשים`} תיקון. שום דבר לא נשמר.
           </p>
         )}
       </div>

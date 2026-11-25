@@ -15,7 +15,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { pageId } = await params;
   const page = await getSeoPageByIdAdmin(pageId);
-  return { title: page ? `Edit — ${page.title}` : "SEO landing page" };
+  return { title: page ? `עריכה — ${page.title}` : "דף נחיתה" };
 }
 
 export default async function EditSeoPagePage({
@@ -34,7 +34,7 @@ export default async function EditSeoPagePage({
     <div>
       {isAdmin && (
         <div className="mb-4 flex justify-end">
-          <DeleteButton action={deleteSeoPage.bind(null, pageId)} what="this SEO page" redirectTo="/admin/seo-pages" />
+          <DeleteButton action={deleteSeoPage.bind(null, pageId)} what="את דף הנחיתה הזה" redirectTo="/admin/seo-pages" />
         </div>
       )}
       <div className="mb-6">

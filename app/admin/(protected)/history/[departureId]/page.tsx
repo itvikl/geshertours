@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { travelerDisplayName } from "@/lib/travelerName";
+import { BOOKING_STATUS_LABELS, OCCUPANCY_LABELS } from "@/lib/adminLabels";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { getDepartureRegistrantsAdmin } from "@/lib/data/admin/history";
@@ -12,7 +14,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { departureId } = await params;
   const { tour } = await getDepartureRegistrantsAdmin(departureId);
-  return { title: tour ? `Registrants — ${tour.title}` : "Registrants" };
+  return { title: tour ? `נרשמים — ${tour.title}` : "נרשמים" };
 }
 
 function formatDate(iso: string) {
@@ -31,12 +33,12 @@ export default async function DepartureRegistrantsPage({
   return (
     <div>
       <Link href="/admin/history" className="text-sm font-medium text-navy hover:text-navy-light">
-        ← Back to history
+        → חזרה להיסטוריה
       </Link>
 
       <div className="mt-3 mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">{tour?.title ?? "Departure"}</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">{tour?.title ?? "מועד יציאה"}</h1>
           <p className="mt-1 text-sm text-ink-muted">
             {formatDate(departure.startDate)} – {formatDate(departure.endDate)}
           </p>
@@ -47,14 +49,14 @@ export default async function DepartureRegistrantsPage({
             className="inline-flex items-center gap-2 shrink-0 rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
           >
             <AdminIcon name="download" className="h-4 w-4" />
-            Export to Excel
+            ייצוא לאקסל
           </a>
         )}
       </div>
 
       {registrants.length === 0 ? (
         <p className="rounded-xl border border-dashed border-line bg-white p-10 text-center text-ink-muted">
-          No registrants on this departure.
+          אין נרשמים למועד הזה.
         </p>
       ) : (
         <div className="space-y-4">
@@ -79,11 +81,11 @@ export default async function DepartureRegistrantsPage({
                       className="flex items-center justify-between py-1.5 text-sm"
                     >
                       <span className="text-ink">
-                        {traveler.firstName} {traveler.lastName}
+                        {travelerDisplayName(traveler)}
                       </span>
-                      <span className="text-ink-muted capitalize">
-                        {traveler.occupancy}
-                        {traveler.roomWith ? ` · with ${traveler.roomWith}` : ""}
+                      <span className="text-ink-muted">
+                        {OCCUPANCY_LABELS[traveler.occupancy] ?? traveler.occupancy}
+                        {traveler.roomWith ? ` · עם ${traveler.roomWith}` : ""}
                       </span>
                     </li>
                   ))}
@@ -105,13 +107,7 @@ const STATUS_STYLES: Record<BookingStatus, string> = {
   refunded: "bg-ink-muted/15 text-ink-muted",
 };
 
-const STATUS_LABELS: Record<BookingStatus, string> = {
-  pending_payment: "Pending payment",
-  partial_paid: "Partially paid",
-  paid_in_full: "Paid in full",
-  cancelled: "Cancelled",
-  refunded: "Refunded",
-};
+const STATUS_LABELS = BOOKING_STATUS_LABELS;
 
 function StatusBadge({ status }: { status: BookingStatus }) {
   return (

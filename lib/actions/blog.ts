@@ -23,11 +23,11 @@ export async function saveBlogPost(input: unknown, postId?: string): Promise<Sav
   const data = parsed.data;
   if (isHtmlBody(data.body)) data.body = sanitizeBlogHtml(data.body);
   if (!bodyToPlainText(data.body) && !/<img/i.test(data.body)) {
-    return { ok: false, errors: { body: ["Body is required."] } };
+    return { ok: false, errors: { body: ["יש למלא תוכן."] } };
   }
 
   if (await isBlogSlugTaken(data.slug, postId)) {
-    return { ok: false, errors: { slug: ["This slug is already used by another post."] } };
+    return { ok: false, errors: { slug: ["הכתובת (slug) כבר בשימוש בפוסט אחר."] } };
   }
 
   const savedId = postId ? await updateBlogPostDoc(postId, data) : await createBlogPostDoc(data);

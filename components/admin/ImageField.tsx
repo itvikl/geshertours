@@ -29,7 +29,7 @@ export default function ImageField({
   onChange,
   folder,
   shape = "square",
-  noun = "image",
+  noun = "תמונה",
   focusOf,
   onSetFocus,
 }: {
@@ -55,7 +55,7 @@ export default function ImageField({
       )}
       <div className="flex flex-wrap items-center gap-2">
         <ImageUploadButton
-          label={value ? `Replace ${noun}` : `Upload ${noun}`}
+          label={value ? `החלפת ${noun}` : `העלאת ${noun}`}
           folder={folder}
           onUploaded={([url]) => url && onChange(url)}
         />
@@ -65,7 +65,7 @@ export default function ImageField({
             onClick={() => onSetFocus(value)}
             className="rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-sand-warm"
           >
-            {focus ? "Focus ✓" : "Set focus"}
+            {focus ? "מוקד ✓" : "בחירת מוקד"}
           </button>
         )}
         {value && (
@@ -74,7 +74,7 @@ export default function ImageField({
             onClick={() => onChange(undefined)}
             className="rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-medium text-terracotta-dark transition-colors hover:bg-terracotta/10"
           >
-            Remove
+            הסרה
           </button>
         )}
       </div>
@@ -115,8 +115,8 @@ export function ImageGalleryField({
                 <button
                   type="button"
                   onClick={() => onChange(values.filter((_, i) => i !== index))}
-                  aria-label={`Remove photo ${index + 1}`}
-                  title="Remove"
+                  aria-label={`הסרת תמונה ${index + 1}`}
+                  title="הסרה"
                   className="absolute -end-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full border border-line bg-white text-xs font-bold text-terracotta-dark shadow transition-colors hover:bg-terracotta hover:text-white"
                 >
                   ✕
@@ -125,10 +125,10 @@ export function ImageGalleryField({
                   <button
                     type="button"
                     onClick={() => onSetFocus(src)}
-                    aria-label={`Set focus for photo ${index + 1}`}
+                    aria-label={`בחירת מוקד לתמונה ${index + 1}`}
                     className="absolute bottom-1 start-1 rounded-md bg-black/65 px-1.5 py-0.5 text-[11px] font-semibold text-white transition-colors hover:bg-black/85"
                   >
-                    {focus ? "Focus ✓" : "Set focus"}
+                    {focus ? "מוקד ✓" : "בחירת מוקד"}
                   </button>
                 )}
               </li>
@@ -137,7 +137,7 @@ export function ImageGalleryField({
         </ul>
       )}
       <ImageUploadButton
-        label={values.length > 0 ? "Add more images" : "Upload images"}
+        label={values.length > 0 ? "הוספת תמונות" : "העלאת תמונות"}
         multiple
         folder={folder}
         onUploaded={(urls) => onChange([...values, ...urls])}

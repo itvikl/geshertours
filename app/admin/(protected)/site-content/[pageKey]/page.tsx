@@ -45,18 +45,18 @@ const PAGE_KEYS: SiteContentPageKey[] = [
 ];
 
 const PAGE_LABELS: Record<SiteContentPageKey, string> = {
-  home: "Home",
-  about: "About",
-  "custom-tours": "Custom Made Tours",
-  "special-offers": "Special Offers",
-  testimonials: "Testimonials",
+  home: "דף הבית",
+  about: "אודות",
+  "custom-tours": "טיול בהתאמה אישית",
+  "special-offers": "מבצעים",
+  testimonials: "המלצות",
   faq: "FAQ",
-  contact: "Contact",
-  "legal-privacy": "Privacy Policy",
-  "legal-terms": "Terms & Conditions",
-  "tour-page": "Tour Page",
-  booking: "Booking Form",
-  blog: "Blog",
+  contact: "צור קשר",
+  "legal-privacy": "מדיניות פרטיות",
+  "legal-terms": "תקנון",
+  "tour-page": "דף טיול",
+  booking: "טופס הרשמה",
+  blog: "בלוג",
 };
 
 function isSiteContentPageKey(value: string): value is SiteContentPageKey {
@@ -69,7 +69,7 @@ export async function generateMetadata({
   params: Promise<{ pageKey: string }>;
 }): Promise<Metadata> {
   const { pageKey } = await params;
-  return { title: isSiteContentPageKey(pageKey) ? PAGE_LABELS[pageKey] : "Site Content" };
+  return { title: isSiteContentPageKey(pageKey) ? PAGE_LABELS[pageKey] : "תוכן האתר" };
 }
 
 export default async function SiteContentEditorPage({
@@ -84,7 +84,7 @@ export default async function SiteContentEditorPage({
     <div>
       <div className="mb-6">
         <Link href="/admin/site-content" className="text-sm font-medium text-navy hover:text-navy-light">
-          ← Site Content
+          → תוכן האתר
         </Link>
         <h1 className="mt-2 text-2xl font-bold tracking-tight text-ink">{PAGE_LABELS[pageKey]}</h1>
       </div>
@@ -119,7 +119,7 @@ async function EditorForm({ pageKey }: { pageKey: SiteContentPageKey }) {
           sections={TESTIMONIALS_COPY_SECTIONS}
           initialContent={content}
           saveAction={saveTestimonialsContent}
-          liveLinks={[{ label: "Open the live page", href: "/testimonials" }]}
+          liveLinks={[{ label: "פתיחת הדף באתר", href: "/testimonials" }]}
         />
       );
     }
@@ -148,7 +148,7 @@ async function EditorForm({ pageKey }: { pageKey: SiteContentPageKey }) {
           sections={TOUR_PAGE_COPY_SECTIONS}
           initialContent={content}
           saveAction={saveTourPageContent}
-          liveLinks={tours.slice(0, 1).map((tour) => ({ label: `See it on ${tour.title}`, href: `/tours/${tour.slug}` }))}
+          liveLinks={tours.slice(0, 1).map((tour) => ({ label: `צפייה בטיול ${tour.title}`, href: `/tours/${tour.slug}` }))}
         />
       );
     }
@@ -159,7 +159,7 @@ async function EditorForm({ pageKey }: { pageKey: SiteContentPageKey }) {
           sections={BOOKING_COPY_SECTIONS}
           initialContent={content}
           saveAction={saveBookingContent}
-          liveLinks={tours.slice(0, 1).map((tour) => ({ label: `See it on ${tour.title}`, href: `/tours/${tour.slug}/book` }))}
+          liveLinks={tours.slice(0, 1).map((tour) => ({ label: `צפייה בטיול ${tour.title}`, href: `/tours/${tour.slug}/book` }))}
         />
       );
     }
@@ -170,7 +170,7 @@ async function EditorForm({ pageKey }: { pageKey: SiteContentPageKey }) {
           sections={BLOG_COPY_SECTIONS}
           initialContent={content}
           saveAction={saveBlogContent}
-          liveLinks={[{ label: "Open the live page", href: "/blog" }]}
+          liveLinks={[{ label: "פתיחת הדף באתר", href: "/blog" }]}
         />
       );
     }

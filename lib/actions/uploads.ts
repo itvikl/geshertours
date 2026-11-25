@@ -29,15 +29,15 @@ export async function uploadImage(formData: FormData, folder = "tours"): Promise
 
   const file = formData.get("file");
   if (!(file instanceof File)) {
-    return { ok: false, error: "No file provided." };
+    return { ok: false, error: "לא נבחר קובץ." };
   }
 
   const extension = ALLOWED_TYPES[file.type];
   if (!extension) {
-    return { ok: false, error: "Only JPEG, PNG, WebP or GIF images are allowed." };
+    return { ok: false, error: "אפשר להעלות רק תמונות JPEG,‏ PNG,‏ WebP או GIF." };
   }
   if (file.size > MAX_BYTES) {
-    return { ok: false, error: "Image is too large (max 8MB)." };
+    return { ok: false, error: "התמונה גדולה מדי (עד 8MB)." };
   }
 
   const buffer = Buffer.from(await file.arrayBuffer());
@@ -156,10 +156,10 @@ export async function uploadTourPdf(formData: FormData): Promise<UploadTourPdfRe
 
   const file = formData.get("file");
   if (!(file instanceof File)) {
-    return { ok: false, error: "No file provided." };
+    return { ok: false, error: "לא נבחר קובץ." };
   }
   if (file.type !== "application/pdf") {
-    return { ok: false, error: "Only PDF files are allowed." };
+    return { ok: false, error: "אפשר להעלות רק קובצי PDF." };
   }
   if (file.size > TOUR_PDF_MAX_BYTES) {
     return { ok: false, error: "PDF is too large (max 9MB)." };
@@ -167,7 +167,7 @@ export async function uploadTourPdf(formData: FormData): Promise<UploadTourPdfRe
 
   const buffer = Buffer.from(await file.arrayBuffer());
   if (!hasMatchingSignature(buffer, "pdf")) {
-    return { ok: false, error: "That file doesn't look like a valid PDF." };
+    return { ok: false, error: "הקובץ לא נראה כמו PDF תקין." };
   }
 
   const fileName = file.name.trim().slice(0, 120) || "document.pdf";

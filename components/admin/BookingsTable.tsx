@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { formatUsd } from "@/lib/pricing";
+import { BOOKING_STATUS_LABELS } from "@/lib/adminLabels";
 import { availableSeats, type BookingStatus, type ContactPreference } from "@/lib/types";
 import type { AdminBookingRow } from "@/lib/data/admin/bookings";
 import BookingDetailModal from "@/components/admin/BookingDetailModal";
@@ -15,15 +16,15 @@ export default function BookingsTable({ rows }: { rows: AdminBookingRow[] }) {
         <table className="w-full min-w-[900px] text-start text-sm">
           <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
             <tr>
-              <th className="px-4 py-3">Contact</th>
-              <th className="px-4 py-3">Tour</th>
-              <th className="px-4 py-3">Departure</th>
-              <th className="px-4 py-3">Travelers</th>
-              <th className="px-4 py-3">Capacity</th>
-              <th className="px-4 py-3">Total</th>
-              <th className="px-4 py-3">Status</th>
-              <th className="px-4 py-3">Wants</th>
-              <th className="px-4 py-3">Submitted</th>
+              <th className="px-4 py-3">איש קשר</th>
+              <th className="px-4 py-3">טיול</th>
+              <th className="px-4 py-3">מועד יציאה</th>
+              <th className="px-4 py-3">מטיילים</th>
+              <th className="px-4 py-3">מקומות</th>
+              <th className="px-4 py-3">סה״כ</th>
+              <th className="px-4 py-3">סטטוס</th>
+              <th className="px-4 py-3">מבקש/ת</th>
+              <th className="px-4 py-3">נשלח</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-line">
@@ -55,7 +56,7 @@ export default function BookingsTable({ rows }: { rows: AdminBookingRow[] }) {
                   </td>
                   <td className="px-4 py-3 text-ink-muted">{booking.travelerCount}</td>
                   <td className="px-4 py-3 text-ink-muted">
-                    {departure ? `${availableSeats(departure)} / ${departure.capacityTotal} left` : "—"}
+                    {departure ? `נותרו ${availableSeats(departure)} מתוך ${departure.capacityTotal}` : "—"}
                   </td>
                   <td className="px-4 py-3 text-ink-muted">
                     {formatUsd(booking.priceBreakdown.grandTotal)}
@@ -98,13 +99,7 @@ const STATUS_STYLES: Record<BookingStatus, string> = {
   refunded: "bg-ink-muted/15 text-ink-muted",
 };
 
-const STATUS_LABELS: Record<BookingStatus, string> = {
-  pending_payment: "Pending payment",
-  partial_paid: "Partially paid",
-  paid_in_full: "Paid in full",
-  cancelled: "Cancelled",
-  refunded: "Refunded",
-};
+const STATUS_LABELS = BOOKING_STATUS_LABELS;
 
 function StatusBadge({ status }: { status: BookingStatus }) {
   return (
@@ -119,7 +114,7 @@ function StatusBadge({ status }: { status: BookingStatus }) {
 function ContactPreferenceBadge({ preference }: { preference: ContactPreference }) {
   return (
     <span className="inline-block rounded-full bg-navy/10 px-2.5 py-0.5 text-xs font-semibold text-navy">
-      {preference === "callback" ? "Call back" : "Pay online"}
+      {preference === "callback" ? "חזרה טלפונית" : "תשלום באתר"}
     </span>
   );
 }

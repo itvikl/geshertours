@@ -15,7 +15,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { reviewId } = await params;
   const review = await getReviewByIdAdmin(reviewId);
-  return { title: review ? `Edit — ${review.customerName}` : "Review" };
+  return { title: review ? `עריכה — ${review.customerName}` : "המלצה" };
 }
 
 export default async function EditReviewPage({
@@ -37,13 +37,13 @@ export default async function EditReviewPage({
     <div>
       {isAdmin && (
         <div className="mb-4 flex justify-end">
-          <DeleteButton action={deleteReview.bind(null, reviewId)} what="this testimonial" redirectTo="/admin/reviews" />
+          <DeleteButton action={deleteReview.bind(null, reviewId)} what="את ההמלצה הזו" redirectTo="/admin/reviews" />
         </div>
       )}
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight text-ink">{review.customerName}</h1>
         <p className="mt-1 text-sm text-ink-muted">
-          Editing an existing review — changes appear on the public testimonials page once approved.
+          עריכת המלצה קיימת — השינויים יופיעו בדף ההמלצות באתר אחרי אישור.
         </p>
       </div>
       <ReviewForm

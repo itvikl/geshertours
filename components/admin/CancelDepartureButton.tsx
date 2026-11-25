@@ -22,25 +22,25 @@ export default function CancelDepartureButton({
 
   async function handleClick() {
     const ok = await confirm({
-      title: `Cancel “${label}”?`,
-      description: "This departure date will be marked as cancelled and closed for new bookings.",
-      confirmLabel: "Cancel date",
-      cancelLabel: "Keep date",
+      title: `לבטל את המועד ${label}?`,
+      description: "מועד היציאה יסומן כמבוטל וייסגר להרשמות חדשות.",
+      confirmLabel: "ביטול המועד",
+      cancelLabel: "השארת המועד",
       tone: "danger",
     });
     if (!ok) return;
     startTransition(async () => {
       try {
         await cancelDeparture(departureId, tourId);
-        toast.success({ title: "Date cancelled", description: `“${label}” is now cancelled.` });
+        toast.success({ title: "המועד בוטל", description: `המועד ${label} בוטל.` });
         router.refresh();
       } catch {
-        toast.error({ title: "Couldn't cancel date", description: "Something went wrong — please try again." });
+        toast.error({ title: "ביטול המועד נכשל", description: "משהו השתבש — נסו שוב." });
       }
     });
   }
 
   return (
-    <IconButton icon="ban" label="Cancel this date" tone="danger" disabled={pending} onClick={handleClick} />
+    <IconButton icon="ban" label="ביטול המועד" tone="danger" disabled={pending} onClick={handleClick} />
   );
 }

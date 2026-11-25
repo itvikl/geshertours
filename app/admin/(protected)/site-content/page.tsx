@@ -2,30 +2,30 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import type { SiteContentPageKey } from "@/lib/types";
 
-export const metadata: Metadata = { title: "Site Content" };
+export const metadata: Metadata = { title: "תוכן האתר" };
 
 const PAGES: { pageKey: SiteContentPageKey; label: string; description: string; publicHref: string }[] = [
-  { pageKey: "home", label: "Home", description: "Hero, trust signals, and the closing call-to-action.", publicHref: "/" },
-  { pageKey: "about", label: "About", description: "Page intro plus every content section.", publicHref: "/about" },
-  { pageKey: "custom-tours", label: "Custom Made Tours", description: "Page header above the request form.", publicHref: "/custom-made-tours" },
-  { pageKey: "special-offers", label: "Special Offers", description: "Page header above the offers list.", publicHref: "/special-offers" },
-  { pageKey: "tour-page", label: "Tour Page", description: "Booking card wording, headings, and labels shared by every tour.", publicHref: "/tours" },
-  { pageKey: "booking", label: "Booking Form", description: "Every step of registration, through to the confirmation.", publicHref: "/tours" },
-  { pageKey: "blog", label: "Blog", description: "Page header and the wording around posts.", publicHref: "/blog" },
-  { pageKey: "testimonials", label: "Testimonials", description: "Page header and wording — the letters come from Reviews.", publicHref: "/testimonials" },
-  { pageKey: "faq", label: "FAQ", description: "Page header and every question/answer.", publicHref: "/faq" },
-  { pageKey: "contact", label: "Contact", description: "Page header — phone numbers come from Settings.", publicHref: "/contact" },
-  { pageKey: "legal-privacy", label: "Privacy Policy", description: "Title and the full policy text.", publicHref: "/legal/privacy" },
-  { pageKey: "legal-terms", label: "Terms & Conditions", description: "Title and the full terms text.", publicHref: "/legal/terms-conditions" },
+  { pageKey: "home", label: "דף הבית", description: "התמונה הראשית, כרטיסי האמון והקריאה לפעולה בסוף.", publicHref: "/" },
+  { pageKey: "about", label: "אודות", description: "פתיח הדף וכל מקטעי התוכן.", publicHref: "/about" },
+  { pageKey: "custom-tours", label: "טיול בהתאמה אישית", description: "כותרת הדף מעל טופס הבקשה.", publicHref: "/custom-made-tours" },
+  { pageKey: "special-offers", label: "מבצעים", description: "כותרת הדף מעל רשימת המבצעים.", publicHref: "/special-offers" },
+  { pageKey: "tour-page", label: "דף טיול", description: "נוסח כרטיס ההרשמה, כותרות ותוויות שמשותפים לכל הטיולים.", publicHref: "/tours" },
+  { pageKey: "booking", label: "טופס הרשמה", description: "כל שלבי ההרשמה, עד האישור.", publicHref: "/tours" },
+  { pageKey: "blog", label: "בלוג", description: "כותרת הדף והנוסח סביב הפוסטים.", publicHref: "/blog" },
+  { pageKey: "testimonials", label: "המלצות", description: "כותרת הדף והנוסח — ההמלצות עצמן מגיעות ממסך ״המלצות״.", publicHref: "/testimonials" },
+  { pageKey: "faq", label: "שאלות נפוצות", description: "כותרת הדף וכל השאלות והתשובות.", publicHref: "/faq" },
+  { pageKey: "contact", label: "צור קשר", description: "כותרת הדף — מספרי הטלפון מגיעים מ״הגדרות״.", publicHref: "/contact" },
+  { pageKey: "legal-privacy", label: "מדיניות פרטיות", description: "הכותרת והטקסט המלא של המדיניות.", publicHref: "/legal/privacy" },
+  { pageKey: "legal-terms", label: "תקנון", description: "הכותרת והטקסט המלא של התקנון.", publicHref: "/legal/terms-conditions" },
 ];
 
 export default function SiteContentIndexPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-ink">Site Content</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-ink">תוכן האתר</h1>
         <p className="mt-1 text-sm text-ink-muted">
-          Every page in the public site&apos;s navigation, editable here in the same design customers see.
+          כל הדפים בתפריט האתר, לעריכה כאן באותו עיצוב שהלקוחות רואים.
         </p>
       </div>
 
@@ -38,7 +38,7 @@ export default function SiteContentIndexPage() {
           >
             <p className="font-semibold text-ink group-hover:text-navy">{page.label}</p>
             <p className="mt-1 text-sm text-ink-muted">{page.description}</p>
-            <p className="mt-3 text-xs font-medium text-navy">Edit →</p>
+            <p className="mt-3 text-xs font-medium text-navy">עריכה ←</p>
           </Link>
         ))}
       </div>

@@ -21,14 +21,14 @@ export default async function MarketingLayout({
   children: React.ReactNode;
 }) {
   // One read of Admin -> Settings feeds every phone number on the site.
-  const [{ phone }, footerTours] = await Promise.all([getSiteSettings(), getFooterTours(5)]);
+  const [{ phone, email }, footerTours] = await Promise.all([getSiteSettings(), getFooterTours(5)]);
 
   return (
     <SitePhoneProvider phone={phone}>
       <div className="flex min-h-full flex-1 flex-col bg-[var(--color-glacier)] text-[var(--color-mist)] selection:bg-[var(--color-ice)]/30 transition-colors">
         <Header phone={phone} />
         <main className="flex-1">{children}</main>
-        <Footer phone={phone} tours={footerTours} />
+        <Footer phone={phone} email={email} tours={footerTours} />
       </div>
       {GA_MEASUREMENT_ID && <DeferredGoogleAnalytics gaId={GA_MEASUREMENT_ID} />}
     </SitePhoneProvider>

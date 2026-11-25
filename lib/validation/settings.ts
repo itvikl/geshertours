@@ -1,4 +1,5 @@
 import * as z from "zod";
+import "@/lib/validation/zodLocale";
 
 function optionalText() {
   return z.preprocess((v) => (typeof v === "string" && v.trim() === "" ? undefined : v), z.string().optional());
@@ -6,11 +7,11 @@ function optionalText() {
 
 /** Mirrors lib/types.ts SiteSettings. Bound to a native <form>, so numeric fields arrive as strings. */
 export const SiteSettingsInputSchema = z.object({
-  phone: z.string().min(1, { error: "Phone is required." }),
+  phone: z.string().min(1, { error: "יש למלא טלפון." }),
   phoneAlt: optionalText(),
   email: z.preprocess(
     (v) => (typeof v === "string" && v.trim() === "" ? undefined : v),
-    z.email({ error: "Enter a valid email." }).optional()
+    z.email({ error: "יש להזין כתובת אימייל תקינה." }).optional()
   ),
   defaultDepositAmount: z.coerce.number().min(0),
   defaultMinGroupSize: z.coerce.number().int().min(0),
@@ -23,7 +24,7 @@ export const SiteSettingsInputSchema = z.object({
       typeof v === "string"
         ? v.split(/[,;\n]/).map((address) => address.trim()).filter(Boolean)
         : v,
-    z.array(z.email({ error: "Each address must be a valid email." })).default([])
+    z.array(z.email({ error: "כל כתובת חייבת להיות כתובת אימייל תקינה." })).default([])
   ),
 });
 

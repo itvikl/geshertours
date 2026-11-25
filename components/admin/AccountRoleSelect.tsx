@@ -26,28 +26,28 @@ export default function AccountRoleSelect({
   async function handleChange(next: AdminRole) {
     if (next === role) return;
     const ok = await confirm({
-      title: `Make ${email ?? "this account"} ${ROLE_LABELS[next]}?`,
-      description: "They'll be signed out and get the new permissions when they sign in again.",
-      confirmLabel: "Change role",
+      title: `לשנות את התפקיד של ${email ?? "החשבון"} ל${ROLE_LABELS[next]}?`,
+      description: "החשבון ינותק ויקבל את ההרשאות החדשות בכניסה הבאה.",
+      confirmLabel: "שינוי תפקיד",
     });
     if (!ok) return;
     setSaving(true);
     const result = await changeAccountRole({ uid, role: next }).catch(() => ({
       ok: false as const,
-      error: "Couldn't change the role — try again.",
+      error: "שינוי התפקיד נכשל — נסו שוב.",
     }));
     setSaving(false);
     if (!result.ok) {
-      toast.error({ title: "Role not changed", description: result.error });
+      toast.error({ title: "התפקיד לא שונה", description: result.error });
       return;
     }
-    toast.success({ title: "Role changed", description: `${email ?? "The account"} is now ${ROLE_LABELS[next]}.` });
+    toast.success({ title: "התפקיד שונה", description: `התפקיד של ${email ?? "החשבון"} עכשיו: ${ROLE_LABELS[next]}.` });
     router.refresh();
   }
 
   return (
     <select
-      aria-label={`Role for ${email ?? "this account"}`}
+      aria-label={`התפקיד של ${email ?? "החשבון"}`}
       value={role}
       disabled={saving}
       onChange={(e) => handleChange(e.target.value as AdminRole)}

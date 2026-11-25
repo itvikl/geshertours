@@ -1,4 +1,5 @@
 import * as z from "zod";
+import "@/lib/validation/zodLocale";
 import { COUNTRIES } from "@/lib/countries";
 
 const KashrutBooleanOrNotGuaranteed = z.union([z.boolean(), z.literal("not_guaranteed")]);
@@ -6,7 +7,7 @@ const KashrutBooleanOrNotGuaranteed = z.union([z.boolean(), z.literal("not_guara
 export const ItineraryDayInputSchema = z.object({
   dayId: z.string().min(1),
   dayNumber: z.number().int().min(1),
-  title: z.string().min(1, { error: "Day title is required." }),
+  title: z.string().min(1, { error: "יש למלא כותרת ליום." }),
   description: z.string(),
   meals: z.array(z.string()),
   accommodation: z.string().optional(),
@@ -21,7 +22,7 @@ const TourInfoFieldSchema = z.object({
 
 export const TourInfoCardSchema = z.object({
   cardId: z.string().min(1),
-  title: z.string().min(1, { error: "Card title is required." }),
+  title: z.string().min(1, { error: "יש למלא כותרת לכרטיס." }),
   fields: z.array(TourInfoFieldSchema),
   notes: z.string().optional(),
   items: z.array(z.string()),
@@ -35,8 +36,8 @@ export const ImageFocusSchema = z.object({
 
 export const TourDocumentSchema = z.object({
   documentId: z.string().min(1),
-  title: z.string().trim().min(1, { error: "Give each PDF a title." }).max(120),
-  url: z.url({ error: "Invalid file link." }),
+  title: z.string().trim().min(1, { error: "יש לתת כותרת לכל קובץ PDF." }).max(120),
+  url: z.url({ error: "קישור הקובץ אינו תקין." }),
   fileName: z.string().max(200),
 });
 
@@ -47,21 +48,21 @@ export const TourDocumentSchema = z.object({
 export const TourInputSchema = z.object({
   slug: z
     .string()
-    .min(1, { error: "Slug is required." })
+    .min(1, { error: "יש למלא כתובת (slug)." })
     .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, {
-      error: "Slug must be lowercase, hyphen-separated (e.g. kosher-tour-to-italy).",
+      error: "הכתובת חייבת להיות באותיות אנגליות קטנות, מופרדות במקפים (למשל kosher-tour-to-italy).",
     }),
-  title: z.string().min(1, { error: "Title is required." }),
-  summary: z.string().min(1, { error: "Summary is required." }),
+  title: z.string().min(1, { error: "יש למלא כותרת." }),
+  summary: z.string().min(1, { error: "יש למלא תקציר." }),
   description: z.string(),
   heroImage: z.string(),
   gallery: z.array(z.string()),
   countries: z
     .array(z.enum(COUNTRIES))
-    .min(1, { error: "Choose at least one country." }),
+    .min(1, { error: "יש לבחור לפחות מדינה אחת." }),
   travelStyle: z.enum(["land", "luxury", "cruise", "seminar"]),
   themeTags: z.array(z.string()),
-  durationDays: z.number().int().min(1, { error: "Duration must be at least 1 day." }),
+  durationDays: z.number().int().min(1, { error: "משך הטיול חייב להיות לפחות יום אחד." }),
   minGroupSize: z.number().int().min(0),
   flightsIncluded: z.boolean(),
   isSpecialOffer: z.boolean().optional(),
@@ -82,7 +83,7 @@ export const TourInputSchema = z.object({
   }),
   kashrutDetails: z.object({
     title: z.string().optional(),
-    supervisionLevel: z.string().min(1, { error: "Supervision level is required." }),
+    supervisionLevel: z.string().min(1, { error: "יש למלא את רמת הכשרות." }),
     patYisrael: KashrutBooleanOrNotGuaranteed,
     chalavYisrael: KashrutBooleanOrNotGuaranteed,
     extraFields: z.array(TourInfoFieldSchema).optional(),

@@ -1,6 +1,13 @@
 import Link from "next/link";
 import BrandLogo from "@/components/marketing/BrandLogo";
 import { telHref } from "@/lib/sitePhone";
+import {
+  DEFAULT_SITE_EMAIL,
+  SITE_ADDRESS,
+  SITE_FACEBOOK_URL,
+  whatsappDisplay,
+  whatsappHref,
+} from "@/lib/siteContact";
 
 // Country names must match lib/countries.ts's COUNTRIES exactly — these
 // deep-link into the homepage's existing country filter (TourFilterProvider).
@@ -29,9 +36,12 @@ const COLUMNS = [
 
 export default function Footer({
   phone,
+  email,
   tours,
 }: {
   phone: string;
+  /** From Admin → Settings; falls back to the site's default inbox. */
+  email?: string;
   /** Top published tours in admin order (see getFooterTours). */
   tours: { slug: string; title: string }[];
 }) {
@@ -56,12 +66,51 @@ export default function Footer({
             <p className="mt-3 text-sm text-[var(--color-slate)]">
               טיולים מאורגנים ברחבי העולם.
             </p>
-            <a
-              href={telHref(phone)}
-              className="mt-4 inline-block text-sm font-semibold text-[var(--color-ice)] transition-colors hover:brightness-110"
-            >
-              {phone}
-            </a>
+            <ul className="mt-4 space-y-1.5 text-sm text-[var(--color-mist)]/80">
+              <li>
+                <span className="text-[var(--color-slate)]">טלפון: </span>
+                <a
+                  href={telHref(phone)}
+                  dir="ltr"
+                  className="font-semibold text-[var(--color-ice)] transition-colors hover:brightness-110"
+                >
+                  {phone}
+                </a>
+              </li>
+              <li>
+                <span className="text-[var(--color-slate)]">וואטסאפ: </span>
+                <a
+                  href={whatsappHref()}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  dir="ltr"
+                  className="transition-colors hover:text-[var(--color-ice)]"
+                >
+                  {whatsappDisplay()}
+                </a>
+              </li>
+              <li>
+                <span className="text-[var(--color-slate)]">דוא&quot;ל: </span>
+                <a
+                  href={`mailto:${email || DEFAULT_SITE_EMAIL}`}
+                  dir="ltr"
+                  className="transition-colors hover:text-[var(--color-ice)]"
+                >
+                  {email || DEFAULT_SITE_EMAIL}
+                </a>
+              </li>
+              <li>{SITE_ADDRESS}</li>
+              <li>
+                <a
+                  href={SITE_FACEBOOK_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="transition-colors hover:text-[var(--color-ice)]"
+                >
+                  פייסבוק
+                </a>
+              </li>
+            </ul>
           </div>
 
           {columns.map((col) => (

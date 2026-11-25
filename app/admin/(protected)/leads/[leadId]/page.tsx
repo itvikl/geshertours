@@ -17,7 +17,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { leadId } = await params;
   const lead = await getLeadByIdAdmin(leadId);
-  return { title: lead ? `Edit — ${lead.name ?? lead.email ?? lead.phone ?? "Lead"}` : "Lead" };
+  return { title: lead ? `עריכה — ${lead.name ?? lead.email ?? lead.phone ?? "פנייה"}` : "פנייה" };
 }
 
 export default async function EditLeadPage({ params }: { params: Promise<{ leadId: string }> }) {
@@ -39,20 +39,20 @@ export default async function EditLeadPage({ params }: { params: Promise<{ leadI
   return (
     <div>
       <Link href="/admin/leads" className="text-sm font-medium text-navy hover:text-navy-light">
-        ← All leads
+        → כל הפניות
       </Link>
       {isAdmin && (
         <div className="mb-4 flex justify-end">
-          <DeleteButton action={deleteLead.bind(null, leadId)} what="this lead" redirectTo="/admin/leads" />
+          <DeleteButton action={deleteLead.bind(null, leadId)} what="את הפנייה הזו" redirectTo="/admin/leads" />
         </div>
       )}
       <div className="mb-6 mt-2">
         <h1 className="text-2xl font-bold tracking-tight text-ink">
-          {lead.name ?? lead.email ?? lead.phone ?? "Lead"}
+          {lead.name ?? lead.email ?? lead.phone ?? "פנייה"}
         </h1>
         <p className="mt-1 text-sm text-ink-muted">
-          {LEAD_SOURCE_LABELS[lead.source]} · received {formatDate(lead.createdAt)}
-          {lead.updatedAt && ` · last edited ${formatDate(lead.updatedAt)}`}
+          {LEAD_SOURCE_LABELS[lead.source]} · התקבלה {formatDate(lead.createdAt)}
+          {lead.updatedAt && ` · נערכה לאחרונה ${formatDate(lead.updatedAt)}`}
         </p>
       </div>
       <LeadForm tours={tours} lead={lead} />

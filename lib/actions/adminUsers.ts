@@ -54,7 +54,7 @@ export async function addAdminAccount(input: unknown): Promise<AddAdminAccountRe
   const { email, role, password } = parsed.data;
 
   if (!assignableRoles(session.role).includes(role)) {
-    return { ok: false, errors: { role: [`You can't give the ${roleLabel(role)} role.`] } };
+    return { ok: false, errors: { role: [`אין לכם הרשאה לתת את התפקיד ${roleLabel(role)}.`] } };
   }
 
   let user: UserRecord | null = null;
@@ -67,10 +67,10 @@ export async function addAdminAccount(input: unknown): Promise<AddAdminAccountRe
   let created = false;
   if (user) {
     if (user.uid === session.uid) {
-      return { ok: false, errors: { email: ["You can't change your own role."] } };
+      return { ok: false, errors: { email: ["אי אפשר לשנות את התפקיד של עצמכם."] } };
     }
     if (!canManageAccount(session.role, user.customClaims?.role)) {
-      return { ok: false, errors: { email: ["Only a developer can change a developer's account."] } };
+      return { ok: false, errors: { email: ["רק מפתח/ת יכול/ה לשנות חשבון של מפתח/ת."] } };
     }
   } else {
     if (!password) {
@@ -93,18 +93,18 @@ export async function changeAccountRole(input: unknown): Promise<AccountActionRe
   const session = await requireAccountManager();
 
   const parsed = ChangeAccountRoleInputSchema.safeParse(input);
-  if (!parsed.success) return { ok: false, error: "Choose a valid role." };
+  if (!parsed.success) return { ok: false, error: "יש לבחור תפקיד תקין." };
   const { uid, role } = parsed.data;
 
-  if (uid === session.uid) return { ok: false, error: "You can't change your own role." };
+  if (uid === session.uid) return { ok: false, error: "אי אפשר לשנות את התפקיד של עצמכם." };
   if (!assignableRoles(session.role).includes(role)) {
-    return { ok: false, error: `You can't give the ${roleLabel(role)} role.` };
+    return { ok: false, error: `אין לכם הרשאה לתת את התפקיד ${roleLabel(role)}.` };
   }
 
   const user = await adminAuth().getUser(uid).catch(() => null);
-  if (!user) return { ok: false, error: "Account not found." };
+  if (!user) return { ok: false, error: "החשבון לא נמצא." };
   if (!canManageAccount(session.role, user.customClaims?.role)) {
-    return { ok: false, error: "Only a developer can change a developer's account." };
+    return { ok: false, error: "רק מפתח/ת יכול/ה לשנות חשבון של מפתח/ת." };
   }
 
   await grantRole(user, role);
@@ -121,14 +121,14 @@ export async function changeAccountRole(input: unknown): Promise<AccountActionRe
 export async function resetAdminTwoFactor(uid: string): Promise<AccountActionResult> {
   const session = await requireAccountManager();
   if (uid === session.uid) {
-    return { ok: false, error: "Ask another super admin or developer to reset your own 2FA." };
+    return { ok: false, error: "בקשו ממנהל/ת על או ממפתח/ת אחר/ת לאפס את האימות הדו-שלבי שלכם." };
   }
 
   const users = await listAdminUsersAdmin();
   const target = users.find((u) => u.uid === uid);
-  if (!target) return { ok: false, error: "Account not found." };
+  if (!target) return { ok: false, error: "החשבון לא נמצא." };
   if (!canManageAccount(session.role, target.role)) {
-    return { ok: false, error: "Only a developer can reset a developer's 2FA." };
+    return { ok: false, error: "רק מפתח/ת יכול/ה לאפס אימות דו-שלבי של מפתח/ת." };
   }
 
   await adminAuth().updateUser(uid, { multiFactor: { enrolledFactors: null } });
@@ -148,14 +148,14 @@ export async function deleteAdminAccount(uid: string): Promise<AccountActionResu
   const session = await requireAccountManager();
 
   if (uid === session.uid) {
-    return { ok: false, error: "You can't delete your own account." };
+    return { ok: false, error: "אי אפשר למחוק את החשבון של עצמכם." };
   }
 
   const users = await listAdminUsersAdmin();
   const target = users.find((u) => u.uid === uid);
-  if (!target) return { ok: false, error: "Account not found." };
+  if (!target) return { ok: false, error: "החשבון לא נמצא." };
   if (!canManageAccount(session.role, target.role)) {
-    return { ok: false, error: "Only a developer can delete a developer's account." };
+    return { ok: false, error: "רק מפתח/ת יכול/ה למחוק חשבון של מפתח/ת." };
   }
 
   try {

@@ -209,8 +209,12 @@ export interface RoomConfiguration {
 
 export interface Traveler {
   travelerId: string;
+  /** Hebrew (or however the traveler writes it). */
   firstName: string;
   lastName: string;
+  /** English, as printed in the passport. Missing on older bookings and some staff-entered ones. */
+  passportFirstName?: string;
+  passportLastName?: string;
   dob?: string;
   passport?: string;
   /** Private Storage path (passport-scans/<uuid>.<ext>) — opened only via the admin passport-scans route. */

@@ -1,15 +1,16 @@
 import * as z from "zod";
+import "@/lib/validation/zodLocale";
 
 /** Mirrors lib/types.ts SeoLandingPage, minus pageId (assigned by the data layer). */
 export const SeoPageInputSchema = z.object({
   slug: z
     .string()
-    .min(1, { error: "Slug is required." })
+    .min(1, { error: "יש למלא כתובת (slug)." })
     .regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, {
-      error: "Slug must be lowercase, hyphen-separated (e.g. kosher-tour-to-italy).",
+      error: "הכתובת חייבת להיות באותיות אנגליות קטנות, מופרדות במקפים (למשל kosher-tour-to-italy).",
     }),
-  title: z.string().min(1, { error: "Title is required." }),
-  body: z.string().min(1, { error: "Body is required." }),
+  title: z.string().min(1, { error: "יש למלא כותרת." }),
+  body: z.string().min(1, { error: "יש למלא תוכן." }),
   tourIds: z.array(z.string()),
   seoTitle: z.string().optional(),
   seoDescription: z.string().optional(),

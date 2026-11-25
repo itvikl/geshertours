@@ -1,64 +1,65 @@
 import * as z from "zod";
+import "@/lib/validation/zodLocale";
 import { placeholdersIn, type CopySection } from "@/lib/siteCopy";
 
 const TrustSignalInputSchema = z.object({
-  title: z.string().min(1, { error: "Required." }),
-  body: z.string().min(1, { error: "Required." }),
+  title: z.string().min(1, { error: "שדה חובה." }),
+  body: z.string().min(1, { error: "שדה חובה." }),
 });
 
 export const SiteContentHomeInputSchema = z.object({
-  heroImage: z.string().min(1, { error: "Choose a hero image." }),
-  heroEyebrow: z.string().min(1, { error: "Required." }),
-  heroTitleLine1: z.string().min(1, { error: "Required." }),
-  heroTitleHighlight: z.string().min(1, { error: "Required." }),
-  heroSubtitle: z.string().min(1, { error: "Required." }),
-  heroPrimaryCta: z.string().min(1, { error: "Required." }),
+  heroImage: z.string().min(1, { error: "יש לבחור תמונה ראשית." }),
+  heroEyebrow: z.string().min(1, { error: "שדה חובה." }),
+  heroTitleLine1: z.string().min(1, { error: "שדה חובה." }),
+  heroTitleHighlight: z.string().min(1, { error: "שדה חובה." }),
+  heroSubtitle: z.string().min(1, { error: "שדה חובה." }),
+  heroPrimaryCta: z.string().min(1, { error: "שדה חובה." }),
   trustSignals: z.tuple([TrustSignalInputSchema, TrustSignalInputSchema, TrustSignalInputSchema]),
-  ctaHeading: z.string().min(1, { error: "Required." }),
-  ctaHeadingHighlight: z.string().min(1, { error: "Required." }),
-  ctaBody: z.string().min(1, { error: "Required." }),
-  ctaPrimaryButton: z.string().min(1, { error: "Required." }),
-  ctaSecondaryButton: z.string().min(1, { error: "Required." }),
+  ctaHeading: z.string().min(1, { error: "שדה חובה." }),
+  ctaHeadingHighlight: z.string().min(1, { error: "שדה חובה." }),
+  ctaBody: z.string().min(1, { error: "שדה חובה." }),
+  ctaPrimaryButton: z.string().min(1, { error: "שדה חובה." }),
+  ctaSecondaryButton: z.string().min(1, { error: "שדה חובה." }),
 });
 
 const SiteContentSectionInputSchema = z.object({
   sectionId: z.string().min(1),
-  heading: z.string().min(1, { error: "Required." }),
-  body: z.string().min(1, { error: "Required." }),
+  heading: z.string().min(1, { error: "שדה חובה." }),
+  body: z.string().min(1, { error: "שדה חובה." }),
 });
 
 export const SiteContentAboutInputSchema = z.object({
   heroImage: z.string().optional(),
-  eyebrow: z.string().min(1, { error: "Required." }),
-  title: z.string().min(1, { error: "Required." }),
-  lede: z.string().min(1, { error: "Required." }),
-  sections: z.array(SiteContentSectionInputSchema).min(1, { error: "Add at least one section." }),
+  eyebrow: z.string().min(1, { error: "שדה חובה." }),
+  title: z.string().min(1, { error: "שדה חובה." }),
+  lede: z.string().min(1, { error: "שדה חובה." }),
+  sections: z.array(SiteContentSectionInputSchema).min(1, { error: "יש להוסיף לפחות מקטע אחד." }),
 });
 
 export const SiteContentSimplePageInputSchema = z.object({
   heroImage: z.string().optional(),
   eyebrow: z.string().optional(),
-  title: z.string().min(1, { error: "Required." }),
+  title: z.string().min(1, { error: "שדה חובה." }),
   lede: z.string().optional(),
 });
 
 const SiteContentFaqItemInputSchema = z.object({
   itemId: z.string().min(1),
-  question: z.string().min(1, { error: "Required." }),
-  answer: z.string().min(1, { error: "Required." }),
+  question: z.string().min(1, { error: "שדה חובה." }),
+  answer: z.string().min(1, { error: "שדה חובה." }),
 });
 
 export const SiteContentFaqInputSchema = z.object({
   heroImage: z.string().optional(),
-  title: z.string().min(1, { error: "Required." }),
+  title: z.string().min(1, { error: "שדה חובה." }),
   lede: z.string().optional(),
-  items: z.array(SiteContentFaqItemInputSchema).min(1, { error: "Add at least one question." }),
+  items: z.array(SiteContentFaqItemInputSchema).min(1, { error: "יש להוסיף לפחות שאלה אחת." }),
 });
 
 export const SiteContentContactInputSchema = z.object({
   heroImage: z.string().optional(),
-  title: z.string().min(1, { error: "Required." }),
-  lede: z.string().min(1, { error: "Required." }),
+  title: z.string().min(1, { error: "שדה חובה." }),
+  lede: z.string().min(1, { error: "שדה חובה." }),
 });
 
 /** Builds the schema for a CopyContentForm page from its field list. A mistyped {placeholder} is rejected here because visitors would otherwise see it literally. */
@@ -70,13 +71,13 @@ export function copyInputSchema(sections: CopySection[]) {
       continue;
     }
     const allowed = field.placeholders ?? [];
-    const base = field.optional ? z.string().trim() : z.string().trim().min(1, { error: "Required." });
+    const base = field.optional ? z.string().trim() : z.string().trim().min(1, { error: "שדה חובה." });
     shape[field.key] = base.refine(
       (value) => placeholdersIn(value).every((name) => allowed.includes(name)),
       {
         error: allowed.length
-          ? `Only ${allowed.map((name) => `{${name}}`).join(", ")} can be used in curly brackets here.`
-          : "Curly brackets can't be used in this field.",
+          ? `בסוגריים מסולסלים אפשר להשתמש כאן רק ב-${allowed.map((name) => `{${name}}`).join(", ")}.`
+          : "אי אפשר להשתמש בסוגריים מסולסלים בשדה הזה.",
       }
     );
   }
@@ -85,6 +86,6 @@ export function copyInputSchema(sections: CopySection[]) {
 
 export const SiteContentLegalInputSchema = z.object({
   heroImage: z.string().optional(),
-  title: z.string().min(1, { error: "Required." }),
-  body: z.string().min(1, { error: "Required." }),
+  title: z.string().min(1, { error: "שדה חובה." }),
+  body: z.string().min(1, { error: "שדה חובה." }),
 });

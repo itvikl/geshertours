@@ -7,9 +7,9 @@ type Point = { x: number; y: number };
 
 // The shapes tour photos are cropped to on the public site, so the editor sees what a pick really does.
 const PREVIEWS = [
-  { label: "Home card", box: "h-32 w-32" },
-  { label: "Tour banner", box: "h-28 w-44" },
-  { label: "Side tile", box: "h-16 w-44" },
+  { label: "כרטיס בדף הבית", box: "h-32 w-32" },
+  { label: "באנר הטיול", box: "h-28 w-44" },
+  { label: "אריח צדדי", box: "h-16 w-44" },
 ];
 
 /**
@@ -63,17 +63,17 @@ export default function ImageFocusDialog({
     <div
       role="dialog"
       aria-modal="true"
-      aria-label="Choose the important part of the photo"
+      aria-label="בחירת החלק החשוב בתמונה"
       className="fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto bg-black/60 p-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
       <div className="w-full max-w-3xl rounded-2xl bg-white p-5 shadow-2xl">
-        <h2 className="text-base font-bold text-ink">Choose the important part of the photo</h2>
+        <h2 className="text-base font-bold text-ink">בחירת החלק החשוב בתמונה</h2>
         <p className="mt-1 text-sm text-ink-muted">
-          Click or drag on the photo to mark what must stay in view, such as a face, a building&apos;s top or the
-          horizon. The photo is cropped around that spot wherever it is shown.
+          לחצו או גררו על התמונה כדי לסמן מה חייב להישאר בתמונה, כמו פנים, ראש של בניין או
+          קו האופק. בכל מקום שהתמונה מוצגת, היא נחתכת סביב הנקודה הזו.
         </p>
 
         <div className="mt-4 flex flex-col gap-5 md:flex-row">
@@ -106,12 +106,12 @@ export default function ImageFocusDialog({
               </span>
             </div>
             <p className="mt-2 text-center text-xs text-ink-muted">
-              {value ? `Focus set (${position})` : "Not set — the photo is cropped around its center"}
+              {value ? `נקבע מוקד (${position})` : "לא נקבע — התמונה נחתכת סביב המרכז"}
             </p>
           </div>
 
           <div className="shrink-0 space-y-3">
-            <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">How it will look</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">איך זה ייראה</p>
             {PREVIEWS.map((preview) => (
               <div key={preview.label}>
                 <div className={`overflow-hidden rounded-lg bg-black ${preview.box}`}>
@@ -137,7 +137,7 @@ export default function ImageFocusDialog({
             disabled={!value}
             className="rounded-lg border border-line px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-sand-warm disabled:opacity-40"
           >
-            Reset to center
+            חזרה למרכז
           </button>
           <button
             ref={doneButton}
@@ -145,7 +145,7 @@ export default function ImageFocusDialog({
             onClick={onClose}
             className="rounded-lg bg-navy px-5 py-2 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
           >
-            Done
+            סיום
           </button>
         </div>
       </div>

@@ -18,12 +18,12 @@ export default function ReviewStatusButtons({ review }: { review: Review }) {
         await setReviewStatus(review.reviewId, status);
         toast.success(
           status === "approved"
-            ? { title: "Review approved", description: `${review.customerName}'s review is now visible on the site.` }
-            : { title: "Review rejected", description: `${review.customerName}'s review was hidden from the site.` }
+            ? { title: "ההמלצה אושרה", description: `ההמלצה של ${review.customerName} מוצגת עכשיו באתר.` }
+            : { title: "ההמלצה נדחתה", description: `ההמלצה של ${review.customerName} הוסתרה מהאתר.` }
         );
         router.refresh();
       } catch {
-        toast.error({ title: "Couldn't update review", description: "Something went wrong — please try again." });
+        toast.error({ title: "עדכון ההמלצה נכשל", description: "משהו השתבש — נסו שוב." });
       }
     });
   }
@@ -33,7 +33,7 @@ export default function ReviewStatusButtons({ review }: { review: Review }) {
       {review.status !== "approved" && (
         <IconButton
           icon="check"
-          label="Approve (show on site)"
+          label="אישור (הצגה באתר)"
           tone="success"
           disabled={pending}
           onClick={() => change("approved")}
@@ -42,7 +42,7 @@ export default function ReviewStatusButtons({ review }: { review: Review }) {
       {review.status !== "rejected" && (
         <IconButton
           icon="x"
-          label="Reject (hide from site)"
+          label="דחייה (הסתרה מהאתר)"
           tone="danger"
           disabled={pending}
           onClick={() => change("rejected")}

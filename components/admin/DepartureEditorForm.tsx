@@ -78,21 +78,21 @@ export default function DepartureEditorForm({
       result = await saveDeparture(draft, tourId, departureId);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
     if (!result.ok) {
       setErrors(result.errors);
       setSaving(false);
-      toast.error({ title: "Departure not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "מועד היציאה לא נשמר", description: "תקנו את השדות המסומנים ונסו שוב." });
       return;
     }
 
     markSaved(draft);
     toast.success(
       mode === "create"
-        ? { title: "Departure created", description: `${draft.startDate} was added to ${tour.title}.` }
-        : { title: "Departure saved", description: "Your changes were saved successfully." }
+        ? { title: "מועד היציאה נוצר", description: `${draft.startDate} נוסף לטיול ${tour.title}.` }
+        : { title: "מועד היציאה נשמר", description: "השינויים נשמרו בהצלחה." }
     );
 
     if (result.balancePaymentLinks.length > 0) {
@@ -112,20 +112,21 @@ export default function DepartureEditorForm({
       <div className="max-w-xl space-y-4">
         <div className="rounded-xl border border-terracotta/30 bg-terracotta/10 p-4">
           <p className="font-semibold text-ink">
-            This departure is now guaranteed — {balancePaymentLinks.length} customer
-            {balancePaymentLinks.length === 1 ? "" : "s"} who already paid something still owe a
-            balance.
+            מועד היציאה מובטח עכשיו —{" "}
+            {balancePaymentLinks.length === 1
+              ? "לקוח אחד ששילם כבר חלק עדיין חייב יתרה."
+              : `${balancePaymentLinks.length} לקוחות ששילמו כבר חלק עדיין חייבים יתרה.`}
           </p>
           <p className="mt-1 text-sm text-ink-muted">
-            There&apos;s no automatic email yet — send these links manually (phone, WhatsApp, or
-            your own email) until that&apos;s set up.
+            עדיין אין מייל אוטומטי — שלחו את הקישורים ידנית (בטלפון, בוואטסאפ או
+            במייל שלכם) עד שזה יוגדר.
           </p>
         </div>
         <div className="space-y-3">
           {balancePaymentLinks.map((link) => (
             <div key={link.bookingId} className="rounded-xl border border-line bg-white p-4">
               <p className="text-sm font-semibold text-ink">
-                {link.contactName} · ${link.balanceAmount} balance due
+                {link.contactName} · יתרה לתשלום: ${link.balanceAmount}
               </p>
               <div className="mt-2 flex items-center gap-2">
                 <input
@@ -138,13 +139,13 @@ export default function DepartureEditorForm({
                   type="button"
                   onClick={() =>
                     navigator.clipboard.writeText(link.url).then(
-                      () => toast.success({ title: "Link copied", description: `Payment link for ${link.contactName} is on your clipboard.` }),
-                      () => toast.error("Couldn't copy — select the link and copy it manually.")
+                      () => toast.success({ title: "הקישור הועתק", description: `קישור התשלום של ${link.contactName} הועתק.` }),
+                      () => toast.error("ההעתקה נכשלה — סמנו את הקישור והעתיקו ידנית.")
                     )
                   }
                   className="shrink-0 rounded-lg border border-line px-3 py-1.5 text-xs font-semibold text-ink transition-colors hover:bg-sand-warm"
                 >
-                  Copy
+                  העתקה
                 </button>
               </div>
             </div>
@@ -155,7 +156,7 @@ export default function DepartureEditorForm({
           onClick={() => navigate(`/admin/tours/${tourId}/departures`, { skipConfirm: true })}
           className="rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
         >
-          Done
+          סיום
         </button>
       </div>
     );
@@ -166,21 +167,21 @@ export default function DepartureEditorForm({
       {initialDeparture && (
         <div className="rounded-xl border border-line bg-sand-warm p-4 text-sm text-ink">
           <p>
-            <span className="font-semibold">{initialDeparture.capacityBooked}</span> booked ·{" "}
-            <span className="font-semibold">{initialDeparture.capacityHeld}</span> held ·{" "}
-            <span className="font-semibold">{availableSeats(initialDeparture)}</span> available out of{" "}
+            <span className="font-semibold">{initialDeparture.capacityBooked}</span> רשומים ·{" "}
+            <span className="font-semibold">{initialDeparture.capacityHeld}</span> שמורים ·{" "}
+            <span className="font-semibold">{availableSeats(initialDeparture)}</span> פנויים מתוך{" "}
             {initialDeparture.capacityTotal}
           </p>
           <p className="mt-1 text-xs text-ink-muted">
-            Balance due date: {initialDeparture.balanceDueDate} (computed from the start date and the
-            tour&apos;s balance-due policy — {tour.pricing.balanceDueDaysBeforeDeparture} days).
+            מועד תשלום היתרה: {initialDeparture.balanceDueDate} (מחושב לפי תאריך היציאה ומדיניות
+            הטיול — {tour.pricing.balanceDueDaysBeforeDeparture} ימים לפני).
           </p>
         </div>
       )}
 
       <div className="space-y-4 rounded-xl border border-line bg-white p-6">
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Start date" required error={errors.startDate}>
+          <Field label="תאריך התחלה" required error={errors.startDate}>
             <input
               type="date"
               value={draft.startDate}
@@ -192,7 +193,7 @@ export default function DepartureEditorForm({
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             />
           </Field>
-          <Field label="End date" required error={errors.endDate}>
+          <Field label="תאריך סיום" required error={errors.endDate}>
             <input
               type="date"
               value={draft.endDate}
@@ -203,7 +204,7 @@ export default function DepartureEditorForm({
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Maximum capacity" required error={errors.capacityTotal}>
+          <Field label="מספר מקומות מרבי" required error={errors.capacityTotal}>
             <input
               type="number"
               min={0}
@@ -212,42 +213,42 @@ export default function DepartureEditorForm({
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             />
           </Field>
-          <Field label="Status" error={errors.status}>
+          <Field label="סטטוס" error={errors.status}>
             <select
               value={draft.status}
               onChange={(e) => set("status", e.target.value as DepartureStatus)}
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             >
-              <option value="open">Open</option>
-              <option value="closed">Closed</option>
-              <option value="soldout">Sold out</option>
-              <option value="cancelled">Cancelled</option>
+              <option value="open">פתוח להרשמה</option>
+              <option value="closed">סגור</option>
+              <option value="soldout">מלא</option>
+              <option value="cancelled">בוטל</option>
             </select>
           </Field>
         </div>
 
         <Field
-          label="Booking assurance"
-          hint="Shown to customers on the booking page — a manual editorial call, independent of the actual minimum-group-size numbers. Flipping to Guaranteed will surface payment links for anyone who already paid something on this date."
+          label="סטטוס היציאה"
+          hint="מוצג ללקוחות בדף ההרשמה — החלטה ידנית, שאינה תלויה במספרי המינימום בפועל. מעבר ל״מובטחת״ יציג קישורי תשלום לכל מי ששילם כבר חלק במועד הזה."
         >
           <select
             value={draft.bookingAssurance}
             onChange={(e) => set("bookingAssurance", e.target.value as BookingAssurance)}
             className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
           >
-            <option value="conditional">Conditional — requires minimum group size</option>
-            <option value="guaranteed">Guaranteed to run</option>
+            <option value="conditional">מותנית — דורשת מינימום משתתפים</option>
+            <option value="guaranteed">יציאה מובטחת</option>
           </select>
         </Field>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Guide">
+          <Field label="מדריך/ה">
             <select
               value={draft.guideId ?? ""}
               onChange={(e) => set("guideId", e.target.value || undefined)}
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             >
-              <option value="">— None —</option>
+              <option value="">— ללא —</option>
               {guides.map((g) => (
                 <option key={g.staffId} value={g.staffId}>
                   {g.name}
@@ -255,13 +256,13 @@ export default function DepartureEditorForm({
               ))}
             </select>
           </Field>
-          <Field label="Kashrut supervisor">
+          <Field label="משגיח/ת כשרות">
             <select
               value={draft.kashrutSupervisorId ?? ""}
               onChange={(e) => set("kashrutSupervisorId", e.target.value || undefined)}
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             >
-              <option value="">— None —</option>
+              <option value="">— ללא —</option>
               {kashrutSupervisors.map((s) => (
                 <option key={s.staffId} value={s.staffId}>
                   {s.name}
@@ -279,9 +280,9 @@ export default function DepartureEditorForm({
             className="mt-0.5"
           />
           <span>
-            Minimum group size met
+            הגענו למינימום המשתתפים
             <span className="block text-xs text-ink-muted">
-              Internal only — never shown to customers.
+              פנימי בלבד — לא מוצג ללקוחות.
             </span>
           </span>
         </label>
@@ -293,7 +294,7 @@ export default function DepartureEditorForm({
         onClick={handleSave}
         className="rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light disabled:opacity-60"
       >
-        {saving ? "Saving…" : mode === "create" ? "Create departure" : "Save changes"}
+        {saving ? "שומר…" : mode === "create" ? "יצירת מועד יציאה" : "שמירת שינויים"}
       </button>
     </div>
   );

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { DEPARTURE_STATUS_LABELS } from "@/lib/adminLabels";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTourByIdAdmin } from "@/lib/data/admin/tours";
@@ -15,7 +16,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { tourId } = await params;
   const tour = await getTourByIdAdmin(tourId);
-  return { title: tour ? `Departures — ${tour.title}` : "Departures" };
+  return { title: tour ? `מועדי יציאה — ${tour.title}` : "מועדי יציאה" };
 }
 
 export default async function TourDeparturesPage({
@@ -42,33 +43,33 @@ export default async function TourDeparturesPage({
       </p>
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">Departures</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">מועדי יציאה</h1>
           <p className="mt-1 text-sm text-ink-muted">
-            {departures.length} departure{departures.length === 1 ? "" : "s"}
+            {departures.length === 1 ? "מועד אחד" : `${departures.length} מועדים`}
           </p>
         </div>
         <Link
           href={`/admin/tours/${tourId}/departures/new`}
           className="shrink-0 rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
         >
-          + New departure
+          + מועד יציאה חדש
         </Link>
       </div>
 
       {departures.length === 0 ? (
         <p className="rounded-xl border border-dashed border-line bg-white p-10 text-center text-ink-muted">
-          No departures yet. Add one so this tour can be booked.
+          עדיין אין מועדי יציאה. הוסיפו מועד כדי שאפשר יהיה להירשם לטיול.
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[760px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
-                <th className="px-4 py-3">Dates</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Capacity</th>
-                <th className="px-4 py-3">Guide</th>
-                <th className="px-4 py-3">Kashrut supervisor</th>
+                <th className="px-4 py-3">תאריכים</th>
+                <th className="px-4 py-3">סטטוס</th>
+                <th className="px-4 py-3">מקומות</th>
+                <th className="px-4 py-3">מדריך/ה</th>
+                <th className="px-4 py-3">משגיח/ת כשרות</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -94,7 +95,7 @@ export default async function TourDeparturesPage({
                   </td>
                   <td className="px-4 py-3 text-ink-muted">
                     {departure.capacityBooked}/{departure.capacityTotal} ·{" "}
-                    {availableSeats(departure)} left
+                    נותרו {availableSeats(departure)}
                   </td>
                   <td className="px-4 py-3 text-ink-muted">
                     {departure.guideId ? (staffById.get(departure.guideId)?.name ?? "—") : "—"}
@@ -106,7 +107,7 @@ export default async function TourDeparturesPage({
                   </td>
                   <td className="px-4 py-3 text-end">
                     <div className="flex justify-end gap-3">
-                      <IconLink href={`/admin/tours/${tourId}/departures/${departure.departureId}`} icon="edit" label="Edit" />
+                      <IconLink href={`/admin/tours/${tourId}/departures/${departure.departureId}`} icon="edit" label="עריכה" />
                       {departure.status !== "cancelled" && (
                         <CancelDepartureButton
                           departureId={departure.departureId}
@@ -136,9 +137,9 @@ const STATUS_STYLES: Record<Departure["status"], string> = {
 function StatusBadge({ status }: { status: Departure["status"] }) {
   return (
     <span
-      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${STATUS_STYLES[status]}`}
+      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLES[status]}`}
     >
-      {status}
+      {DEPARTURE_STATUS_LABELS[status]}
     </span>
   );
 }

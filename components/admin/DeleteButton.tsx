@@ -28,22 +28,22 @@ export default function DeleteButton({
 
   async function handleDelete() {
     const ok = await confirm({
-      title: `Delete ${what} permanently?`,
-      description: "This can't be undone.",
-      confirmLabel: "Delete",
+      title: `למחוק ${what} לצמיתות?`,
+      description: "אי אפשר לבטל את הפעולה.",
+      confirmLabel: "מחיקה",
       tone: "danger",
     });
     if (!ok) return;
     setDeleting(true);
     const result = await action().catch(
-      (): DeleteResult => ({ ok: false, error: "Couldn't delete — try again." })
+      (): DeleteResult => ({ ok: false, error: "המחיקה נכשלה — נסו שוב." })
     );
     if (!result.ok) {
-      toast.error({ title: "Couldn't delete", description: result.error });
+      toast.error({ title: "המחיקה נכשלה", description: result.error });
       setDeleting(false);
       return;
     }
-    toast.success({ title: "Deleted", description: `${what.charAt(0).toUpperCase()}${what.slice(1)} was deleted.` });
+    toast.success({ title: "נמחק", description: "הפריט נמחק." });
     router.push(redirectTo);
     router.refresh();
   }
@@ -56,7 +56,7 @@ export default function DeleteButton({
       className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-semibold text-terracotta-dark transition-colors hover:bg-terracotta/5 disabled:opacity-60"
     >
       <AdminIcon name="trash" className="h-4 w-4" />
-      {deleting ? "Deleting…" : "Delete"}
+      {deleting ? "מוחק…" : "מחיקה"}
     </button>
   );
 }

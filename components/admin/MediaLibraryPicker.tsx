@@ -33,17 +33,17 @@ export default function MediaLibraryPicker({
       <div
         role="dialog"
         aria-modal="true"
-        aria-label="Image library"
+        aria-label="ספריית תמונות"
         className="flex h-[85vh] w-full max-w-5xl flex-col overflow-hidden rounded-xl bg-white shadow-xl"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between border-b border-line px-5 py-4">
-          <h2 className="text-lg font-bold text-ink">Image library</h2>
+          <h2 className="text-lg font-bold text-ink">ספריית תמונות</h2>
           <button
             type="button"
             onClick={onClose}
             className="text-sm font-medium text-ink-muted hover:text-ink"
-            aria-label="Close"
+            aria-label="סגירה"
           >
             ✕
           </button>

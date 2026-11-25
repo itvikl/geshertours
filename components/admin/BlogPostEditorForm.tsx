@@ -74,7 +74,7 @@ export default function BlogPostEditorForm({
     try {
       setPreview({ bodyHtml: await previewBlogBody(draft.body) });
     } catch {
-      toast.error({ title: "Preview failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "התצוגה המקדימה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
     } finally {
       setPreviewLoading(false);
     }
@@ -95,14 +95,14 @@ export default function BlogPostEditorForm({
       result = await saveBlogPost(payload, savedPostId);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
 
     if (!result.ok) {
       setErrors(result.errors);
       setSaving(false);
-      toast.error({ title: "Post not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "הפוסט לא נשמר", description: "תקנו את השדות המסומנים ונסו שוב." });
       return;
     }
 
@@ -115,23 +115,23 @@ export default function BlogPostEditorForm({
     setSaving(false);
     toast.success(
       status === "published"
-        ? { title: "Post published", description: "Your changes are now live on the site." }
-        : { title: "Draft saved", description: "The post was saved as a draft." }
+        ? { title: "הפוסט פורסם", description: "השינויים מוצגים עכשיו באתר." }
+        : { title: "הטיוטה נשמרה", description: "הפוסט נשמר כטיוטה." }
     );
   }
 
   return (
     <div className="max-w-2xl space-y-6">
-      <Section title="Post">
+      <Section title="הפוסט">
         <div className="space-y-4">
-          <Field label="Title" required error={errors.title}>
+          <Field label="כותרת" required error={errors.title}>
             <input
               value={draft.title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             />
           </Field>
-          <Field label="Slug" required hint="/blog/…" error={errors.slug}>
+          <Field label="כתובת (slug)" required hint="/blog/… · באנגלית" error={errors.slug}>
             <input
               value={draft.slug}
               onChange={(e) => {
@@ -142,17 +142,17 @@ export default function BlogPostEditorForm({
             />
           </Field>
           <Field
-            label="Body"
+            label="תוכן"
             required
-            hint="Paste from Word or Google Docs to keep headings, bold, lists and links. Add pictures with the Image button."
+            hint="הדביקו מ-Word או מ-Google Docs כדי לשמור כותרות, הדגשות, רשימות וקישורים. הוסיפו תמונות בכפתור ״תמונה״."
             error={errors.body}
           >
             <RichTextEditor value={draft.body} onChange={(html) => set("body", html)} />
           </Field>
-          <Field label="Hero image">
+          <Field label="תמונה ראשית">
             <ImageField folder="blog" value={draft.heroImage} onChange={(url) => set("heroImage", url)} />
           </Field>
-          <Field label="Tags" hint="One per line">
+          <Field label="תגיות" hint="תגית בכל שורה">
             <textarea
               value={draft.tags.join("\n")}
               onChange={(e) => set("tags", e.target.value.split("\n"))}
@@ -165,14 +165,14 @@ export default function BlogPostEditorForm({
 
       <Section title="SEO">
         <div className="space-y-4">
-          <Field label="SEO title">
+          <Field label="כותרת SEO">
             <input
               value={draft.seoTitle ?? ""}
               onChange={(e) => set("seoTitle", e.target.value || undefined)}
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             />
           </Field>
-          <Field label="SEO description">
+          <Field label="תיאור SEO">
             <textarea
               value={draft.seoDescription ?? ""}
               onChange={(e) => set("seoDescription", e.target.value || undefined)}
@@ -183,10 +183,10 @@ export default function BlogPostEditorForm({
         </div>
       </Section>
 
-      <Section title="Publishing">
+      <Section title="פרסום">
         <Field
-          label="Publish date"
-          hint="Shown on the post and used to order the blog. Leave empty to use the day you publish."
+          label="תאריך פרסום"
+          hint="מוצג בפוסט וקובע את הסדר בבלוג. השאירו ריק כדי להשתמש ביום הפרסום."
           error={errors.publishedAt}
         >
           <div className="flex items-center gap-2">
@@ -202,7 +202,7 @@ export default function BlogPostEditorForm({
                 onClick={() => set("publishedAt", undefined)}
                 className="text-sm font-medium text-ink-muted underline-offset-2 hover:underline"
               >
-                Clear
+                ניקוי
               </button>
             )}
           </div>
@@ -216,7 +216,7 @@ export default function BlogPostEditorForm({
           onClick={openPreview}
           className="rounded-lg border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-sand-warm disabled:opacity-60"
         >
-          {previewLoading ? "Opening preview…" : "Preview"}
+          {previewLoading ? "פותח תצוגה מקדימה…" : "תצוגה מקדימה"}
         </button>
         <button
           type="button"
@@ -224,7 +224,7 @@ export default function BlogPostEditorForm({
           onClick={() => handleSave("draft")}
           className="rounded-lg border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-sand-warm disabled:opacity-60"
         >
-          Save draft
+          שמירת טיוטה
         </button>
         <button
           type="button"
@@ -232,7 +232,7 @@ export default function BlogPostEditorForm({
           onClick={() => handleSave("published")}
           className="rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light disabled:opacity-60"
         >
-          Publish
+          פרסום
         </button>
         {isDirty && <span className="self-center"><UnsavedIndicator /></span>}
       </div>
@@ -272,21 +272,21 @@ function PostPreview({ post, bodyHtml, onClose }: { post: BlogPost; bodyHtml: st
   }, [onClose]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex flex-col bg-[var(--color-glacier)]" role="dialog" aria-modal aria-label="Post preview">
+    <div className="fixed inset-0 z-[100] flex flex-col bg-[var(--color-glacier)]" role="dialog" aria-modal aria-label="תצוגה מקדימה של הפוסט">
       <div className="flex items-center justify-between gap-3 border-b border-line bg-white px-4 py-2.5">
         <p className="text-sm font-semibold text-ink">
-          Preview <span className="font-normal text-ink-muted">— unsaved changes included; not visible to visitors. Hover a link to see its address.</span>
+          תצוגה מקדימה <span className="font-normal text-ink-muted">— כולל שינויים שלא נשמרו; לא גלוי למבקרים. העבירו את העכבר על קישור כדי לראות את הכתובת.</span>
         </p>
         <button
           type="button"
           onClick={onClose}
           className="rounded-lg bg-navy px-4 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
         >
-          Close preview
+          סגירת התצוגה המקדימה
         </button>
       </div>
       <div className="flex-1 overflow-y-auto text-[var(--color-mist)]">
-        <BlogPostView post={post} bodyHtml={bodyHtml} backLabel="Back to blog" />
+        <BlogPostView post={post} bodyHtml={bodyHtml} backLabel="חזרה לבלוג" />
       </div>
     </div>
   );

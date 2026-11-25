@@ -16,7 +16,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { departureId } = await params;
   const departure = await getDepartureByIdAdmin(departureId);
-  return { title: departure ? `Departure — ${departure.startDate}` : "Departure" };
+  return { title: departure ? `מועד יציאה — ${departure.startDate}` : "מועד יציאה" };
 }
 
 export default async function EditDeparturePage({
@@ -37,12 +37,12 @@ export default async function EditDeparturePage({
     <div>
       {isAdmin && (
         <div className="mb-4 flex justify-end">
-          <DeleteButton action={deleteDeparture.bind(null, departureId, tourId)} what="this departure date" redirectTo={`/admin/tours/${tourId}/departures`} />
+          <DeleteButton action={deleteDeparture.bind(null, departureId, tourId)} what="את מועד היציאה הזה" redirectTo={`/admin/tours/${tourId}/departures`} />
         </div>
       )}
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight text-ink">
-          Edit departure — {tour.title}
+          עריכת מועד יציאה — {tour.title}
         </h1>
       </div>
       <DepartureEditorForm

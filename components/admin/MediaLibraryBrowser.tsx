@@ -12,6 +12,7 @@ import {
   setImagesCategory,
 } from "@/lib/actions/mediaLibrary";
 import { uploadImage } from "@/lib/actions/uploads";
+import { countryLabel } from "@/lib/countryNames";
 import { useConfirm, useToast } from "@/components/admin/feedback/AdminFeedbackProvider";
 import type {
   MediaCategory,
@@ -68,7 +69,7 @@ export default function MediaLibraryBrowser({
       setCategoryList(await listMediaCategories());
       setLoadError(null);
     } catch {
-      setLoadError("Couldn't load the image library.");
+      setLoadError("לא הצלחנו לטעון את ספריית התמונות.");
     }
   }, []);
 
@@ -88,7 +89,7 @@ export default function MediaLibraryBrowser({
           next = page.nextCursor;
         } while (untilEnd && next);
       } catch {
-        setLoadError("Couldn't load images.");
+        setLoadError("לא הצלחנו לטעון את התמונות.");
       } finally {
         setPageLoading(false);
       }
@@ -127,7 +128,7 @@ export default function MediaLibraryBrowser({
   useEffect(() => {
     listMediaCategories()
       .then(setCategoryList)
-      .catch(() => setLoadError("Couldn't load the image library."));
+      .catch(() => setLoadError("לא הצלחנו לטעון את ספריית התמונות."));
   }, []);
 
   // Next page when the end of the grid scrolls into view.
@@ -144,7 +145,11 @@ export default function MediaLibraryBrowser({
     return () => observer.disconnect();
   }, [scope, nextCursor, pageLoading, loadPage]);
 
-  const categories = useMemo(() => categoryList?.categories ?? [], [categoryList]);
+  const categories = useMemo(
+    () =>
+      (categoryList?.categories ?? []).map((c) => (c.kind === "country" ? { ...c, name: countryLabel(c.name) } : c)),
+    [categoryList]
+  );
   const categoryById = useMemo(() => new Map(categories.map((c) => [c.id, c])), [categories]);
   const current = categoryId ? categoryById.get(categoryId) : undefined;
 
@@ -182,12 +187,12 @@ export default function MediaLibraryBrowser({
       const error = await task();
       if (error) toast.error(error);
     } catch {
-      toast.error({ title: "Something went wrong", description: "Please try again." });
+      toast.error({ title: "משהו השתבש", description: "נסו שוב." });
     }
     setBusy(false);
   }
 
-  const plural = (n: number) => `${n} image${n === 1 ? "" : "s"}`;
+  const plural = (n: number) => (n === 1 ? "תמונה אחת" : `${n} תמונות`);
 
   const showFolders = scope === null;
   const canAssignHere = Boolean(current);
@@ -202,41 +207,41 @@ export default function MediaLibraryBrowser({
             onClick={() => openCategory(null)}
             className="text-sm font-medium text-navy hover:text-navy-light"
           >
-            ← All categories
+            → כל הקטגוריות
           </button>
         ) : null}
         <h3 className="text-base font-bold text-ink">
           {categoryId === null
-            ? "Categories"
+            ? "קטגוריות"
             : categoryId === ALL
-              ? "All images"
+              ? "כל התמונות"
               : categoryId === UNCATEGORIZED
-                ? "Uncategorized"
-                : (current?.name ?? "Category")}
+                ? "ללא קטגוריה"
+                : (current?.name ?? "קטגוריה")}
         </h3>
         {current?.kind === "country" && (
           <span className="rounded-full bg-sand-warm px-2 py-0.5 text-xs font-semibold text-ink-muted">
-            Country · tour photos added automatically
+            מדינה · תמונות של טיולים נוספות אוטומטית
           </span>
         )}
         <input
           type="search"
           value={query}
           onChange={(e) => changeQuery(e.target.value)}
-          placeholder={categoryId === null ? "Search all images…" : "Search in this category…"}
+          placeholder={categoryId === null ? "חיפוש בכל התמונות…" : "חיפוש בקטגוריה הזו…"}
           className="min-w-44 flex-1 rounded-lg border border-line px-3 py-2 text-sm text-ink outline-none focus:border-navy"
         />
         {categoryId !== null && (
           <UploadIntoCategory
             disabled={busy}
-            label={canAssignHere ? `Upload to ${current?.name}` : "Upload images"}
+            label={canAssignHere ? `העלאה ל${current?.name}` : "העלאת תמונות"}
             onUploaded={(urls) =>
               run(async () => {
                 if (current) await setImagesCategory(urls, current.id, true);
                 await reload();
                 toast.success({
-                  title: "Upload complete",
-                  description: current ? `${plural(urls.length)} added to ${current.name}.` : `${plural(urls.length)} uploaded.`,
+                  title: "ההעלאה הסתיימה",
+                  description: current ? `${plural(urls.length)} נוספו ל${current.name}.` : `הועלו ${plural(urls.length)}.`,
                 });
                 if (mode === "pick") {
                   if (!multiple) onPick?.(urls.slice(0, 1));
@@ -255,7 +260,7 @@ export default function MediaLibraryBrowser({
                 const result = await renameMediaCategory(current.id, name);
                 if (!result.ok) return result.error;
                 await reload();
-                toast.success(`Category renamed to "${name}"`);
+                toast.success(`שם הקטגוריה שונה ל״${name}״`);
               })
             }
             onDelete={() =>
@@ -263,7 +268,7 @@ export default function MediaLibraryBrowser({
                 await deleteMediaCategory(current.id);
                 openCategory(null);
                 await reload();
-                toast.success({ title: "Category deleted", description: `"${current.name}" was removed. Its images stay in the library.` });
+                toast.success({ title: "הקטגוריה נמחקה", description: `״${current.name}״ הוסרה. התמונות שלה נשארות בספרייה.` });
               })
             }
           />
@@ -273,7 +278,7 @@ export default function MediaLibraryBrowser({
       <div className="min-h-0 flex-1 overflow-y-auto p-5">
         {loadError && <p className="text-sm font-medium text-terracotta-dark">{loadError}</p>}
         {!loadError && categoryList === null && (
-          <p className="text-sm text-ink-muted">Loading images…</p>
+          <p className="text-sm text-ink-muted">טוען תמונות…</p>
         )}
 
         {categoryList !== null && showFolders && (
@@ -287,7 +292,7 @@ export default function MediaLibraryBrowser({
                 const result = await createMediaCategory(name);
                 if (!result.ok) return result.error;
                 await reload();
-                toast.success(`Category "${name}" created`);
+                toast.success(`הקטגוריה ״${name}״ נוצרה`);
               })
             }
             disabled={busy}
@@ -299,8 +304,8 @@ export default function MediaLibraryBrowser({
             {visible.length === 0 && !pageLoading && !nextCursor && (
               <p className="text-sm text-ink-muted">
                 {query.trim()
-                  ? "No images match."
-                  : "No images in this category yet — upload some, or add existing ones from another category."}
+                  ? "אין תמונות מתאימות."
+                  : "עדיין אין תמונות בקטגוריה — העלו תמונות, או הוסיפו תמונות קיימות מקטגוריה אחרת."}
               </p>
             )}
             <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
@@ -315,7 +320,7 @@ export default function MediaLibraryBrowser({
               ))}
             </ul>
             <div ref={sentinelRef} aria-hidden="true" />
-            {pageLoading && <p className="mt-3 text-sm text-ink-muted">Loading images…</p>}
+            {pageLoading && <p className="mt-3 text-sm text-ink-muted">טוען תמונות…</p>}
           </>
         )}
       </div>
@@ -323,13 +328,13 @@ export default function MediaLibraryBrowser({
       {/* Selection bar */}
       {selected.length > 0 && (
         <div className="flex flex-wrap items-center gap-3 border-t border-line px-5 py-3">
-          <span className="text-sm text-ink-muted">{selected.length} selected</span>
+          <span className="text-sm text-ink-muted">נבחרו {selected.length}</span>
           <button
             type="button"
             onClick={() => setSelected([])}
             className="text-sm font-medium text-ink-muted hover:text-ink"
           >
-            Clear
+            ניקוי
           </button>
           <div className="ms-auto flex flex-wrap items-center gap-2">
             {mode === "manage" && (
@@ -341,7 +346,7 @@ export default function MediaLibraryBrowser({
                     run(async () => {
                       await setImagesCategory(selected, id, true);
                       await reload();
-                      toast.success(`${plural(selected.length)} added to ${categoryById.get(id)?.name ?? "category"}`);
+                      toast.success(`${plural(selected.length)} נוספו ל${categoryById.get(id)?.name ?? "קטגוריה"}`);
                     })
                   }
                 />
@@ -358,18 +363,18 @@ export default function MediaLibraryBrowser({
                         const removed = selected.length - stillAuto;
                         setSelected([]);
                         await reload();
-                        if (removed > 0) toast.success(`${plural(removed)} removed from ${current.name}`);
+                        if (removed > 0) toast.success(`${plural(removed)} הוסרו מ${current.name}`);
                         if (stillAuto > 0) {
                           toast.info({
-                            title: `${plural(stillAuto)} kept in ${current.name}`,
-                            description: `They stay here automatically because a ${current.name} tour uses them.`,
+                            title: `${plural(stillAuto)} נשארו ב${current.name}`,
+                            description: `הן נשארות כאן אוטומטית כי טיול ל${current.name} משתמש בהן.`,
                           });
                         }
                       })
                     }
                     className="rounded-lg border border-line px-3.5 py-2 text-sm font-semibold text-ink transition-colors hover:bg-sand-warm disabled:opacity-60"
                   >
-                    Remove from {current.name}
+                    הסרה מ{current.name}
                   </button>
                 )}
                 <DeleteImagesButton
@@ -380,11 +385,11 @@ export default function MediaLibraryBrowser({
                       const result = await deleteUnusedImages(selected);
                       setSelected([]);
                       await reload();
-                      if (result.deleted > 0) toast.success(`${plural(result.deleted)} deleted`);
+                      if (result.deleted > 0) toast.success(`נמחקו ${plural(result.deleted)}`);
                       if (result.inUse > 0) {
                         toast.warning({
-                          title: `${plural(result.inUse)} kept`,
-                          description: "They're used on the site — remove them from their page first.",
+                          title: `${plural(result.inUse)} לא נמחקו`,
+                          description: "הן מופיעות באתר — הסירו אותן קודם מהדף שבו הן מופיעות.",
                         });
                       }
                     })
@@ -398,7 +403,7 @@ export default function MediaLibraryBrowser({
                 onClick={() => onPick?.(selected)}
                 className="rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
               >
-                Add selected
+                הוספת הנבחרות
               </button>
             )}
           </div>
@@ -441,27 +446,27 @@ function FolderGrid({
         <input
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
-          placeholder="New category name, e.g. Synagogues"
+          placeholder="שם קטגוריה חדשה, למשל: בתי כנסת"
           maxLength={60}
           className="min-w-52 flex-1 rounded-lg border border-line px-3 py-2 text-sm text-ink outline-none focus:border-navy sm:max-w-sm"
         />
         <button
           type="submit"
           disabled={disabled || !newName.trim()}
-          title={!newName.trim() ? "Type a category name first" : undefined}
+          title={!newName.trim() ? "הקלידו קודם שם לקטגוריה" : undefined}
           className="rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-navy-light disabled:opacity-40"
         >
-          + Create category
+          + יצירת קטגוריה
         </button>
       </form>
 
-      <FolderSection title="Library">
-        <Folder name="All images" count={allCount} onClick={() => onOpen(ALL)} />
-        <Folder name="Uncategorized" count={uncategorizedCount} onClick={() => onOpen(UNCATEGORIZED)} />
+      <FolderSection title="הספרייה">
+        <Folder name="כל התמונות" count={allCount} onClick={() => onOpen(ALL)} />
+        <Folder name="ללא קטגוריה" count={uncategorizedCount} onClick={() => onOpen(UNCATEGORIZED)} />
       </FolderSection>
 
       {custom.length > 0 && (
-        <FolderSection title="My categories">
+        <FolderSection title="הקטגוריות שלי">
           {custom.map((c) => (
             <Folder key={c.id} name={c.name} count={c.imageCount} onClick={() => onOpen(c.id)} />
           ))}
@@ -469,7 +474,7 @@ function FolderGrid({
       )}
 
       {countries.length > 0 && (
-        <FolderSection title="Countries">
+        <FolderSection title="מדינות">
           {countries.map((c) => (
             <Folder
               key={c.id}
@@ -517,7 +522,7 @@ function Folder({
       <span className="min-w-0">
         <span className="block truncate text-sm font-semibold text-ink">{name}</span>
         <span className="block text-xs text-ink-muted">
-          {count} image{count === 1 ? "" : "s"}
+          {count === 1 ? "תמונה אחת" : `${count} תמונות`}
         </span>
       </span>
     </button>
@@ -540,8 +545,8 @@ function ImageTile({
     .map((id) => categoryById.get(id)?.name)
     .filter(Boolean);
   const tooltip = [
-    item.usedIn.length ? `Used in:\n${item.usedIn.join("\n")}` : "Not used anywhere yet",
-    categoryNames.length ? `Categories: ${categoryNames.join(", ")}` : "",
+    item.usedIn.length ? `מופיעה ב:\n${item.usedIn.join("\n")}` : "עדיין לא בשימוש",
+    categoryNames.length ? `קטגוריות: ${categoryNames.join(", ")}` : "",
   ]
     .filter(Boolean)
     .join("\n\n");
@@ -571,7 +576,7 @@ function ImageTile({
           )}
         </span>
         <span className="block truncate px-1.5 pt-1 text-xs text-ink-muted">
-          {item.usedIn[0] ?? "Unused upload"}
+          {item.usedIn[0] ?? "לא בשימוש"}
           {item.usedIn.length > 1 ? ` +${item.usedIn.length - 1}` : ""}
         </span>
         {categoryNames.length > 0 && (
@@ -597,9 +602,9 @@ function DeleteImagesButton({
 
   async function handleClick() {
     const ok = await confirm({
-      title: `Delete ${count} image${count === 1 ? "" : "s"} for good?`,
-      description: "Images used on the site are kept.",
-      confirmLabel: "Delete",
+      title: count === 1 ? "למחוק את התמונה לצמיתות?" : `למחוק ${count} תמונות לצמיתות?`,
+      description: "תמונות שמופיעות באתר לא יימחקו.",
+      confirmLabel: "מחיקה",
       tone: "danger",
     });
     if (ok) onDelete();
@@ -612,7 +617,7 @@ function DeleteImagesButton({
       onClick={handleClick}
       className="rounded-lg border border-line px-3.5 py-2 text-sm font-semibold text-terracotta-dark transition-colors hover:bg-sand-warm disabled:opacity-60"
     >
-      Delete images
+      מחיקת תמונות
     </button>
   );
 }
@@ -630,13 +635,13 @@ function AssignSelect({
     <select
       value=""
       disabled={disabled || categories.length === 0}
-      title={categories.length === 0 ? "Create a category first" : undefined}
+      title={categories.length === 0 ? "צרו קודם קטגוריה" : undefined}
       onChange={(e) => e.target.value && onAssign(e.target.value)}
       className="rounded-lg border border-line bg-white px-3 py-2 text-sm font-semibold text-ink outline-none focus:border-navy disabled:opacity-60"
     >
-      <option value="">Add to category…</option>
+      <option value="">הוספה לקטגוריה…</option>
       {categories.some((c) => c.kind === "custom") && (
-        <optgroup label="My categories">
+        <optgroup label="הקטגוריות שלי">
           {categories
             .filter((c) => c.kind === "custom")
             .map((c) => (
@@ -646,7 +651,7 @@ function AssignSelect({
             ))}
         </optgroup>
       )}
-      <optgroup label="Countries">
+      <optgroup label="מדינות">
         {categories
           .filter((c) => c.kind === "country")
           .map((c) => (
@@ -674,9 +679,9 @@ function CategoryActions({
 
   async function handleDelete() {
     const ok = await confirm({
-      title: `Delete “${category.name}”?`,
-      description: "Its images stay in the library (uncategorized if this was their only category).",
-      confirmLabel: "Delete category",
+      title: `למחוק את ״${category.name}״?`,
+      description: "התמונות שלה נשארות בספרייה (ללא קטגוריה, אם זו הייתה הקטגוריה היחידה שלהן).",
+      confirmLabel: "מחיקת הקטגוריה",
       tone: "danger",
     });
     if (ok) onDelete();
@@ -688,12 +693,12 @@ function CategoryActions({
         type="button"
         disabled={disabled}
         onClick={() => {
-          const name = window.prompt("Rename category", category.name);
+          const name = window.prompt("שם חדש לקטגוריה", category.name);
           if (name && name.trim() !== category.name) onRename(name);
         }}
         className="font-medium text-ink-muted hover:text-ink"
       >
-        Rename
+        שינוי שם
       </button>
       <button
         type="button"
@@ -701,7 +706,7 @@ function CategoryActions({
         onClick={handleDelete}
         className="font-medium text-ink-muted hover:text-terracotta-dark"
       >
-        Delete
+        מחיקה
       </button>
     </span>
   );
@@ -730,7 +735,7 @@ function UploadIntoCategory({
       formData.append("file", file);
       const result = await uploadImage(formData, "library").catch(() => ({ ok: false as const, error: "Upload failed." }));
       if (result.ok) urls.push(result.url);
-      else toast.error({ title: `Couldn't upload ${file.name}`, description: result.error });
+      else toast.error({ title: `ההעלאה של ${file.name} נכשלה`, description: result.error });
     }
     setUploading(false);
     if (inputRef.current) inputRef.current.value = "";
@@ -740,7 +745,7 @@ function UploadIntoCategory({
   return (
     <span className="inline-flex flex-col">
       <label className="inline-flex cursor-pointer items-center rounded-lg bg-navy px-3.5 py-2 text-sm font-semibold text-white transition-colors hover:bg-navy-light has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60">
-        {uploading ? "Uploading…" : `+ ${label}`}
+        {uploading ? "מעלה…" : `+ ${label}`}
         <input
           ref={inputRef}
           type="file"

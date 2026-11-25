@@ -17,7 +17,7 @@ import {
   roleLabel,
 } from "@/lib/auth/roles";
 
-export const metadata: Metadata = { title: "Admin accounts" };
+export const metadata: Metadata = { title: "חשבונות ניהול" };
 
 export default async function AdminAccountsPage() {
   const session = await requireAccountManager();
@@ -32,21 +32,21 @@ export default async function AdminAccountsPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-ink">Admin accounts</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-ink">חשבונות ניהול</h1>
         <p className="mt-1 text-sm text-ink-muted">
-          Who can sign in to the management system. Only developers and super admins see this page.
+          מי יכול להיכנס למערכת הניהול. רק מפתחים ומנהלי על רואים את הדף הזה.
         </p>
         <p className="mt-1 text-sm text-ink-muted">
-          Two-factor authentication is{" "}
-          <strong className="text-ink">{required ? "required" : "optional"}</strong> for every account
+          אימות דו-שלבי{" "}
+          <strong className="text-ink">{required ? "חובה" : "רשות"}</strong> לכל החשבונות
           {required
-            ? " — accounts with an authenticator app enter its code; everyone else gets a code by email at each sign-in."
-            : " — accounts that set up an authenticator app enter its code at every sign-in."}
+            ? " — חשבונות עם אפליקציית אימות מזינים את הקוד ממנה; כל השאר מקבלים קוד במייל בכל כניסה."
+            : " — חשבונות שהגדירו אפליקציית אימות מזינים את הקוד ממנה בכל כניסה."}
         </p>
       </div>
 
       <details className="mb-6 rounded-xl border border-line bg-white p-5 text-sm">
-        <summary className="cursor-pointer font-semibold text-ink">What each role can do</summary>
+        <summary className="cursor-pointer font-semibold text-ink">מה כל תפקיד יכול לעשות</summary>
         <dl className="mt-3 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2">
           {ADMIN_ROLES.map((r) => (
             <div key={r} className="contents">
@@ -63,9 +63,9 @@ export default async function AdminAccountsPage() {
         <table className="w-full min-w-[560px] text-start text-sm">
           <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
             <tr>
-              <th className="px-4 py-3">Email</th>
-              <th className="px-4 py-3">Role</th>
-              <th className="px-4 py-3">2FA</th>
+              <th className="px-4 py-3">אימייל</th>
+              <th className="px-4 py-3">תפקיד</th>
+              <th className="px-4 py-3">אימות דו-שלבי</th>
               <th className="px-4 py-3" />
             </tr>
           </thead>
@@ -79,7 +79,7 @@ export default async function AdminAccountsPage() {
                     {user.email ?? "—"}
                     {isSelf && (
                       <Link href="/admin/account" className="ms-2 text-xs text-ink-muted hover:text-ink hover:underline">
-                        (you — manage in My account)
+                        (זה אתם — לניהול ב״החשבון שלי״)
                       </Link>
                     )}
                   </td>
@@ -92,11 +92,11 @@ export default async function AdminAccountsPage() {
                   </td>
                   <td className="px-4 py-3">
                     {twoFactorUids.has(user.uid) ? (
-                      <span className="font-medium text-olive">App</span>
+                      <span className="font-medium text-olive">אפליקציה</span>
                     ) : required ? (
-                      <span className="font-medium text-olive">Email</span>
+                      <span className="font-medium text-olive">מייל</span>
                     ) : (
-                      <span className="text-ink-muted">Off</span>
+                      <span className="text-ink-muted">כבוי</span>
                     )}
                   </td>
                   <td className="px-4 py-3 text-end">

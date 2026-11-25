@@ -43,7 +43,7 @@ export default function PreviewFrameClient({ copy }: { copy: TourPageCopy }) {
   if (!payload) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-[#0a0e1a] text-sm text-[#a0b4c4]">
-        Loading preview…
+        טוען תצוגה מקדימה…
       </div>
     );
   }

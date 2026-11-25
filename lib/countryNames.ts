@@ -204,3 +204,17 @@ const HEBREW_COUNTRY_NAMES: Record<string, string> = {
 export function countryLabel(country: string): string {
   return HEBREW_COUNTRY_NAMES[country] ?? country;
 }
+
+const ENGLISH_BY_HEBREW = new Map(
+  Object.entries(HEBREW_COUNTRY_NAMES).map(([english, hebrew]) => [hebrew, english])
+);
+
+/** The stored (English) country for a Hebrew name, e.g. "פורטוגל" → "Portugal"; undefined when unknown. */
+export function countryFromHebrew(name: string): string | undefined {
+  return ENGLISH_BY_HEBREW.get(name.trim().replace(/'/g, "׳"));
+}
+
+/** Every Hebrew country name, longest first — for finding countries inside free text. */
+export function hebrewCountryNames(): string[] {
+  return Array.from(ENGLISH_BY_HEBREW.keys()).sort((a, b) => b.length - a.length);
+}

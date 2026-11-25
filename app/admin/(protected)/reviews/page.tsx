@@ -3,12 +3,13 @@ import type { Metadata } from "next";
 import { getAllReviewsAdmin } from "@/lib/data/admin/reviews";
 import { getAllToursAdmin } from "@/lib/data/admin/tours";
 import ReviewStatusButtons from "@/components/admin/ReviewStatusButtons";
+import { REVIEW_STATUS_LABELS } from "@/lib/adminLabels";
 import TestimonialDestinationsPanel from "@/components/admin/TestimonialDestinationsPanel";
 import { getTestimonialGroups } from "@/lib/data/reviews";
 import type { Review } from "@/lib/types";
 import { IconLink } from "@/components/admin/IconAction";
 
-export const metadata: Metadata = { title: "Reviews" };
+export const metadata: Metadata = { title: "המלצות" };
 
 export default async function AdminReviewsPage() {
   const [reviews, tours, groups] = await Promise.all([
@@ -22,33 +23,33 @@ export default async function AdminReviewsPage() {
     <div>
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">Reviews</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">המלצות</h1>
           <p className="mt-1 text-sm text-ink-muted">
-            {reviews.length} review{reviews.length === 1 ? "" : "s"}
+            {reviews.length === 1 ? "המלצה אחת" : `${reviews.length} המלצות`}
           </p>
         </div>
         <Link
           href="/admin/reviews/new"
           className="shrink-0 rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
         >
-          + New review
+          + המלצה חדשה
         </Link>
       </div>
 
       {reviews.length === 0 ? (
         <p className="rounded-xl border border-dashed border-line bg-white p-10 text-center text-ink-muted">
-          No reviews yet.
+          עדיין אין המלצות.
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[760px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
-                <th className="px-4 py-3">Customer</th>
-                <th className="px-4 py-3">Tour</th>
-                <th className="px-4 py-3">Destination</th>
-                <th className="px-4 py-3">Rating</th>
-                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">לקוח/ה</th>
+                <th className="px-4 py-3">טיול</th>
+                <th className="px-4 py-3">יעד</th>
+                <th className="px-4 py-3">דירוג</th>
+                <th className="px-4 py-3">סטטוס</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -72,7 +73,7 @@ export default async function AdminReviewsPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-3">
                       <ReviewStatusButtons review={review} />
-                      <IconLink href={`/admin/reviews/${review.reviewId}`} icon="edit" label="Edit" />
+                      <IconLink href={`/admin/reviews/${review.reviewId}`} icon="edit" label="עריכה" />
                     </div>
                   </td>
                 </tr>
@@ -100,9 +101,9 @@ const STATUS_STYLES: Record<Review["status"], string> = {
 function StatusBadge({ status }: { status: Review["status"] }) {
   return (
     <span
-      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${STATUS_STYLES[status]}`}
+      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLES[status]}`}
     >
-      {status}
+      {REVIEW_STATUS_LABELS[status]}
     </span>
   );
 }

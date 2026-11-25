@@ -18,6 +18,8 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { reorderTours } from "@/lib/actions/tours";
 import { formatUsd } from "@/lib/pricing";
+import { countryLabel } from "@/lib/countryNames";
+import { TOUR_STATUS_LABELS } from "@/lib/adminLabels";
 import type { Tour, TourStatus } from "@/lib/types";
 import DuplicateTourButton from "@/components/admin/DuplicateTourButton";
 import ArchiveTourButton from "@/components/admin/ArchiveTourButton";
@@ -100,27 +102,27 @@ export default function SortableToursTable({
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by tour name…"
-          aria-label="Search by tour name"
+          placeholder="חיפוש לפי שם הטיול…"
+          aria-label="חיפוש לפי שם הטיול"
           className="w-full max-w-xs rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-navy"
         />
         <select
           value={country}
           onChange={(e) => setCountry(e.target.value)}
-          aria-label="Filter by country"
+          aria-label="סינון לפי מדינה"
           className="rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink outline-none focus:border-navy"
         >
-          <option value="">All countries</option>
+          <option value="">כל המדינות</option>
           {countryOptions.map(([name, count]) => (
             <option key={name} value={name}>
-              {name} ({count})
+              {countryLabel(name)} ({count})
             </option>
           ))}
         </select>
         {isFiltered && (
           <>
             <span className="text-sm text-ink-muted">
-              Showing {visibleRows.length} of {rows.length} — reordering is off while filtering
+              מוצגים {visibleRows.length} מתוך {rows.length} — אי אפשר לשנות סדר בזמן סינון
             </span>
             <button
               type="button"
@@ -130,7 +132,7 @@ export default function SortableToursTable({
               }}
               className="text-sm font-medium text-navy hover:text-navy-light"
             >
-              Clear filters
+              ניקוי הסינון
             </button>
           </>
         )}
@@ -138,7 +140,7 @@ export default function SortableToursTable({
 
       {visibleRows.length === 0 ? (
         <p className="rounded-xl border border-dashed border-line bg-white p-10 text-center text-ink-muted">
-          No tours match these filters.
+          אין טיולים שמתאימים לסינון.
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
@@ -150,11 +152,11 @@ export default function SortableToursTable({
               <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
                 <tr>
                   <th className="w-8 px-2 py-3" />
-                  <th className="px-4 py-3">Tour</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Countries</th>
-                  <th className="px-4 py-3">From</th>
-                  <th className="px-4 py-3">Capacity</th>
+                  <th className="px-4 py-3">טיול</th>
+                  <th className="px-4 py-3">סטטוס</th>
+                  <th className="px-4 py-3">מדינות</th>
+                  <th className="px-4 py-3">מחיר החל מ-</th>
+                  <th className="px-4 py-3">מקומות</th>
                   <th className="px-4 py-3" />
                 </tr>
               </thead>
@@ -203,7 +205,7 @@ function SortableTourRow({
           {...listeners}
           disabled={dragDisabled}
           className="cursor-grab touch-none px-1 text-ink-muted active:cursor-grabbing disabled:cursor-not-allowed disabled:opacity-30"
-          aria-label={`Reorder ${tour.title}`}
+          aria-label={`שינוי מיקום: ${tour.title}`}
         >
           ⠿
         </button>
@@ -218,40 +220,40 @@ function SortableTourRow({
           {tour.isLegacyMigrated && (
             <span
               className="inline-block rounded-full bg-gold/15 px-2.5 py-0.5 text-xs font-semibold text-terracotta-dark"
-              title="Scraped from the old site — pricing, dates and countries need review before publishing"
+              title="יובא מהאתר הישן — יש לבדוק מחירים, מועדים ומדינות לפני פרסום"
             >
-              Migrated
+              יובא
             </span>
           )}
         </div>
       </td>
-      <td className="px-4 py-3 text-ink-muted">{tour.countries.join(", ")}</td>
+      <td className="px-4 py-3 text-ink-muted">{tour.countries.map(countryLabel).join(", ")}</td>
       <td className="px-4 py-3 text-ink-muted">
         {formatUsd(tour.pricing.pricePerPersonDouble)}
       </td>
       <td className="px-4 py-3">
         {capacity.departureCount === 0 ? (
           <span className="inline-flex items-center gap-1.5 rounded-full bg-terracotta/10 px-2.5 py-0.5 text-xs font-semibold text-terracotta-dark">
-            No future dates
+            אין מועדים עתידיים
           </span>
         ) : (
           <div>
             <p className="font-medium text-ink">
-              {capacity.totalAvailable} / {capacity.totalCapacity} left
+              נותרו {capacity.totalAvailable} מתוך {capacity.totalCapacity}
             </p>
             <p className="text-xs text-ink-muted">
-              {capacity.departureCount} upcoming departure{capacity.departureCount === 1 ? "" : "s"}
+              {capacity.departureCount === 1 ? "מועד קרוב אחד" : `${capacity.departureCount} מועדים קרובים`}
             </p>
           </div>
         )}
       </td>
       <td className="px-4 py-3 text-end">
         <div className="flex items-center justify-end gap-1">
-          <IconLink href={`/admin/tours/${tour.tourId}/preview`} icon="eye" label="Preview" newTab />
+          <IconLink href={`/admin/tours/${tour.tourId}/preview`} icon="eye" label="תצוגה מקדימה" newTab />
           {!limited && (
-            <IconLink href={`/admin/tours/${tour.tourId}/departures`} icon="calendar" label="Departure dates" />
+            <IconLink href={`/admin/tours/${tour.tourId}/departures`} icon="calendar" label="מועדי יציאה" />
           )}
-          <IconLink href={`/admin/tours/${tour.tourId}`} icon="edit" label="Edit" />
+          <IconLink href={`/admin/tours/${tour.tourId}`} icon="edit" label="עריכה" />
           <DuplicateTourButton tourId={tour.tourId} variant="link" />
           {tour.status !== "archived" && !(limited && tour.status === "published") && (
             <ArchiveTourButton tourId={tour.tourId} title={tour.title} />
@@ -271,9 +273,9 @@ const STATUS_STYLES: Record<TourStatus, string> = {
 function StatusBadge({ status }: { status: TourStatus }) {
   return (
     <span
-      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${STATUS_STYLES[status]}`}
+      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLES[status]}`}
     >
-      {status}
+      {TOUR_STATUS_LABELS[status]}
     </span>
   );
 }

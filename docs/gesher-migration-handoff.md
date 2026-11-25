@@ -1,6 +1,6 @@
 # Gesher Tours: migration handoff
 
-Status as of 2026-11-22. Read this first to continue the work, for
+Status as of 2026-11-22 (updated the same day, after the admin translation). Read this first to continue the work, for
 example by pointing Claude Code at this file ("read
 docs/gesher-migration-handoff.md and continue").
 
@@ -43,6 +43,21 @@ docs/gesher-migration-handoff.md and continue").
 4. **Verified:** with the local Firestore emulator and seed data, every
    page returns 200, `next build` passes and the screenshots look right.
    The 8 lint errors were already there.
+5. **Admin panel in Hebrew** (2026-11-22): every admin screen, toast,
+   validation message (including Zod's own, via `lib/validation/zodLocale.ts`),
+   admin email and Excel export. Status values stay English in Firestore;
+   their Hebrew labels are in `lib/adminLabels.ts`.
+6. **Contact details from geshertours.co.il:** phone 03-5260900, email
+   yifat@gst1000.co.il (also the default for booking/lead alerts and the
+   reply-to address), address האודם 1 פתח תקווה, WhatsApp 054-6360119 and
+   the Facebook page. Fallbacks are in `lib/sitePhone.ts` and
+   `lib/siteContact.ts`; phone and email can be changed in Admin → Settings.
+   They show in the footer and on the contact page.
+7. **Traveler names:** each traveler has a Hebrew first and last name plus
+   the English first and last name as in the passport (`passportFirstName`,
+   `passportLastName`). Required on the public form, optional for bookings
+   staff enter by hand. The registrants Excel export has a מטיילים sheet with
+   both names.
 
 ## Placeholders still to replace
 
@@ -51,21 +66,35 @@ docs/gesher-migration-handoff.md and continue").
 - **Privacy and terms pages:** "coming soon" placeholders. Keshertours'
   texts were US contracts and were removed. The old site has
   "תנאים כלליים ואחריות" (Gesher's own terms).
-- **Phone:** the fallback is still Keshertours' `1-800-847-0700`
-  (`lib/sitePhone.ts`). Set the real number in Admin → Settings.
 - **Footer destinations:** Italy, Costa Rica and Morocco, in
   `components/marketing/Footer.tsx`. Adjust them to Gesher's
   destinations.
 
 ## Not done yet
 
-- **Admin panel:** still English. The layout is already right-to-left.
-  Labels, buttons, `lib/validation/*` messages and admin action errors
-  still need translating.
 - **Header logo size:** the square logo is small at header height. Use a
   wide version if one exists, or make the header taller.
 
-## Next step: import content from geshertours.co.il
+## Tour import: `scripts/migrate/import-gesher-tours.ts`
+
+Written and dry-run tested on 2026-11-22. It reads all 56 tour pages
+(cached in `scripts/migrate/output/gesher-cache/`) and writes
+`scripts/migrate/output/gesher-tours-preview.json` plus
+`gesher-redirects.json` (old Hebrew URL → new `/tours/<slug>`).
+
+- 10 tours with upcoming dates become drafts with their 23 departures
+  (capacity 30 by default, `--capacity=N`). "טיול מובטח!" in a date's notes
+  marks it guaranteed. The other 46 are archived.
+- Itinerary, includes/excludes, "כדאי לדעת" cards, cancellation terms,
+  deposit, minimum group size and countries are parsed. Slugs are English.
+- EUR prices and deposits are converted at `--eur-rate` (default 1.08).
+- Each tour's warnings list what to check: 32 have no kashrut line, 14 no
+  photos on the old site, 12 no deposit, guides named on dates.
+- Not run with `--commit` yet: that needs the gesher-tours service-account
+  key in `.env.local`. Run `npx tsx scripts/migrate/import-gesher-tours.ts --commit`
+  on your own machine.
+
+## Next step: the rest of the content from geshertours.co.il
 
 Findings from the old site, which runs WordPress 7.1.5:
 
@@ -108,11 +137,9 @@ Plan, based on `scripts/migrate-legacy-tours.ts` and the
 
 ## Open questions for the owner
 
-- **Euro tour:** convert it to USD, or add per-tour currency support?
-- **Traveler names:** require English names, as on the passport? The
-  form currently accepts Hebrew names.
-- Gesher's phone, email, address and WhatsApp, and which inboxes get
-  booking alerts.
+- **Euro tours:** two tours with dates are priced in EUR on the old site
+  (Naples/Amalfi, Italy carnivals). The import converts them at 1.08 —
+  confirm the USD prices, or ask for per-tour currency support.
 - Is there a wide (horizontal) version of the logo?
 
 ## Owner setup checklist (Firebase and services)

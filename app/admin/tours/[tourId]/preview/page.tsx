@@ -6,7 +6,7 @@ import { getDeparturesForTour, getGuidesForDepartures } from "@/lib/data/tours";
 import { requireContentSession } from "@/lib/auth/dal";
 import { getSiteContent } from "@/lib/data/siteContent";
 
-export const metadata: Metadata = { title: "Preview", robots: { index: false, follow: false } };
+export const metadata: Metadata = { title: "תצוגה מקדימה", robots: { index: false, follow: false } };
 
 /**
  * "Open Full Preview" (PRD FR-25) — a separate tab showing the exact

@@ -1,5 +1,7 @@
 "use client";
 
+import { passportName } from "@/lib/travelerName";
+import { BOOKING_STATUS_LABELS, OCCUPANCY_LABELS } from "@/lib/adminLabels";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getBookingTravelers } from "@/lib/actions/bookings";
@@ -19,13 +21,7 @@ const STATUS_STYLES: Record<BookingStatus, string> = {
   refunded: "bg-ink-muted/15 text-ink-muted",
 };
 
-const STATUS_LABELS: Record<BookingStatus, string> = {
-  pending_payment: "Pending payment",
-  partial_paid: "Partially paid",
-  paid_in_full: "Paid in full",
-  cancelled: "Cancelled",
-  refunded: "Refunded",
-};
+const STATUS_LABELS = BOOKING_STATUS_LABELS;
 
 function formatDateRange(startIso: string, endIso: string) {
   const opts: Intl.DateTimeFormatOptions = { month: "long", day: "numeric", year: "numeric", timeZone: "UTC" };
@@ -45,9 +41,9 @@ function getInitials(name: string): string {
 
 function roomConfigParts(room: RoomConfiguration): { label: string; count: number }[] {
   return [
-    { label: "Double", count: room.doubleRooms },
-    { label: "Single", count: room.singleRooms },
-    { label: "Triple", count: room.triples },
+    { label: "זוגי", count: room.doubleRooms },
+    { label: "ליחיד", count: room.singleRooms },
+    { label: "לשלושה", count: room.triples },
   ].filter((part) => part.count > 0);
 }
 
@@ -118,15 +114,15 @@ export default function BookingDetailModal({
               </span>
             </div>
             <p className="mt-0.5 truncate text-sm text-ink-muted">
-              {tour?.title ?? "—"} · {booking.travelerCount} traveler
-              {booking.travelerCount === 1 ? "" : "s"}
+              {tour?.title ?? "—"} ·{" "}
+              {booking.travelerCount === 1 ? "מטייל אחד" : `${booking.travelerCount} מטיילים`}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
             className="shrink-0 rounded-lg p-1.5 text-ink-muted transition-colors hover:bg-white hover:text-ink"
-            aria-label="Close"
+            aria-label="סגירה"
           >
             ✕
           </button>
@@ -137,10 +133,10 @@ export default function BookingDetailModal({
           <span>{booking.contactEmail}</span>
           {booking.contactPhone && <span>{booking.contactPhone}</span>}
           <span>
-            {booking.contactPreference === "pay_online" ? "Wants to pay online" : "Wants a callback"}
+            {booking.contactPreference === "pay_online" ? "מבקש/ת לשלם באתר" : "מבקש/ת שיחזרו אליו/ה"}
           </span>
           <span>
-            Submitted{" "}
+            נשלח ב-
             {new Date(booking.createdAt).toLocaleDateString("he-IL", {
               month: "short",
               day: "numeric",
@@ -151,14 +147,14 @@ export default function BookingDetailModal({
 
         {/* Body */}
         <div className="max-h-[65vh] space-y-4 overflow-y-auto px-6 py-5">
-          <Card title="Trip">
+          <Card title="הטיול">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="text-sm font-medium text-ink">
-                  {departure ? formatDateRange(departure.startDate, departure.endDate) : "No departure on file"}
+                  {departure ? formatDateRange(departure.startDate, departure.endDate) : "אין מועד יציאה רשום"}
                 </p>
                 <p className="mt-0.5 text-xs text-ink-muted">
-                  Last updated {new Date(booking.updatedAt).toLocaleString("he-IL")}
+                  עודכן לאחרונה {new Date(booking.updatedAt).toLocaleString("he-IL")}
                 </p>
               </div>
               {rooms.length > 0 && (
@@ -168,7 +164,7 @@ export default function BookingDetailModal({
                       key={room.label}
                       className="inline-flex items-center rounded-full border border-line bg-white px-3 py-1 text-xs font-medium text-ink"
                     >
-                      {room.count} × {room.label} room{room.count > 1 ? "s" : ""}
+                      {room.count} × {room.count > 1 ? "חדרים" : "חדר"} {room.label}
                     </span>
                   ))}
                 </div>
@@ -176,22 +172,22 @@ export default function BookingDetailModal({
             </div>
           </Card>
 
-          <Card title="Payment">
+          <Card title="תשלום">
             <div className="flex items-baseline justify-between">
-              <span className="text-sm font-medium text-ink-muted">Total price</span>
+              <span className="text-sm font-medium text-ink-muted">מחיר כולל</span>
               <span className="text-2xl font-bold text-ink">{formatUsd(priceBreakdown.grandTotal)}</span>
             </div>
 
             <div className="mt-3 grid grid-cols-3 gap-2.5">
-              <StatTile label="Minimum" value={formatUsd(booking.depositAmount)} />
-              <StatTile label="Paid so far" value={formatUsd(booking.amountPaid)} tone="text-olive" />
-              <StatTile label="Balance due" value={formatUsd(booking.balanceAmount)} tone={balanceTone} />
+              <StatTile label="מינימום" value={formatUsd(booking.depositAmount)} />
+              <StatTile label="שולם עד כה" value={formatUsd(booking.amountPaid)} tone="text-olive" />
+              <StatTile label="יתרה לתשלום" value={formatUsd(booking.balanceAmount)} tone={balanceTone} />
             </div>
 
             {priceBreakdown.childAdjustments > 0 && (
               <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 border-t border-line pt-3 text-xs text-ink-muted">
-                <span>Base {formatUsd(priceBreakdown.baseTotal)}</span>
-                <span>Child adjustments {formatUsd(priceBreakdown.childAdjustments)}</span>
+                <span>בסיס {formatUsd(priceBreakdown.baseTotal)}</span>
+                <span>התאמות לילדים {formatUsd(priceBreakdown.childAdjustments)}</span>
               </div>
             )}
           </Card>
@@ -200,13 +196,13 @@ export default function BookingDetailModal({
             booking.status !== "cancelled" &&
             booking.status !== "refunded" && <AdminChargeCard booking={booking} />}
 
-          <Card title={`Travelers (${booking.travelerCount})`}>
+          <Card title={`מטיילים (${booking.travelerCount})`}>
             {error ? (
               <p className="text-sm text-terracotta-dark">{error}</p>
             ) : travelers === null ? (
-              <p className="text-sm text-ink-muted">Loading…</p>
+              <p className="text-sm text-ink-muted">טוען…</p>
             ) : travelers.length === 0 ? (
-              <p className="text-sm text-ink-muted">No traveler records found.</p>
+              <p className="text-sm text-ink-muted">לא נמצאו פרטי מטיילים.</p>
             ) : (
               <div className="space-y-2">
                 {travelers.map((traveler) => (
@@ -215,18 +211,21 @@ export default function BookingDetailModal({
                       <p dir="auto" className="font-medium text-ink">
                         {traveler.firstName} {traveler.lastName}
                       </p>
-                      <span className="shrink-0 rounded-full bg-navy/10 px-2 py-0.5 text-[11px] font-semibold capitalize text-navy">
-                        {traveler.occupancy}
+                      {passportName(traveler) && (
+                        <p dir="ltr" className="text-xs text-ink-muted">{passportName(traveler)}</p>
+                      )}
+                      <span className="shrink-0 rounded-full bg-navy/10 px-2 py-0.5 text-[11px] font-semibold text-navy">
+                        {OCCUPANCY_LABELS[traveler.occupancy] ?? traveler.occupancy}
                       </span>
                     </div>
                     {(traveler.dob || traveler.passport || traveler.roomWith || traveler.dietary) && (
                       <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
-                        {traveler.dob && <TravelerField label="DOB" value={traveler.dob} />}
-                        {traveler.passport && <TravelerField label="Passport" value={traveler.passport} />}
+                        {traveler.dob && <TravelerField label="תאריך לידה" value={traveler.dob} />}
+                        {traveler.passport && <TravelerField label="דרכון" value={traveler.passport} />}
                         {traveler.roomWith && (
-                          <TravelerField label="Rooming with" value={traveler.roomWith} />
+                          <TravelerField label="חולק/ת חדר עם" value={traveler.roomWith} />
                         )}
-                        {traveler.dietary && <TravelerField label="Dietary" value={traveler.dietary} />}
+                        {traveler.dietary && <TravelerField label="תזונה" value={traveler.dietary} />}
                       </div>
                     )}
                     {passportScanPathOf(traveler) && (
@@ -236,7 +235,7 @@ export default function BookingDetailModal({
                         rel="noopener noreferrer"
                         className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-navy hover:underline"
                       >
-                        View passport scan →
+                        צפייה בצילום הדרכון ←
                       </a>
                     )}
                   </div>
@@ -269,14 +268,14 @@ function AdminChargeCard({ booking }: { booking: Booking }) {
     if (result.ok) setSession({ clientSecret: result.clientSecret, amount: result.amount });
     else {
       setError(result.error);
-      toast.error({ title: "Couldn't start the charge", description: result.error });
+      toast.error({ title: "לא הצלחנו להתחיל את החיוב", description: result.error });
     }
   }
 
   function handleSuccess() {
     toast.success({
-      title: "Payment submitted",
-      description: `${formatUsd(session?.amount ?? 0)} charged to ${booking.contactName}'s card. The booking will update in a moment.`,
+      title: "התשלום נשלח",
+      description: `${formatUsd(session?.amount ?? 0)} חויבו בכרטיס של ${booking.contactName}. ההזמנה תתעדכן בעוד רגע.`,
     });
     setDone(true);
     setSession(null);
@@ -286,28 +285,28 @@ function AdminChargeCard({ booking }: { booking: Booking }) {
 
   if (done) {
     return (
-      <Card title="Charge customer">
+      <Card title="חיוב הלקוח">
         <p className="text-sm font-medium text-olive">
-          Payment submitted. The booking will update in a moment.
+          התשלום נשלח. ההזמנה תתעדכן בעוד רגע.
         </p>
       </Card>
     );
   }
 
   return (
-    <Card title="Charge customer">
+    <Card title="חיוב הלקוח">
       {!open ? (
         <button
           type="button"
           onClick={() => setOpen(true)}
           className="rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
         >
-          Enter card details &amp; pay for customer
+          הזנת פרטי כרטיס ותשלום עבור הלקוח
         </button>
       ) : session ? (
         <div className="space-y-3">
           <p className="text-xs text-ink-muted">
-            Charging {formatUsd(session.amount)} to {booking.contactName}&apos;s card.
+            חיוב של {formatUsd(session.amount)} בכרטיס של {booking.contactName}.
           </p>
           <DepositPaymentForm
             clientSecret={session.clientSecret}
@@ -320,13 +319,13 @@ function AdminChargeCard({ booking }: { booking: Booking }) {
             onClick={() => setSession(null)}
             className="text-xs font-semibold text-ink-muted hover:underline"
           >
-            ← Change amount
+            → שינוי הסכום
           </button>
         </div>
       ) : (
         <div className="space-y-3">
           <label className="block text-sm text-ink-muted">
-            Amount to charge (USD, up to {formatUsd(booking.balanceAmount)})
+            סכום לחיוב (בדולרים, עד {formatUsd(booking.balanceAmount)})
             <input
               type="number"
               min={1}
@@ -344,7 +343,7 @@ function AdminChargeCard({ booking }: { booking: Booking }) {
             onClick={start}
             className="rounded-lg bg-navy px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
           >
-            {starting ? "Starting…" : "Continue to card details"}
+            {starting ? "מתחיל…" : "המשך לפרטי הכרטיס"}
           </button>
         </div>
       )}

@@ -145,7 +145,7 @@ function EditorMenus({ editor, imageFolder }: { editor: Editor; imageFolder: str
       <div className="sticky top-0 z-10 flex flex-wrap items-center gap-1 rounded-t-lg border-b border-line bg-sand/40 px-2 py-1.5">
         <div className="[&_button]:!py-1 [&_label]:!py-1 [&_button]:!text-xs [&_label]:!text-xs">
           <ImageUploadButton
-            label="Image"
+            label="תמונה"
             folder={imageFolder}
             onUploaded={(urls) => {
               const chain = editor.chain().focus();
@@ -155,14 +155,14 @@ function EditorMenus({ editor, imageFolder }: { editor: Editor; imageFolder: str
           />
         </div>
         <Divider />
-        <ToolButton label="Undo" disabled={!state.canUndo} onClick={() => editor.chain().focus().undo().run()}>
+        <ToolButton label="ביטול פעולה" disabled={!state.canUndo} onClick={() => editor.chain().focus().undo().run()}>
           ↶
         </ToolButton>
-        <ToolButton label="Redo" disabled={!state.canRedo} onClick={() => editor.chain().focus().redo().run()}>
+        <ToolButton label="ביצוע מחדש" disabled={!state.canRedo} onClick={() => editor.chain().focus().redo().run()}>
           ↷
         </ToolButton>
         <span className="ms-auto pe-1 text-[11px] text-ink-muted">
-          Select text to format it · on an empty line for headings and lists
+          סמנו טקסט כדי לעצב אותו · בשורה ריקה — כותרות ורשימות
         </span>
       </div>
 
@@ -180,14 +180,14 @@ function EditorMenus({ editor, imageFolder }: { editor: Editor; imageFolder: str
         className="z-20 w-max max-w-[min(34rem,calc(100vw-2rem))] rounded-lg border border-line bg-white p-1.5 shadow-xl"
       >
         <div className="flex flex-wrap items-center gap-1">
-          <ToolButton label="Bold" active={state.bold} onClick={() => editor.chain().focus().toggleBold().run()}>
+          <ToolButton label="מודגש" active={state.bold} onClick={() => editor.chain().focus().toggleBold().run()}>
             <span className="font-bold">B</span>
           </ToolButton>
-          <ToolButton label="Italic" active={state.italic} onClick={() => editor.chain().focus().toggleItalic().run()}>
+          <ToolButton label="נטוי" active={state.italic} onClick={() => editor.chain().focus().toggleItalic().run()}>
             <span className="font-serif italic">I</span>
           </ToolButton>
           <ToolButton
-            label="Underline"
+            label="קו תחתון"
             active={state.underline}
             onClick={() => editor.chain().focus().toggleUnderline().run()}
           >
@@ -195,52 +195,52 @@ function EditorMenus({ editor, imageFolder }: { editor: Editor; imageFolder: str
           </ToolButton>
           <Divider />
           <ToolButton
-            label="Heading"
+            label="כותרת"
             active={state.h2}
             onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           >
-            Heading
+            כותרת
           </ToolButton>
           <ToolButton
-            label="Subheading"
+            label="כותרת משנה"
             active={state.h3}
             onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           >
-            Subheading
+            כותרת משנה
           </ToolButton>
           <Divider />
           <ToolButton
-            label="Bulleted list"
+            label="רשימת תבליטים"
             active={state.bullet}
             onClick={() => editor.chain().focus().toggleBulletList().run()}
           >
-            • List
+            • רשימה
           </ToolButton>
           <ToolButton
-            label="Numbered list"
+            label="רשימה ממוספרת"
             active={state.ordered}
             onClick={() => editor.chain().focus().toggleOrderedList().run()}
           >
-            1. List
+            1. רשימה
           </ToolButton>
-          <ToolButton label="Quote" active={state.quote} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
-            “ Quote
+          <ToolButton label="ציטוט" active={state.quote} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
+            ” ציטוט
           </ToolButton>
           <Divider />
-          <ToolButton label="Link" active={state.link} onClick={startLinkEdit}>
-            🔗 Link
+          <ToolButton label="קישור" active={state.link} onClick={startLinkEdit}>
+            🔗 קישור
           </ToolButton>
         </div>
         {linkEdit ? (
           <div className="flex w-full flex-wrap items-center gap-2 border-t border-line pt-1.5 text-xs">
             <label htmlFor="rich-link-address" className="font-medium text-ink-muted">
-              Link address:
+              כתובת הקישור:
             </label>
             <input
               id="rich-link-address"
               autoFocus
               value={linkEdit.value}
-              placeholder="Paste an address, or type to search blog posts"
+              placeholder="הדביקו כתובת, או הקלידו כדי לחפש פוסט בבלוג"
               onChange={(e) => {
                 setLinkEdit({ ...linkEdit, value: e.target.value });
                 setHighlight(0);
@@ -263,18 +263,18 @@ function EditorMenus({ editor, imageFolder }: { editor: Editor; imageFolder: str
               className="min-w-[16rem] flex-1 rounded-md border border-line bg-white px-2 py-1 text-xs text-ink focus:border-navy focus:outline-none"
             />
             <BarButton onClick={() => applyLink(suggestions[highlight]?.href)} primary>
-              Apply
+              החלה
             </BarButton>
-            <BarButton onClick={cancelLinkEdit}>Cancel</BarButton>
-            <span className="text-ink-muted">Enter to apply · Esc to cancel · empty removes the link</span>
+            <BarButton onClick={cancelLinkEdit}>ביטול</BarButton>
+            <span className="text-ink-muted">Enter להחלה · Esc לביטול · שדה ריק מסיר את הקישור</span>
             {!looksLikeAddress && (
               <div className="w-full">
                 <p className="mb-1 font-medium text-ink-muted">
-                  {query ? "Matching blog posts" : "Or link to a blog post"}
-                  {posts === null && " — loading…"}
+                  {query ? "פוסטים מתאימים" : "או קישור לפוסט בבלוג"}
+                  {posts === null && " — טוען…"}
                 </p>
                 {posts && suggestions.length === 0 && (
-                  <p className="text-ink-muted">No published post title matches “{query}”.</p>
+                  <p className="text-ink-muted">אין פוסט שפורסם עם כותרת שמתאימה ל־״{query}״.</p>
                 )}
                 {suggestions.length > 0 && (
                   <ul className="max-h-56 overflow-y-auto rounded-md border border-line bg-white" role="listbox">
@@ -302,19 +302,19 @@ function EditorMenus({ editor, imageFolder }: { editor: Editor; imageFolder: str
         ) : (
           state.link && (
             <div className="flex w-full flex-wrap items-center gap-2 border-t border-line pt-1.5 text-xs">
-              <span className="font-medium text-ink-muted">Link to:</span>
+              <span className="font-medium text-ink-muted">קישור אל:</span>
               <a
                 href={state.href}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="max-w-[60%] truncate font-medium text-navy underline underline-offset-2"
-                title={`${state.href} (opens in a new tab)`}
+                title={`${state.href} (נפתח בכרטיסייה חדשה)`}
               >
                 {state.href}
               </a>
-              <BarButton onClick={startLinkEdit}>Edit</BarButton>
+              <BarButton onClick={startLinkEdit}>עריכה</BarButton>
               <BarButton onClick={() => editor.chain().focus().extendMarkRange("link").unsetLink().run()} danger>
-                Remove link
+                הסרת הקישור
               </BarButton>
             </div>
           )
@@ -327,36 +327,36 @@ function EditorMenus({ editor, imageFolder }: { editor: Editor; imageFolder: str
         className="z-20 flex items-center gap-1 rounded-lg border border-line bg-white p-1 shadow-lg"
       >
         <ToolButton
-          label="Heading"
+          label="כותרת"
           active={state.h2}
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
         >
-          Heading
+          כותרת
         </ToolButton>
         <ToolButton
-          label="Subheading"
+          label="כותרת משנה"
           active={state.h3}
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
         >
-          Subheading
+          כותרת משנה
         </ToolButton>
         <Divider />
         <ToolButton
-          label="Bulleted list"
+          label="רשימת תבליטים"
           active={state.bullet}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
         >
-          • List
+          • רשימה
         </ToolButton>
         <ToolButton
-          label="Numbered list"
+          label="רשימה ממוספרת"
           active={state.ordered}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
         >
-          1. List
+          1. רשימה
         </ToolButton>
-        <ToolButton label="Quote" active={state.quote} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
-          “ Quote
+        <ToolButton label="ציטוט" active={state.quote} onClick={() => editor.chain().focus().toggleBlockquote().run()}>
+          ” ציטוט
         </ToolButton>
       </FloatingMenu>
     </>

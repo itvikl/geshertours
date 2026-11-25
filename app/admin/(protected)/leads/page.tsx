@@ -10,7 +10,7 @@ import { AdminIcon } from "@/components/admin/IconAction";
 import DateRangeFilterForm from "@/components/admin/DateRangeFilterForm";
 import { dateRangeQuery, isDateRangeActive, parseDateRangeFilter } from "@/lib/dateRangeFilter";
 
-export const metadata: Metadata = { title: "Leads" };
+export const metadata: Metadata = { title: "פניות" };
 
 export default async function AdminLeadsPage({
   searchParams,
@@ -25,10 +25,10 @@ export default async function AdminLeadsPage({
     <div>
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">Leads</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">פניות</h1>
           <p className="mt-1 text-sm text-ink-muted">
-            {rows.length} lead{rows.length === 1 ? "" : "s"}
-            {isFiltered ? " received in the selected range" : ""} · newest first
+            {rows.length === 1 ? "פנייה אחת" : `${rows.length} פניות`}
+            {isFiltered ? " שהתקבלו בטווח התאריכים שנבחר" : ""} · החדשות ראשונות
           </p>
         </div>
         <div className="flex shrink-0 items-center gap-3">
@@ -39,36 +39,36 @@ export default async function AdminLeadsPage({
               className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-4 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-sand-warm"
             >
               <AdminIcon name="download" className="h-4 w-4" />
-              Export to Excel
+              ייצוא לאקסל
             </a>
           )}
           <Link
             href="/admin/leads/new"
             className="rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
           >
-            + New lead
+            + פנייה חדשה
           </Link>
         </div>
       </div>
 
-      <DateRangeFilterForm filter={filter} clearHref="/admin/leads" fromLabel="Received from" />
+      <DateRangeFilterForm filter={filter} clearHref="/admin/leads" fromLabel="התקבלה מ-" />
 
       {rows.length === 0 ? (
         <p className="rounded-xl border border-dashed border-line bg-white p-10 text-center text-ink-muted">
-          {isFiltered ? "No leads in this date range." : "No leads yet."}
+          {isFiltered ? "אין פניות בטווח התאריכים הזה." : "עדיין אין פניות."}
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[1180px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
-                <th className="px-4 py-3">Contact</th>
-                <th className="px-4 py-3">Message</th>
-                <th className="px-4 py-3">Tour / Destination</th>
-                <th className="px-4 py-3">Source</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Notes</th>
-                <th className="px-4 py-3">Received</th>
+                <th className="px-4 py-3">איש קשר</th>
+                <th className="px-4 py-3">הודעה</th>
+                <th className="px-4 py-3">טיול / יעד</th>
+                <th className="px-4 py-3">מקור</th>
+                <th className="px-4 py-3">סטטוס</th>
+                <th className="px-4 py-3">הערות</th>
+                <th className="px-4 py-3">התקבלה</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -110,7 +110,7 @@ export default async function AdminLeadsPage({
                     })}
                   </td>
                   <td className="px-4 py-3 text-end">
-                    <IconLink href={`/admin/leads/${lead.leadId}`} icon="edit" label="Edit" />
+                    <IconLink href={`/admin/leads/${lead.leadId}`} icon="edit" label="עריכה" />
                   </td>
                 </tr>
               ))}

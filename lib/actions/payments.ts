@@ -121,7 +121,7 @@ export async function createAdminPaymentIntent(
   if (!Number.isFinite(amount) || amount < 1 || amount > booking.balanceAmount) {
     return {
       ok: false,
-      error: `Amount must be between $1 and the remaining balance ($${booking.balanceAmount}).`,
+      error: `הסכום חייב להיות בין $1 ליתרה שנותרה ($${booking.balanceAmount}).`,
     };
   }
 

@@ -112,7 +112,7 @@ export async function updateLead(
 
   const ref = adminDb().collection("leads").doc(leadId);
   if (!(await ref.get()).exists) {
-    return { ok: false, errors: { form: ["This lead no longer exists."] } };
+    return { ok: false, errors: { form: ["הפנייה הזו כבר לא קיימת."] } };
   }
 
   const patch: Record<string, unknown> = { updatedAt: new Date().toISOString() };

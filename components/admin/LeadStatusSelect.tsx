@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { updateLeadStatus } from "@/lib/actions/leads";
 import type { Lead } from "@/lib/types";
+import { LEAD_STATUS_LABELS } from "@/lib/leadLabels";
 import { useToast } from "@/components/admin/feedback/AdminFeedbackProvider";
 
 const STATUS_STYLES: Record<Lead["status"], string> = {
@@ -12,12 +13,7 @@ const STATUS_STYLES: Record<Lead["status"], string> = {
   closed: "bg-ink-muted/15 text-ink-muted",
 };
 
-const STATUS_LABELS: Record<Lead["status"], string> = {
-  new: "New",
-  contacted: "Contacted",
-  converted: "Converted",
-  closed: "Closed",
-};
+const STATUS_LABELS = LEAD_STATUS_LABELS;
 
 /** Badge-styled select — changing it saves immediately, reverting if the save fails. */
 export default function LeadStatusSelect({
@@ -38,9 +34,9 @@ export default function LeadStatusSelect({
       const result = await updateLeadStatus(leadId, next).catch(() => ({ ok: false }));
       if (!result.ok) {
         setStatus(previous);
-        toast.error({ title: "Status not saved", description: "Couldn't update the lead — please try again." });
+        toast.error({ title: "הסטטוס לא נשמר", description: "עדכון הפנייה נכשל — נסו שוב." });
       } else {
-        toast.success(`Lead marked as ${STATUS_LABELS[next].toLowerCase()}`);
+        toast.success(`סטטוס הפנייה: ${STATUS_LABELS[next]}`);
       }
     });
   }
@@ -51,7 +47,7 @@ export default function LeadStatusSelect({
         value={status}
         disabled={pending}
         onChange={(e) => handleChange(e.target.value as Lead["status"])}
-        aria-label="Lead status"
+        aria-label="סטטוס הפנייה"
         className={`cursor-pointer rounded-full border-0 px-2.5 py-0.5 text-xs font-semibold outline-none focus:ring-2 focus:ring-navy/30 disabled:opacity-60 ${STATUS_STYLES[status]}`}
       >
         {(Object.keys(STATUS_LABELS) as Lead["status"][]).map((value) => (

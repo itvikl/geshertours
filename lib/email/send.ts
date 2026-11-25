@@ -6,6 +6,7 @@ import { bookingConfirmationEmail } from "@/lib/email/templates/bookingConfirmat
 import { bookingNotificationEmail, leadNotificationEmail } from "@/lib/email/templates/adminNotifications";
 import { paymentReceiptEmail } from "@/lib/email/templates/paymentReceipt";
 import { SITE_URL } from "@/lib/siteUrl";
+import { DEFAULT_SITE_EMAIL } from "@/lib/siteContact";
 import type { Booking, Departure, Lead, Tour } from "@/lib/types";
 
 async function getTourAndDeparture(
@@ -130,7 +131,7 @@ export async function sendPaymentReceiptEmail(input: PaymentReceiptInput): Promi
 /**
  * Staff inbox(es) for new-booking / new-lead alerts: the list set in Admin →
  * Settings, or, when that's empty (or can't be read), ADMIN_NOTIFY_EMAIL,
- * comma-separated.
+ * comma-separated, or else the site's public email (lib/siteContact.ts).
  */
 async function adminNotifyRecipients(): Promise<string[]> {
   try {
@@ -139,7 +140,7 @@ async function adminNotifyRecipients(): Promise<string[]> {
   } catch (err) {
     console.error("Could not read alert emails from settings; using ADMIN_NOTIFY_EMAIL:", err);
   }
-  return (process.env.ADMIN_NOTIFY_EMAIL ?? "")
+  return (process.env.ADMIN_NOTIFY_EMAIL || DEFAULT_SITE_EMAIL)
     .split(",")
     .map((address) => address.trim())
     .filter(Boolean);

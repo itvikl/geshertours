@@ -14,7 +14,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { tourId } = await params;
   const tour = await getTourByIdAdmin(tourId);
-  return { title: tour ? `${tour.title} — Bookings` : "Bookings" };
+  return { title: tour ? `${tour.title} — הזמנות` : "הזמנות" };
 }
 
 export default async function DepartureBookingsPage({
@@ -38,7 +38,7 @@ export default async function DepartureBookingsPage({
         href={`/admin/bookings/${tourId}`}
         className="text-sm font-medium text-navy hover:text-navy-light"
       >
-        ← {tour.title} departures
+        → מועדי היציאה של {tour.title}
       </Link>
 
       <div className="mb-6 mt-2 flex items-center justify-between gap-4">
@@ -58,7 +58,7 @@ export default async function DepartureBookingsPage({
             )}
           </h1>
           <p className="mt-1 text-sm text-ink-muted">
-            {rows.length} registration{rows.length === 1 ? "" : "s"}
+            {rows.length === 1 ? "הרשמה אחת" : `${rows.length} הרשמות`}
           </p>
         </div>
         {rows.length > 0 && (
@@ -67,14 +67,14 @@ export default async function DepartureBookingsPage({
             className="inline-flex items-center gap-2 shrink-0 rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
           >
             <AdminIcon name="download" className="h-4 w-4" />
-            Export to Excel
+            ייצוא לאקסל
           </a>
         )}
       </div>
 
       {rows.length === 0 ? (
         <p className="rounded-xl border border-dashed border-line bg-white p-10 text-center text-ink-muted">
-          No registrations yet for this departure.
+          עדיין אין הרשמות למועד הזה.
         </p>
       ) : (
         <BookingsTable rows={rows} />

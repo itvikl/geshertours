@@ -6,6 +6,7 @@ import { adminDb } from "@/lib/firebase/admin";
 import { requireAdminSession } from "@/lib/auth/dal";
 import { calculatePriceBreakdown } from "@/lib/pricing";
 import { sendBookingConfirmationEmail, sendBookingNotificationEmail } from "@/lib/email/send";
+import { travelerDisplayName } from "@/lib/travelerName";
 import { ManualBookingInputSchema, PublicBookingInputSchema } from "@/lib/validation/booking";
 import { zodIssuesToFieldErrors } from "@/lib/validation/zodErrors";
 import { ONLINE_PAYMENTS_ENABLED } from "@/lib/onlinePayments";
@@ -108,7 +109,7 @@ async function createBookingCore(
         ok: false,
         errors: {
           paymentAmount: [
-            `Choose an amount between $${depositAmount} and $${priceBreakdown.grandTotal}.`,
+            `יש לבחור סכום בין $${depositAmount} ל-$${priceBreakdown.grandTotal}.`,
           ],
         },
       };
@@ -191,7 +192,7 @@ async function createBookingCore(
     resolution.mode === "public" &&
       sendBookingNotificationEmail(
         booking,
-        data.travelers.map((t) => `${t.firstName} ${t.lastName}`.trim())
+        data.travelers.map(travelerDisplayName)
       ),
   ]);
 

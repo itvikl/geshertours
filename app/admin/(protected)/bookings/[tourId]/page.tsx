@@ -13,7 +13,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { tourId } = await params;
   const tour = await getTourByIdAdmin(tourId);
-  return { title: tour ? `${tour.title} — Bookings` : "Bookings" };
+  return { title: tour ? `${tour.title} — הזמנות` : "הזמנות" };
 }
 
 export default async function TourDeparturesBookingsPage({
@@ -31,30 +31,30 @@ export default async function TourDeparturesBookingsPage({
   return (
     <div>
       <Link href="/admin/bookings" className="text-sm font-medium text-navy hover:text-navy-light">
-        ← All tours
+        → כל הטיולים
       </Link>
 
       <div className="mb-6 mt-2">
         <h1 className="text-2xl font-bold tracking-tight text-ink">{tour.title}</h1>
         <p className="mt-1 text-sm text-ink-muted">
-          {rows.length} planned departure{rows.length === 1 ? "" : "s"} — select one to see its
-          registrants
+          {rows.length === 1 ? "מועד יציאה אחד" : `${rows.length} מועדי יציאה`} — בחרו מועד כדי לראות את
+          הנרשמים
         </p>
       </div>
 
       {rows.length === 0 ? (
         <p className="rounded-xl border border-dashed border-line bg-white p-10 text-center text-ink-muted">
-          No departures yet for this tour.
+          עדיין אין מועדי יציאה לטיול הזה.
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[640px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
-                <th className="px-4 py-3">Dates</th>
-                <th className="px-4 py-3">Capacity</th>
-                <th className="px-4 py-3">Registrants</th>
-                <th className="px-4 py-3">Travelers</th>
+                <th className="px-4 py-3">תאריכים</th>
+                <th className="px-4 py-3">מקומות</th>
+                <th className="px-4 py-3">נרשמים</th>
+                <th className="px-4 py-3">מטיילים</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -82,7 +82,7 @@ export default async function TourDeparturesBookingsPage({
                   </td>
                   <td className="px-4 py-3 text-ink-muted">
                     {departure.capacityBooked}/{departure.capacityTotal} ·{" "}
-                    {availableSeats(departure)} left
+                    נותרו {availableSeats(departure)}
                   </td>
                   <td className="px-4 py-3 text-ink-muted">{registrantCount}</td>
                   <td className="px-4 py-3 text-ink-muted">{travelerCount}</td>
@@ -91,7 +91,7 @@ export default async function TourDeparturesBookingsPage({
                       href={`/admin/bookings/${tourId}/${departure.departureId}`}
                       className="text-sm font-medium text-navy hover:text-navy-light"
                     >
-                      View registrants
+                      צפייה בנרשמים
                     </Link>
                   </td>
                 </tr>

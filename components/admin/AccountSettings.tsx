@@ -38,19 +38,19 @@ function describeError(err: unknown): string {
   switch ((err as { code?: string }).code) {
     case "auth/invalid-credential":
     case "auth/wrong-password":
-      return "Your current password is incorrect.";
+      return "הסיסמה הנוכחית שגויה.";
     case "auth/invalid-verification-code":
-      return "That code didn't work. Check your authenticator app and try again.";
+      return "הקוד לא התקבל. בדקו את אפליקציית האימות ונסו שוב.";
     case "auth/too-many-requests":
-      return "Too many attempts. Wait a few minutes and try again.";
+      return "יותר מדי ניסיונות. המתינו כמה דקות ונסו שוב.";
     case "auth/weak-password":
-      return `Choose a stronger password (at least ${MIN_PASSWORD_LENGTH} characters).`;
+      return `בחרו סיסמה חזקה יותר (לפחות ${MIN_PASSWORD_LENGTH} תווים).`;
     case "auth/unverified-email":
-      return "This account's email isn't verified, so 2FA can't be set up. Ask another admin to fix the account.";
+      return "כתובת המייל של החשבון לא אומתה, ולכן אי אפשר להגדיר אימות דו-שלבי. בקשו ממנהל/ת אחר/ת לתקן את החשבון.";
     case "auth/operation-not-allowed":
-      return "Authenticator apps aren't enabled for this site yet. Ask the developer to turn them on.";
+      return "אפליקציות אימות עדיין לא הופעלו באתר. בקשו מהמפתח/ת להפעיל אותן.";
     default:
-      return "Something went wrong. Try again.";
+      return "משהו השתבש. נסו שוב.";
   }
 }
 
@@ -67,8 +67,8 @@ async function reauthenticate(email: string, password: string, totpCode: string)
     if ((err as { code?: string }).code !== "auth/multi-factor-auth-required") throw err;
     const resolver = getMultiFactorResolver(auth, err as MultiFactorError);
     const hint = resolver.hints.find((h) => h.factorId === TotpMultiFactorGenerator.FACTOR_ID);
-    if (!hint) throw new ShownError("This account's second factor isn't an authenticator app. Ask another admin to reset it.");
-    if (totpCode.length !== 6) throw new ShownError("Enter the 6-digit code from your authenticator app.");
+    if (!hint) throw new ShownError("אמצעי האימות השני של החשבון אינו אפליקציית אימות. בקשו ממנהל/ת אחר/ת לאפס אותו.");
+    if (totpCode.length !== 6) throw new ShownError("הזינו את הקוד בן 6 הספרות מאפליקציית האימות.");
     const assertion = TotpMultiFactorGenerator.assertionForSignIn(hint.uid, totpCode);
     return (await resolver.resolveSignIn(assertion)).user;
   }
@@ -172,14 +172,14 @@ export default function AccountSettings({
   return (
     <div className="max-w-2xl space-y-6">
       <section className={cardClass}>
-        <h2 className="text-lg font-semibold text-ink">Profile</h2>
+        <h2 className="text-lg font-semibold text-ink">פרופיל</h2>
         <dl className="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-sm">
-          <dt className="text-ink-muted">Email</dt>
+          <dt className="text-ink-muted">אימייל</dt>
           <dd className="text-ink">{email ?? "—"}</dd>
-          <dt className="text-ink-muted">Role</dt>
+          <dt className="text-ink-muted">תפקיד</dt>
           <dd className="text-ink">{roleLabel(role)}</dd>
         </dl>
-        <p className="mt-3 text-xs text-ink-muted">To change your email or role, ask a super admin or developer.</p>
+        <p className="mt-3 text-xs text-ink-muted">לשינוי האימייל או התפקיד פנו למנהל/ת על או למפתח/ת.</p>
       </section>
 
       {email ? (
@@ -193,7 +193,7 @@ export default function AccountSettings({
           />
         </>
       ) : (
-        <p className="text-sm text-ink-muted">This account has no email address, so its sign-in can&apos;t be changed here.</p>
+        <p className="text-sm text-ink-muted">לחשבון אין כתובת מייל, ולכן אי אפשר לשנות כאן את פרטי הכניסה.</p>
       )}
     </div>
   );
@@ -212,15 +212,15 @@ function ChangePasswordCard({ email, hasAuthenticator }: { email: string; hasAut
     e.preventDefault();
     setError(null);
     if (next.length < MIN_PASSWORD_LENGTH) {
-      setError(`The new password must be at least ${MIN_PASSWORD_LENGTH} characters.`);
+      setError(`הסיסמה החדשה חייבת להכיל לפחות ${MIN_PASSWORD_LENGTH} תווים.`);
       return;
     }
     if (next !== confirm) {
-      setError("The new passwords don't match.");
+      setError("הסיסמאות החדשות אינן תואמות.");
       return;
     }
     if (next === current) {
-      setError("The new password is the same as the current one.");
+      setError("הסיסמה החדשה זהה לנוכחית.");
       return;
     }
 
@@ -240,28 +240,28 @@ function ChangePasswordCard({ email, hasAuthenticator }: { email: string; hasAut
 
   return (
     <section className={cardClass}>
-      <h2 className="text-lg font-semibold text-ink">Password</h2>
+      <h2 className="text-lg font-semibold text-ink">סיסמה</h2>
       <p className="mt-1 text-sm text-ink-muted">
         After you change it, you&apos;ll be signed out everywhere and sign in again with the new password.
       </p>
       <form onSubmit={handleSubmit} className="mt-5 space-y-4">
-        <Field id="current-password" label="Current password">
+        <Field id="current-password" label="סיסמה נוכחית">
           <PasswordInput id="current-password" value={current} onChange={setCurrent} autoComplete="current-password" />
         </Field>
         {hasAuthenticator && (
-          <Field id="password-code" label="Authenticator code" hint="The 6-digit code from your authenticator app.">
+          <Field id="password-code" label="קוד אימות" hint="הקוד בן 6 הספרות מאפליקציית האימות.">
             <CodeInput id="password-code" value={code} onChange={setCode} />
           </Field>
         )}
-        <Field id="new-password" label="New password" hint={`At least ${MIN_PASSWORD_LENGTH} characters.`}>
+        <Field id="new-password" label="סיסמה חדשה" hint={`לפחות ${MIN_PASSWORD_LENGTH} תווים.`}>
           <PasswordInput id="new-password" value={next} onChange={setNext} autoComplete="new-password" />
         </Field>
-        <Field id="confirm-password" label="Confirm new password">
+        <Field id="confirm-password" label="אימות הסיסמה החדשה">
           <PasswordInput id="confirm-password" value={confirm} onChange={setConfirm} autoComplete="new-password" />
         </Field>
         <ErrorText error={error} />
         <button type="submit" disabled={saving} className={primaryButton}>
-          {saving ? "Changing…" : "Change password"}
+          {saving ? "משנה…" : "שינוי סיסמה"}
         </button>
       </form>
     </section>
@@ -309,7 +309,7 @@ function TwoFactorCard({
       const user = await reauthenticate(email, password, "");
       const session = await multiFactor(user).getSession();
       const secret = await TotpMultiFactorGenerator.generateSecret(session);
-      const qrDataUrl = await QRCode.toDataURL(secret.generateQrCodeUrl(email, "Keshertours Admin"), {
+      const qrDataUrl = await QRCode.toDataURL(secret.generateQrCodeUrl(email, "Gesher Tours Admin"), {
         margin: 1,
         width: 200,
       });
@@ -330,7 +330,7 @@ function TwoFactorCard({
     setBusy(true);
     try {
       const assertion = TotpMultiFactorGenerator.assertionForEnrollment(mode.secret, code);
-      await multiFactor(mode.user).enroll(assertion, "Authenticator app");
+      await multiFactor(mode.user).enroll(assertion, "אפליקציית אימות");
     } catch (err) {
       setError(describeError(err));
       setBusy(false);
@@ -340,8 +340,8 @@ function TwoFactorCard({
     setBusy(false);
     reset();
     toast.success({
-      title: "Two-factor authentication is on",
-      description: "From your next sign-in, you'll enter a code from your authenticator app.",
+      title: "האימות הדו-שלבי פעיל",
+      description: "מהכניסה הבאה תתבקשו להזין קוד מאפליקציית האימות.",
     });
     router.refresh();
   }
@@ -373,27 +373,27 @@ function TwoFactorCard({
   }
 
   const addedOn = authenticatorAddedOn
-    ? new Date(authenticatorAddedOn).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" })
+    ? new Date(authenticatorAddedOn).toLocaleDateString("he-IL", { day: "numeric", month: "short", year: "numeric" })
     : null;
 
   const status = hasAuthenticator ? (
-    <span className="font-semibold text-olive">On — authenticator app</span>
+    <span className="font-semibold text-olive">פעיל — אפליקציית אימות</span>
   ) : twoFactorRequired ? (
-    <span className="font-semibold text-olive">On — emailed codes</span>
+    <span className="font-semibold text-olive">פעיל — קודים במייל</span>
   ) : (
-    <span className="font-semibold text-ink-muted">Off</span>
+    <span className="font-semibold text-ink-muted">כבוי</span>
   );
 
   const explanation = hasAuthenticator
-    ? `You enter a code from your authenticator app at every sign-in${addedOn ? ` (set up ${addedOn})` : ""}.`
+    ? `בכל כניסה מזינים קוד מאפליקציית האימות${addedOn ? ` (הוגדרה ב-${addedOn})` : ""}.`
     : twoFactorRequired
-      ? "Two-factor sign-in is required for every admin. Without an authenticator app, you get a code by email at each sign-in — an app is faster and works offline."
-      : "Your account is protected by your password only. Add an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…) for a code at every sign-in.";
+      ? "אימות דו-שלבי נדרש מכל מנהל/ת. בלי אפליקציית אימות, בכל כניסה נשלח אליכם קוד במייל — אפליקציה מהירה יותר ועובדת גם בלי אינטרנט."
+      : "החשבון מוגן בסיסמה בלבד. הוסיפו אפליקציית אימות (Google Authenticator,‏ Microsoft Authenticator,‏ 1Password…) לקבלת קוד בכל כניסה.";
 
   return (
     <section className={cardClass}>
       <div className="flex flex-wrap items-baseline justify-between gap-2">
-        <h2 className="text-lg font-semibold text-ink">Two-factor authentication</h2>
+        <h2 className="text-lg font-semibold text-ink">אימות דו-שלבי</h2>
         <p className="text-sm">{status}</p>
       </div>
       <p className="mt-1 text-sm text-ink-muted">{explanation}</p>
@@ -402,11 +402,11 @@ function TwoFactorCard({
         <div className="mt-5">
           {hasAuthenticator ? (
             <button type="button" onClick={() => reset({ kind: "disable-confirm" })} className={secondaryButton}>
-              Turn off authenticator app
+              הסרת אפליקציית האימות
             </button>
           ) : (
             <button type="button" onClick={() => reset({ kind: "enable-confirm" })} className={primaryButton}>
-              Set up authenticator app
+              הגדרת אפליקציית אימות
             </button>
           )}
         </div>
@@ -414,7 +414,7 @@ function TwoFactorCard({
 
       {mode.kind === "enable-confirm" && (
         <form onSubmit={startEnable} className="mt-5 space-y-4">
-          <Field id="enable-password" label="Current password" hint="Confirm it's you before adding an authenticator app.">
+          <Field id="enable-password" label="סיסמה נוכחית" hint="אשרו שזה אתם לפני הוספת אפליקציית אימות.">
             <PasswordInput
               id="enable-password"
               value={password}
@@ -426,10 +426,10 @@ function TwoFactorCard({
           <ErrorText error={error} />
           <div className="flex flex-wrap gap-3">
             <button type="submit" disabled={busy} className={primaryButton}>
-              {busy ? "Checking…" : "Continue"}
+              {busy ? "בודק…" : "המשך"}
             </button>
             <button type="button" disabled={busy} onClick={() => reset()} className={secondaryButton}>
-              Cancel
+              ביטול
             </button>
           </div>
         </form>
@@ -438,26 +438,26 @@ function TwoFactorCard({
       {mode.kind === "enable-scan" && (
         <form onSubmit={finishEnable} className="mt-5 space-y-4">
           <p className="text-sm text-ink-muted">
-            Scan this code with your authenticator app, then enter the 6-digit code it shows.
+            סרקו את הקוד באפליקציית האימות והזינו את הקוד בן 6 הספרות שמופיע בה.
           </p>
           {/* eslint-disable-next-line @next/next/no-img-element -- a local data: URL, nothing for next/image to optimize */}
-          <img src={mode.qrDataUrl} alt="Authenticator setup QR code" width={200} height={200} />
+          <img src={mode.qrDataUrl} alt="קוד QR להגדרת אפליקציית האימות" width={200} height={200} />
           <details className="text-xs text-ink-muted">
-            <summary className="cursor-pointer">Can&apos;t scan? Enter this key instead</summary>
+            <summary className="cursor-pointer">לא מצליחים לסרוק? הזינו את המפתח הזה במקום</summary>
             <code className="mt-2 block break-all rounded bg-sand-warm px-2 py-1.5 font-mono text-ink">
               {mode.secret.secretKey}
             </code>
           </details>
-          <Field id="enable-code" label="6-digit code">
+          <Field id="enable-code" label="קוד בן 6 ספרות">
             <CodeInput id="enable-code" value={code} onChange={setCode} />
           </Field>
           <ErrorText error={error} />
           <div className="flex flex-wrap gap-3">
             <button type="submit" disabled={busy || code.length !== 6} className={primaryButton}>
-              {busy ? "Verifying…" : "Turn on"}
+              {busy ? "מאמת…" : "הפעלה"}
             </button>
             <button type="button" disabled={busy} onClick={() => reset()} className={secondaryButton}>
-              Cancel
+              ביטול
             </button>
           </div>
         </form>
@@ -467,10 +467,10 @@ function TwoFactorCard({
         <form onSubmit={disable} className="mt-5 space-y-4">
           <p className="rounded-lg bg-sand-warm px-3 py-2 text-sm text-ink">
             {twoFactorRequired
-              ? "You'll get sign-in codes by email instead. You'll be signed out and sign in again."
-              : "Your account will be protected by your password only. You'll be signed out and sign in again."}
+              ? "במקום זאת תקבלו קודי כניסה במייל. תנותקו ותצטרכו להיכנס שוב."
+              : "החשבון יהיה מוגן בסיסמה בלבד. תנותקו ותצטרכו להיכנס שוב."}
           </p>
-          <Field id="disable-password" label="Current password">
+          <Field id="disable-password" label="סיסמה נוכחית">
             <PasswordInput
               id="disable-password"
               value={password}
@@ -479,16 +479,16 @@ function TwoFactorCard({
               autoFocus
             />
           </Field>
-          <Field id="disable-code" label="Authenticator code" hint="A code from the app you're removing.">
+          <Field id="disable-code" label="קוד אימות" hint="קוד מהאפליקציה שאתם מסירים.">
             <CodeInput id="disable-code" value={code} onChange={setCode} />
           </Field>
           <ErrorText error={error} />
           <div className="flex flex-wrap gap-3">
             <button type="submit" disabled={busy || code.length !== 6} className={dangerButton}>
-              {busy ? "Turning off…" : "Turn off"}
+              {busy ? "מכבה…" : "כיבוי"}
             </button>
             <button type="button" disabled={busy} onClick={() => reset()} className={secondaryButton}>
-              Cancel
+              ביטול
             </button>
           </div>
         </form>

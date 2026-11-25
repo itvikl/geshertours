@@ -5,7 +5,7 @@ import { AdminIcon } from "@/components/admin/IconAction";
 import DateRangeFilterForm from "@/components/admin/DateRangeFilterForm";
 import { dateRangeQuery } from "@/lib/dateRangeFilter";
 
-export const metadata: Metadata = { title: "History" };
+export const metadata: Metadata = { title: "היסטוריה" };
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("he-IL", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" });
@@ -26,10 +26,10 @@ export default async function AdminHistoryPage({
     <div>
       <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">History</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">היסטוריה</h1>
           <p className="mt-1 text-sm text-ink-muted">
-            {rows.length} past departure{rows.length === 1 ? "" : "s"}
-            {isFiltered ? " in the selected range" : ""}
+            {rows.length === 1 ? "מועד יציאה אחד שעבר" : `${rows.length} מועדי יציאה שעברו`}
+            {isFiltered ? " בטווח התאריכים שנבחר" : ""}
           </p>
         </div>
         <a
@@ -37,24 +37,24 @@ export default async function AdminHistoryPage({
           className="inline-flex items-center gap-2 shrink-0 rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
         >
           <AdminIcon name="download" className="h-4 w-4" />
-          Export to Excel
+          ייצוא לאקסל
         </a>
       </div>
 
-      <DateRangeFilterForm filter={filter} clearHref="/admin/history" fromLabel="Departed from" />
+      <DateRangeFilterForm filter={filter} clearHref="/admin/history" fromLabel="יצא מ-" />
 
       {rows.length === 0 ? (
         <p className="rounded-xl border border-dashed border-line bg-white p-10 text-center text-ink-muted">
-          {isFiltered ? "No past departures in this date range." : "No past departures yet."}
+          {isFiltered ? "אין מועדי יציאה שעברו בטווח הזה." : "עדיין אין מועדי יציאה שעברו."}
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[640px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
-                <th className="px-4 py-3">Tour</th>
-                <th className="px-4 py-3">Dates</th>
-                <th className="px-4 py-3">Registrants</th>
+                <th className="px-4 py-3">טיול</th>
+                <th className="px-4 py-3">תאריכים</th>
+                <th className="px-4 py-3">נרשמים</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -71,7 +71,7 @@ export default async function AdminHistoryPage({
                       href={`/admin/history/${departure.departureId}`}
                       className="text-sm font-medium text-navy hover:text-navy-light"
                     >
-                      View registrants
+                      צפייה בנרשמים
                     </Link>
                   </td>
                 </tr>

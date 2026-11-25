@@ -15,7 +15,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { offerId } = await params;
   const offer = await getOfferByIdAdmin(offerId);
-  return { title: offer ? `Edit — ${offer.title}` : "Offer" };
+  return { title: offer ? `עריכה — ${offer.title}` : "מבצע" };
 }
 
 export default async function EditOfferPage({
@@ -34,7 +34,7 @@ export default async function EditOfferPage({
     <div>
       {isAdmin && (
         <div className="mb-4 flex justify-end">
-          <DeleteButton action={deleteOffer.bind(null, offerId)} what="this offer" redirectTo="/admin/offers" />
+          <DeleteButton action={deleteOffer.bind(null, offerId)} what="את המבצע הזה" redirectTo="/admin/offers" />
         </div>
       )}
       <div className="mb-6">

@@ -52,14 +52,14 @@ export default function OfferEditorForm({
       result = await saveOffer(payload, savedOfferId);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
 
     if (!result.ok) {
       setErrors(result.errors);
       setSaving(false);
-      toast.error({ title: "Offer not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "המבצע לא נשמר", description: "תקנו את השדות המסומנים ונסו שוב." });
       return;
     }
 
@@ -72,23 +72,23 @@ export default function OfferEditorForm({
     setSaving(false);
     toast.success(
       status === "published"
-        ? { title: "Offer published", description: "Your changes are now live on the site." }
-        : { title: "Draft saved", description: "The offer was saved as a draft." }
+        ? { title: "המבצע פורסם", description: "השינויים מוצגים עכשיו באתר." }
+        : { title: "הטיוטה נשמרה", description: "המבצע נשמר כטיוטה." }
     );
   }
 
   return (
     <div className="max-w-2xl space-y-6">
-      <Section title="Offer details">
+      <Section title="פרטי המבצע">
         <div className="space-y-4">
-          <Field label="Title" required error={errors.title}>
+          <Field label="כותרת" required error={errors.title}>
             <input
               value={draft.title}
               onChange={(e) => set("title", e.target.value)}
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             />
           </Field>
-          <Field label="Body" required error={errors.body}>
+          <Field label="תוכן" required error={errors.body}>
             <textarea
               value={draft.body}
               onChange={(e) => set("body", e.target.value)}
@@ -96,17 +96,17 @@ export default function OfferEditorForm({
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             />
           </Field>
-          <Field label="Image">
+          <Field label="תמונה">
             <ImageField folder="offers" value={draft.image} onChange={(url) => set("image", url)} />
           </Field>
           <div className="grid gap-4 sm:grid-cols-2">
-            <Field label="Related tour">
+            <Field label="טיול קשור">
               <select
                 value={draft.tourId ?? ""}
                 onChange={(e) => set("tourId", e.target.value || undefined)}
                 className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
               >
-                <option value="">— None —</option>
+                <option value="">— ללא —</option>
                 {tours.map((t) => (
                   <option key={t.tourId} value={t.tourId}>
                     {t.title}
@@ -114,7 +114,7 @@ export default function OfferEditorForm({
                 ))}
               </select>
             </Field>
-            <Field label="Valid until">
+            <Field label="בתוקף עד">
               <input
                 type="date"
                 value={draft.validUntil ?? ""}
@@ -133,7 +133,7 @@ export default function OfferEditorForm({
           onClick={() => handleSave("draft")}
           className="rounded-lg border border-line bg-white px-5 py-2.5 text-sm font-semibold text-ink transition-colors hover:bg-sand-warm disabled:opacity-60"
         >
-          Save draft
+          שמירת טיוטה
         </button>
         <button
           type="button"
@@ -141,7 +141,7 @@ export default function OfferEditorForm({
           onClick={() => handleSave("published")}
           className="rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light disabled:opacity-60"
         >
-          Publish
+          פרסום
         </button>
         {isDirty && <span className="self-center"><UnsavedIndicator /></span>}
       </div>

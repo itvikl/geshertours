@@ -20,7 +20,7 @@ export async function saveSeoPage(input: unknown, pageId?: string): Promise<Save
   const data = parsed.data;
 
   if (await isSeoSlugTaken(data.slug, pageId)) {
-    return { ok: false, errors: { slug: ["This slug is already used by another page."] } };
+    return { ok: false, errors: { slug: ["הכתובת (slug) כבר בשימוש בדף אחר."] } };
   }
 
   const savedId = pageId ? await updateSeoPageDoc(pageId, data) : await createSeoPageDoc(data);

@@ -8,7 +8,7 @@ const dateInputClass =
 export default function DateRangeFilterForm({
   filter,
   clearHref,
-  fromLabel = "From",
+  fromLabel = "מתאריך",
 }: {
   filter: DateRangeFilter;
   clearHref: string;
@@ -21,18 +21,18 @@ export default function DateRangeFilterForm({
         <input type="date" name="from" defaultValue={filter.from} className={dateInputClass} />
       </label>
       <label className="text-sm font-medium text-ink">
-        <span className="mb-1.5 block">To</span>
+        <span className="mb-1.5 block">עד תאריך</span>
         <input type="date" name="to" defaultValue={filter.to} className={dateInputClass} />
       </label>
       <button
         type="submit"
         className="rounded-lg border border-line px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-sand-warm"
       >
-        Filter
+        סינון
       </button>
       {isDateRangeActive(filter) && (
         <Link href={clearHref} className="py-2 text-sm font-medium text-ink-muted hover:text-ink">
-          Clear
+          ניקוי
         </Link>
       )}
     </form>

@@ -24,12 +24,12 @@ export default function DuplicateTourButton({
       try {
         const result = await duplicateTour(tourId);
         if (result && !result.ok) {
-          toast.error({ title: "Couldn't duplicate tour", description: result.error });
+          toast.error({ title: "שכפול הטיול נכשל", description: result.error });
         } else {
-          toast.success({ title: "Tour duplicated", description: "You're now editing the new draft copy." });
+          toast.success({ title: "הטיול שוכפל", description: "אתם עורכים עכשיו את העותק החדש (טיוטה)." });
         }
       } catch {
-        toast.error({ title: "Couldn't duplicate tour", description: "Something went wrong — please try again." });
+        toast.error({ title: "שכפול הטיול נכשל", description: "משהו השתבש — נסו שוב." });
       }
     });
   }
@@ -38,7 +38,7 @@ export default function DuplicateTourButton({
     return (
       <IconButton
         icon="copy"
-        label={pending ? "Duplicating…" : "Duplicate (draft copy, no dates)"}
+        label={pending ? "משכפל…" : "שכפול (עותק טיוטה, בלי מועדים)"}
         onClick={run}
         disabled={pending}
       />
@@ -49,11 +49,11 @@ export default function DuplicateTourButton({
     <button
       type="button"
       disabled={pending}
-      title="Create a draft copy of this tour (without departure dates)"
+      title="יצירת עותק טיוטה של הטיול (בלי מועדי יציאה)"
       onClick={run}
       className="shrink-0 rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-semibold text-ink transition-colors hover:bg-sand-warm disabled:opacity-60"
     >
-      {pending ? "Duplicating…" : "Duplicate"}
+      {pending ? "משכפל…" : "שכפול"}
     </button>
   );
 }

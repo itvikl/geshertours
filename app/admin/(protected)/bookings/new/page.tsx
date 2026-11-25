@@ -3,7 +3,7 @@ import { getAllToursAdmin } from "@/lib/data/admin/tours";
 import { getAllDeparturesAdmin } from "@/lib/data/admin/bookings";
 import BookingManualForm from "@/components/admin/BookingManualForm";
 
-export const metadata: Metadata = { title: "New booking" };
+export const metadata: Metadata = { title: "הזמנה חדשה" };
 
 export default async function NewBookingPage() {
   const [tours, departures] = await Promise.all([getAllToursAdmin(), getAllDeparturesAdmin()]);
@@ -14,9 +14,9 @@ export default async function NewBookingPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-ink">New booking</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-ink">הזמנה חדשה</h1>
         <p className="mt-1 text-sm text-ink-muted">
-          Register a booking taken by phone or another offline channel.
+          רישום הזמנה שהתקבלה בטלפון או בדרך אחרת שאינה באתר.
         </p>
       </div>
       <BookingManualForm tours={publishedTours} departures={departures} />

@@ -11,6 +11,8 @@ export const PHONE_MAX_LENGTH = 20;
 export const PASSPORT_PATTERN = /^[A-Z0-9]{1,10}$/;
 export const NAME_PATTERN = /^[\p{L}\p{M}][\p{L}\p{M}\s'’.-]*$/u;
 export const PHONE_PATTERN = /^\+?[\d\s()-]{5,20}$/;
+/** The name as printed in the passport: English letters, spaces, apostrophe, hyphen. */
+export const LATIN_NAME_PATTERN = /^[A-Z][A-Z\s'-]*$/;
 
 /** Latin letters (uppercased) and digits, at most 10 — many countries' passport numbers mix both. */
 export function sanitizePassport(value: string): string {
@@ -20,6 +22,11 @@ export function sanitizePassport(value: string): string {
 /** Letters (any language), spaces, apostrophe, hyphen, dot — no digits or other symbols. */
 export function sanitizeName(value: string): string {
   return value.replace(/[^\p{L}\p{M}\s'’.-]/gu, "").slice(0, NAME_MAX_LENGTH);
+}
+
+/** English capitals (as in a passport), spaces, apostrophe, hyphen. */
+export function sanitizeLatinName(value: string): string {
+  return value.toUpperCase().replace(/[^A-Z\s'-]/g, "").slice(0, NAME_MAX_LENGTH);
 }
 
 /** Digits, spaces, hyphens, parentheses, and a single leading "+". */

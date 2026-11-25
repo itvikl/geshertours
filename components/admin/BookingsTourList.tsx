@@ -8,9 +8,9 @@ export default function BookingsTourList({ rows }: { rows: TourBookingSummary[] 
       <table className="w-full min-w-[560px] text-start text-sm">
         <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
           <tr>
-            <th className="px-4 py-3">Tour</th>
-            <th className="px-4 py-3">Registrants</th>
-            <th className="px-4 py-3">Travelers</th>
+            <th className="px-4 py-3">טיול</th>
+            <th className="px-4 py-3">נרשמים</th>
+            <th className="px-4 py-3">מטיילים</th>
             <th className="px-4 py-3" />
           </tr>
         </thead>
@@ -20,7 +20,7 @@ export default function BookingsTourList({ rows }: { rows: TourBookingSummary[] 
               <td className="px-4 py-3">
                 <div className="flex flex-col">
                   <NewBookingsBadge count={row.newCount} />
-                  <p className="font-semibold text-ink">{row.tour?.title ?? "Unknown tour"}</p>
+                  <p className="font-semibold text-ink">{row.tour?.title ?? "טיול לא ידוע"}</p>
                   {row.tour && <p className="text-xs text-ink-muted">/{row.tour.slug}</p>}
                 </div>
               </td>
@@ -31,7 +31,7 @@ export default function BookingsTourList({ rows }: { rows: TourBookingSummary[] 
                   href={`/admin/bookings/${row.tourId}`}
                   className="text-sm font-medium text-navy hover:text-navy-light"
                 >
-                  View departures
+                  צפייה במועדים
                 </Link>
               </td>
             </tr>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { sanitizeName, sanitizePassport, sanitizePhone, PASSPORT_MAX_LENGTH, NAME_MAX_LENGTH, PHONE_MAX_LENGTH } from "@/lib/validation/fields";
+import { sanitizeLatinName, sanitizeName, sanitizePassport, sanitizePhone, PASSPORT_MAX_LENGTH, NAME_MAX_LENGTH, PHONE_MAX_LENGTH } from "@/lib/validation/fields";
 import { useDirtyDraft, useGuardedNavigate, useToast } from "@/components/admin/feedback/AdminFeedbackProvider";
 import {
   availableSeats,
@@ -15,10 +15,13 @@ import {
 import { calculatePriceBreakdown, formatUsd } from "@/lib/pricing";
 import { createManualBooking } from "@/lib/actions/bookings";
 import RequiredMark from "@/components/admin/RequiredMark";
+import { OCCUPANCY_LABELS } from "@/lib/adminLabels";
 
 interface TravelerDraft {
   firstName: string;
   lastName: string;
+  passportFirstName: string;
+  passportLastName: string;
   dob: string;
   passport: string;
   occupancy: Occupancy;
@@ -29,6 +32,8 @@ interface TravelerDraft {
 const BLANK_TRAVELER: Omit<TravelerDraft, "occupancy"> = {
   firstName: "",
   lastName: "",
+  passportFirstName: "",
+  passportLastName: "",
   dob: "",
   passport: "",
   roomWith: "",
@@ -125,6 +130,8 @@ export default function BookingManualForm({
         travelers: travelers.map((t) => ({
           firstName: t.firstName,
           lastName: t.lastName,
+          passportFirstName: t.passportFirstName.trim() || undefined,
+          passportLastName: t.passportLastName.trim() || undefined,
           dob: t.dob || undefined,
           passport: t.passport || undefined,
           occupancy: t.occupancy,
@@ -139,18 +146,18 @@ export default function BookingManualForm({
       });
     } catch {
       setSaving(false);
-      toast.error({ title: "Booking not created", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "ההזמנה לא נוצרה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
 
     if (!result.ok) {
       setErrors(result.errors);
       setSaving(false);
-      toast.error({ title: "Booking not created", description: "Please fix the issues listed below and try again." });
+      toast.error({ title: "ההזמנה לא נוצרה", description: "תקנו את הבעיות שמופיעות למטה ונסו שוב." });
       return;
     }
 
-    toast.success({ title: "Booking created", description: `Booking for ${contactName} was added successfully.` });
+    toast.success({ title: "ההזמנה נוצרה", description: `ההזמנה של ${contactName} נוספה בהצלחה.` });
     await navigate("/admin/bookings", { skipConfirm: true });
   }
 
@@ -158,9 +165,9 @@ export default function BookingManualForm({
 
   return (
     <div className="max-w-3xl space-y-6">
-      <Section title="Tour & departure">
+      <Section title="טיול ומועד יציאה">
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Tour">
+          <Field label="טיול">
             <select
               value={tourId}
               onChange={(e) => selectTour(e.target.value)}
@@ -173,13 +180,13 @@ export default function BookingManualForm({
               ))}
             </select>
           </Field>
-          <Field label="Departure" required error={errors.departureId}>
+          <Field label="מועד יציאה" required error={errors.departureId}>
             <select
               value={departureId}
               onChange={(e) => setDepartureId(e.target.value)}
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             >
-              <option value="">— Choose a date —</option>
+              <option value="">— בחרו תאריך —</option>
               {tourDepartures.map((d) => (
                 <option key={d.departureId} value={d.departureId}>
                   {new Date(d.startDate).toLocaleDateString("he-IL", {
@@ -188,7 +195,7 @@ export default function BookingManualForm({
                     day: "numeric",
                     year: "numeric",
                   })}{" "}
-                  · {availableSeats(d)} spots left
+                  · נותרו {availableSeats(d)} מקומות
                 </option>
               ))}
             </select>
@@ -196,65 +203,67 @@ export default function BookingManualForm({
         </div>
       </Section>
 
-      <Section title="Party size & rooms">
+      <Section title="משתתפים וחדרים">
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <NumberField label="Double rooms" value={room.doubleRooms} onChange={(v) => updateRoom({ doubleRooms: v })} />
-          <NumberField label="Single rooms" value={room.singleRooms} onChange={(v) => updateRoom({ singleRooms: v })} />
-          <NumberField label="Triple rooms" value={room.triples} onChange={(v) => updateRoom({ triples: v })} />
-          <NumberField label="Children" value={childCount} onChange={updateChildCount} />
+          <NumberField label="חדרים זוגיים" value={room.doubleRooms} onChange={(v) => updateRoom({ doubleRooms: v })} />
+          <NumberField label="חדרים ליחיד" value={room.singleRooms} onChange={(v) => updateRoom({ singleRooms: v })} />
+          <NumberField label="חדרים לשלושה" value={room.triples} onChange={(v) => updateRoom({ triples: v })} />
+          <NumberField label="ילדים" value={childCount} onChange={updateChildCount} />
         </div>
         {priceBreakdown && (
           <p className="mt-4 rounded-lg bg-sand-warm px-4 py-3 text-sm text-ink">
-            {totalTravelers} traveler{totalTravelers === 1 ? "" : "s"} · Total{" "}
-            <span className="font-semibold">{formatUsd(priceBreakdown.grandTotal)}</span> · Deposit{" "}
+            {totalTravelers === 1 ? "מטייל אחד" : `${totalTravelers} מטיילים`} · סה״כ{" "}
+            <span className="font-semibold">{formatUsd(priceBreakdown.grandTotal)}</span> · מקדמה{" "}
             <span className="font-semibold">{formatUsd(depositAmount)}</span>
           </p>
         )}
       </Section>
 
-      <Section title="Travelers">
+      <Section title="מטיילים">
         <div className="space-y-4">
           {travelers.map((traveler, index) => (
             <div key={index} className="rounded-lg border border-line p-4">
               <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-ink-muted">
-                Traveler {index + 1} · {traveler.occupancy}
+                מטייל {index + 1} · {OCCUPANCY_LABELS[traveler.occupancy]}
               </p>
               <div className="grid gap-3 sm:grid-cols-2">
-                <TextField label="First name" required value={traveler.firstName} onChange={(v) => updateTraveler(index, { firstName: sanitizeName(v) })} maxLength={NAME_MAX_LENGTH} />
-                <TextField label="Last name" required value={traveler.lastName} onChange={(v) => updateTraveler(index, { lastName: sanitizeName(v) })} maxLength={NAME_MAX_LENGTH} />
-                <TextField label="Date of birth" type="date" value={traveler.dob} onChange={(v) => updateTraveler(index, { dob: v })} />
-                <TextField label="Passport number" value={traveler.passport} onChange={(v) => updateTraveler(index, { passport: sanitizePassport(v) })} maxLength={PASSPORT_MAX_LENGTH} />
-                <TextField label="Dietary needs" value={traveler.dietary} onChange={(v) => updateTraveler(index, { dietary: v })} />
+                <TextField label="שם פרטי" required value={traveler.firstName} onChange={(v) => updateTraveler(index, { firstName: sanitizeName(v) })} maxLength={NAME_MAX_LENGTH} />
+                <TextField label="שם משפחה" required value={traveler.lastName} onChange={(v) => updateTraveler(index, { lastName: sanitizeName(v) })} maxLength={NAME_MAX_LENGTH} />
+                <TextField label="שם פרטי באנגלית (כמו בדרכון)" dir="ltr" value={traveler.passportFirstName} onChange={(v) => updateTraveler(index, { passportFirstName: sanitizeLatinName(v) })} maxLength={NAME_MAX_LENGTH} />
+                <TextField label="שם משפחה באנגלית (כמו בדרכון)" dir="ltr" value={traveler.passportLastName} onChange={(v) => updateTraveler(index, { passportLastName: sanitizeLatinName(v) })} maxLength={NAME_MAX_LENGTH} />
+                <TextField label="תאריך לידה" type="date" value={traveler.dob} onChange={(v) => updateTraveler(index, { dob: v })} />
+                <TextField label="מספר דרכון" value={traveler.passport} onChange={(v) => updateTraveler(index, { passport: sanitizePassport(v) })} maxLength={PASSPORT_MAX_LENGTH} />
+                <TextField label="העדפות תזונה" value={traveler.dietary} onChange={(v) => updateTraveler(index, { dietary: v })} />
               </div>
             </div>
           ))}
         </div>
       </Section>
 
-      <Section title="Contact & status">
+      <Section title="פרטי קשר וסטטוס">
         <div className="grid gap-4 sm:grid-cols-2">
-          <TextField label="Contact name" required value={contactName} onChange={(v) => setContactName(sanitizeName(v))} maxLength={NAME_MAX_LENGTH} />
-          <TextField label="Email" required type="email" value={contactEmail} onChange={setContactEmail} />
-          <TextField label="Phone" type="tel" value={contactPhone} onChange={(v) => setContactPhone(sanitizePhone(v))} maxLength={PHONE_MAX_LENGTH} inputMode="tel" />
-          <Field label="Contact preference">
+          <TextField label="שם איש הקשר" required value={contactName} onChange={(v) => setContactName(sanitizeName(v))} maxLength={NAME_MAX_LENGTH} />
+          <TextField label="אימייל" required type="email" dir="ltr" value={contactEmail} onChange={setContactEmail} />
+          <TextField label="טלפון" type="tel" dir="ltr" value={contactPhone} onChange={(v) => setContactPhone(sanitizePhone(v))} maxLength={PHONE_MAX_LENGTH} inputMode="tel" />
+          <Field label="אופן ההמשך">
             <select
               value={contactPreference}
               onChange={(e) => setContactPreference(e.target.value as ContactPreference)}
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             >
-              <option value="callback">Call back</option>
-              <option value="pay_online">Pay online</option>
+              <option value="callback">חזרה טלפונית</option>
+              <option value="pay_online">תשלום באתר</option>
             </select>
           </Field>
-          <Field label="Status" hint="No Stripe step here — set what actually happened.">
+          <Field label="סטטוס" hint="אין כאן שלב תשלום בכרטיס — סמנו מה קרה בפועל.">
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value as BookingStatus)}
               className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
             >
-              <option value="pending_payment">Pending payment</option>
-              <option value="partial_paid">Partially paid</option>
-              <option value="paid_in_full">Paid in full</option>
+              <option value="pending_payment">ממתין לתשלום</option>
+              <option value="partial_paid">שולם חלקית</option>
+              <option value="paid_in_full">שולם במלואו</option>
             </select>
           </Field>
         </div>
@@ -272,16 +281,16 @@ export default function BookingManualForm({
         <button
           type="button"
           disabled={saving || !departureId}
-          title={!departureId ? "Choose a departure date first" : undefined}
+          title={!departureId ? "בחרו קודם מועד יציאה" : undefined}
           aria-describedby={!departureId ? "booking-blocked-reason" : undefined}
           onClick={handleSave}
           className="rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light disabled:opacity-60"
         >
-          {saving ? "Saving…" : "Create booking"}
+          {saving ? "שומר…" : "יצירת הזמנה"}
         </button>
         {!departureId && (
           <p id="booking-blocked-reason" className="text-xs font-medium text-terracotta-dark">
-            Choose a departure date to create the booking.
+            בחרו מועד יציאה כדי ליצור את ההזמנה.
           </p>
         )}
       </div>
@@ -361,6 +370,7 @@ function TextField({
   type = "text",
   maxLength,
   inputMode,
+  dir,
 }: {
   label: string;
   required?: boolean;
@@ -369,6 +379,8 @@ function TextField({
   type?: string;
   maxLength?: number;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  /** "ltr" for English-only fields (passport name, email, phone). */
+  dir?: "ltr" | "rtl";
 }) {
   return (
     <Field label={label} required={required}>
@@ -377,6 +389,7 @@ function TextField({
         value={value}
         maxLength={maxLength}
         inputMode={inputMode}
+        dir={dir}
         onChange={(e) => onChange(e.target.value)}
         className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
       />

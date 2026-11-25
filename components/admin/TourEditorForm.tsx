@@ -14,6 +14,8 @@ import type {
   TourStatus,
 } from "@/lib/types";
 import { COUNTRIES } from "@/lib/countries";
+import { countryLabel } from "@/lib/countryNames";
+import { TOUR_STATUS_LABELS } from "@/lib/adminLabels";
 import { getPublishChecklist, isReadyToPublish } from "@/lib/validation/tourChecklist";
 import { saveTour } from "@/lib/actions/tours";
 import DuplicateTourButton from "@/components/admin/DuplicateTourButton";
@@ -77,7 +79,7 @@ function withInfoCards(tour: Tour): Tour {
   if (legacy.length === 0) return { ...tour, infoCards: tour.infoCards ?? [] };
   const card: TourInfoCard = {
     cardId: crypto.randomUUID(),
-    title: "Important to Know",
+    title: "חשוב לדעת",
     fields: [],
     items: legacy,
   };
@@ -143,6 +145,12 @@ function withUniqueDayIds(days: ItineraryDay[]): ItineraryDay[] {
 }
 
 type Viewport = "desktop" | "tablet" | "mobile";
+const VIEWPORT_LABEL: Record<Viewport, string> = {
+  desktop: "מחשב",
+  tablet: "טאבלט",
+  mobile: "נייד",
+};
+
 const VIEWPORT_WIDTH: Record<Viewport, string> = {
   desktop: "100%",
   tablet: "768px",
@@ -193,7 +201,7 @@ export default function TourEditorForm({
   const missing = useMemo(() => checklist.filter((item) => !item.ok), [checklist]);
   const isPublished = draft.status === "published";
   const isArchived = draft.status === "archived";
-  const blockedWhat = isPublished ? "save changes" : "publish";
+  const blockedWhat = isPublished ? "לשמור שינויים" : "לפרסם";
   // Set when someone clicks Publish while it is blocked: from then on every
   // missing field says so, instead of the button silently doing nothing.
   const [showMissing, setShowMissing] = useState(false);
@@ -218,9 +226,9 @@ export default function TourEditorForm({
   // effect of saving.
   async function handleUnpublish() {
     const ok = await confirm({
-      title: "Unpublish this tour?",
-      description: "It will disappear from the site, and its page will show “not found” until you publish it again.",
-      confirmLabel: "Unpublish",
+      title: "להסיר את הטיול מהאתר?",
+      description: "הטיול ייעלם מהאתר, והדף שלו יציג ״לא נמצא״ עד שתפרסמו אותו שוב.",
+      confirmLabel: "הסרה מהאתר",
       tone: "danger",
     });
     if (ok) handleSave("draft");
@@ -372,7 +380,7 @@ export default function TourEditorForm({
       result = await saveTour(payload, savedTourId);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
 
@@ -381,8 +389,8 @@ export default function TourEditorForm({
       setSaving(false);
       const count = Object.values(result.errors).filter(Boolean).length;
       toast.error({
-        title: "Tour not saved",
-        description: `${count} field${count === 1 ? " needs" : "s need"} attention — check the highlighted fields.`,
+        title: "הטיול לא נשמר",
+        description: `${count === 1 ? "שדה אחד דורש" : `${count} שדות דורשים`} תיקון — בדקו את השדות המסומנים.`,
       });
       return;
     }
@@ -394,12 +402,12 @@ export default function TourEditorForm({
     setSaving(false);
     toast.success(
       status === "published"
-        ? { title: "Tour published", description: `"${payload.title}" is now live on the site.` }
+        ? { title: "הטיול פורסם", description: `״${payload.title}״ מוצג עכשיו באתר.` }
         : status === "draft" && wasPublished
-          ? { title: "Tour unpublished", description: `"${payload.title}" is no longer on the site.` }
+          ? { title: "הטיול הוסר מהאתר", description: `״${payload.title}״ כבר לא מוצג באתר.` }
         : mode === "create"
-          ? { title: "Tour created", description: "Saved as a draft — you can keep editing." }
-          : { title: "Changes saved", description: `"${payload.title}" was saved successfully.` }
+          ? { title: "הטיול נוצר", description: "נשמר כטיוטה — אפשר להמשיך לערוך." }
+          : { title: "השינויים נשמרו", description: `״${payload.title}״ נשמר בהצלחה.` }
     );
 
     if (mode === "create") {
@@ -414,10 +422,10 @@ export default function TourEditorForm({
         <div className="mb-6 flex items-center justify-between gap-4">
           <div>
             <Link href="/admin/tours" className="text-sm font-medium text-ink-muted hover:text-ink">
-              ← Tours
+              → טיולים
             </Link>
             <h1 className="mt-1 text-2xl font-bold tracking-tight text-ink">
-              {mode === "create" ? "New tour" : draft.title || "Untitled tour"}
+              {mode === "create" ? "טיול חדש" : draft.title || "טיול ללא שם"}
             </h1>
           </div>
           {savedTourId && <DuplicateTourButton tourId={savedTourId} />}
@@ -426,15 +434,15 @@ export default function TourEditorForm({
         <PublishChecklist items={checklist} />
 
         <div className="space-y-8">
-          <Section title="Basics">
-            <Field label="Title" {...req("title")} error={errors.title}>
+          <Section title="פרטים בסיסיים">
+            <Field label="כותרת" {...req("title")} error={errors.title}>
               <input
                 className={inputClass}
                 value={draft.title}
                 onChange={(e) => handleTitleChange(e.target.value)}
               />
             </Field>
-            <Field label="Slug" hint="/tours/…" {...req("slug")} error={errors.slug}>
+            <Field label="כתובת (slug)" hint="/tours/… · באנגלית" {...req("slug")} error={errors.slug}>
               <input
                 className={inputClass}
                 value={draft.slug}
@@ -444,7 +452,7 @@ export default function TourEditorForm({
                 }}
               />
             </Field>
-            <Field label="Summary" {...req("summary")} error={errors.summary}>
+            <Field label="תקציר" {...req("summary")} error={errors.summary}>
               <textarea
                 className={inputClass}
                 rows={2}
@@ -452,7 +460,7 @@ export default function TourEditorForm({
                 onChange={(e) => set("summary", e.target.value)}
               />
             </Field>
-            <Field label="Full description">
+            <Field label="תיאור מלא">
               <textarea
                 className={inputClass}
                 rows={5}
@@ -461,8 +469,8 @@ export default function TourEditorForm({
               />
             </Field>
             <Field
-              label="Countries"
-              hint="Ctrl/Cmd-click to select multiple"
+              label="מדינות"
+              hint="Ctrl/Cmd + לחיצה לבחירת כמה מדינות"
               {...req("countries")}
               error={errors.countries}
             >
@@ -480,27 +488,27 @@ export default function TourEditorForm({
               >
                 {COUNTRIES.map((country) => (
                   <option key={country} value={country}>
-                    {country}
+                    {countryLabel(country)}
                   </option>
                 ))}
               </select>
             </Field>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Travel style">
+              <Field label="סגנון טיול">
                 <select
                   className={inputClass}
                   value={draft.travelStyle}
                   onChange={(e) => set("travelStyle", e.target.value as Tour["travelStyle"])}
                 >
-                  <option value="land">Land</option>
-                  <option value="luxury">Luxury</option>
-                  <option value="cruise">Cruise</option>
-                  <option value="seminar">Seminar</option>
+                  <option value="land">טיול יבשתי</option>
+                  <option value="luxury">יוקרה</option>
+                  <option value="cruise">שייט</option>
+                  <option value="seminar">סמינר</option>
                 </select>
               </Field>
             </div>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Duration (days)" error={errors.durationDays}>
+              <Field label="משך (ימים)" error={errors.durationDays}>
                 <input
                   type="number"
                   min={1}
@@ -509,7 +517,7 @@ export default function TourEditorForm({
                   onChange={(e) => set("durationDays", Number(e.target.value))}
                 />
               </Field>
-              <Field label="Minimum group size">
+              <Field label="גודל קבוצה מינימלי">
                 <input
                   type="number"
                   min={0}
@@ -525,7 +533,7 @@ export default function TourEditorForm({
                 checked={draft.flightsIncluded}
                 onChange={(e) => set("flightsIncluded", e.target.checked)}
               />
-              Flights included
+              כולל טיסות
             </label>
             <label className="flex items-center gap-2 text-sm text-ink">
               <input
@@ -533,16 +541,16 @@ export default function TourEditorForm({
                 checked={draft.isSpecialOffer ?? false}
                 onChange={(e) => set("isSpecialOffer", e.target.checked)}
               />
-              Special Offer — feature this tour on the Special Offers page
+              מבצע — הצגת הטיול בדף המבצעים
             </label>
             <p className="text-xs text-ink-muted">
-              Booking assurance (Conditional / Guaranteed) is now set per departure date — see the
-              Departures screen for this tour.
+              סטטוס היציאה (מותנית / מובטחת) נקבע לכל מועד יציאה בנפרד — במסך
+              מועדי היציאה של הטיול.
             </p>
           </Section>
 
-          <Section title="Photos">
-            <Field label="Hero image" {...req("heroImage")} error={errors.heroImage}>
+          <Section title="תמונות">
+            <Field label="תמונה ראשית" {...req("heroImage")} error={errors.heroImage}>
               <ImageField
                 shape="wide"
                 value={draft.heroImage || undefined}
@@ -552,7 +560,7 @@ export default function TourEditorForm({
               />
             </Field>
             <div>
-              <p className="mb-1.5 text-sm font-medium text-ink">Gallery</p>
+              <p className="mb-1.5 text-sm font-medium text-ink">גלריה</p>
               <ImageGalleryField
                 values={draft.gallery}
                 onChange={(urls) => set("gallery", urls)}
@@ -562,9 +570,9 @@ export default function TourEditorForm({
             </div>
           </Section>
 
-          <Section title="Downloads (PDF)">
+          <Section title="קבצים להורדה (PDF)">
             <p className="text-xs text-ink-muted">
-              Itineraries or brochures visitors can download from the tour page. PDF only, up to 9MB each.
+              מסלולים או חוברות שמבקרים יכולים להוריד מדף הטיול. PDF בלבד, עד 9MB לקובץ.
             </p>
             {documents.length > 0 && (
               <ul className="space-y-3">
@@ -575,8 +583,8 @@ export default function TourEditorForm({
                         <input
                           className={inputClass}
                           value={doc.title}
-                          placeholder="Title shown to visitors"
-                          aria-label={`Title for ${doc.fileName}`}
+                          placeholder="הכותרת שתוצג למבקרים"
+                          aria-label={`כותרת עבור ${doc.fileName}`}
                           onChange={(e) => updateDocumentTitle(doc.documentId, e.target.value)}
                         />
                         {errors[`documents.${index}.title`]?.map((message) => (
@@ -598,7 +606,7 @@ export default function TourEditorForm({
                           type="button"
                           disabled={index === 0}
                           onClick={() => moveDocument(index, -1)}
-                          aria-label="Move up"
+                          aria-label="הזזה למעלה"
                           className="rounded px-1.5 text-sm text-ink-muted hover:text-ink disabled:opacity-30 disabled:hover:text-ink-muted"
                         >
                           ↑
@@ -607,7 +615,7 @@ export default function TourEditorForm({
                           type="button"
                           disabled={index === documents.length - 1}
                           onClick={() => moveDocument(index, 1)}
-                          aria-label="Move down"
+                          aria-label="הזזה למטה"
                           className="rounded px-1.5 text-sm text-ink-muted hover:text-ink disabled:opacity-30 disabled:hover:text-ink-muted"
                         >
                           ↓
@@ -617,7 +625,7 @@ export default function TourEditorForm({
                           onClick={() => removeDocument(doc.documentId)}
                           className="ms-1 rounded px-1.5 text-xs font-semibold text-terracotta-dark hover:underline"
                         >
-                          Remove
+                          הסרה
                         </button>
                       </div>
                     </div>
@@ -625,12 +633,12 @@ export default function TourEditorForm({
                 ))}
               </ul>
             )}
-            <PdfUploadButton label={documents.length > 0 ? "Upload another PDF" : "Upload PDF"} onUploaded={addDocuments} />
+            <PdfUploadButton label={documents.length > 0 ? "העלאת PDF נוסף" : "העלאת PDF"} onUploaded={addDocuments} />
           </Section>
 
-          <Section title="Pricing & policy">
+          <Section title="מחירים ומדיניות">
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Price / person (double)" {...req("pricePerPersonDouble")}>
+              <Field label="מחיר לאדם (חדר זוגי)" {...req("pricePerPersonDouble")}>
                 <input
                   type="number"
                   min={0}
@@ -640,8 +648,8 @@ export default function TourEditorForm({
                 />
               </Field>
               <Field
-                label="Price / person (single)"
-                hint={`the full price for a private room, not an add-on · supplement +${formatUsd(singleSupplementOf(draft.pricing))}`}
+                label="מחיר לאדם (חדר ליחיד)"
+                hint={`המחיר המלא לחדר פרטי, לא תוספת · תוספת ליחיד +${formatUsd(singleSupplementOf(draft.pricing))}`}
               >
                 <input
                   type="number"
@@ -651,7 +659,7 @@ export default function TourEditorForm({
                   onChange={(e) => setPricing("pricePerPersonSingle", Number(e.target.value))}
                 />
               </Field>
-              <Field label="Price / person (triple)" hint="optional">
+              <Field label="מחיר לאדם (חדר לשלושה)" hint="לא חובה">
                 <input
                   type="number"
                   min={0}
@@ -665,7 +673,7 @@ export default function TourEditorForm({
                   }
                 />
               </Field>
-              <Field label="Child price" hint="optional">
+              <Field label="מחיר לילד/ה" hint="לא חובה">
                 <input
                   type="number"
                   min={0}
@@ -676,7 +684,7 @@ export default function TourEditorForm({
                   }
                 />
               </Field>
-              <Field label="Deposit / person" hint="0 = no deposit required">
+              <Field label="מקדמה לאדם" hint="0 = אין צורך במקדמה">
                 <input
                   type="number"
                   min={0}
@@ -685,7 +693,7 @@ export default function TourEditorForm({
                   onChange={(e) => setPricing("depositAmountPerPerson", Number(e.target.value))}
                 />
               </Field>
-              <Field label="Balance due (days before)">
+              <Field label="מועד תשלום היתרה (ימים לפני היציאה)">
                 <input
                   type="number"
                   min={0}
@@ -698,8 +706,8 @@ export default function TourEditorForm({
               </Field>
             </div>
             <Field
-              label="Cancellation policy"
-              hint="shown on the tour page, one term per line — display only, doesn't change refund calculations"
+              label="מדיניות ביטול"
+              hint="מוצגת בדף הטיול, תנאי אחד בכל שורה — לתצוגה בלבד, לא משנה את חישובי ההחזר"
             >
               <textarea
                 className={inputClass}
@@ -713,20 +721,20 @@ export default function TourEditorForm({
               onClick={() => set("cancellationPolicy", DEFAULT_CANCELLATION_POLICY_TEXT)}
               className="text-xs font-medium text-navy hover:text-navy-light"
             >
-              Reset to the standard policy
+              חזרה למדיניות הרגילה
             </button>
           </Section>
 
-          <Section title="Kashrut card">
-            <Field label="Card title" hint="blank shows “Kashrut”">
+          <Section title="כרטיס כשרות">
+            <Field label="כותרת הכרטיס" hint="ריק = ״כשרות״">
               <input
                 className={inputClass}
-                placeholder="Kashrut"
+                placeholder="כשרות"
                 value={draft.kashrutDetails.title ?? ""}
                 onChange={(e) => setKashrut("title", e.target.value)}
               />
             </Field>
-            <Field label="Supervision level" {...req("supervisionLevel")} error={errors["kashrutDetails.supervisionLevel"]}>
+            <Field label="רמת הכשרות" {...req("supervisionLevel")} error={errors["kashrutDetails.supervisionLevel"]}>
               <input
                 className={inputClass}
                 value={draft.kashrutDetails.supervisionLevel}
@@ -734,20 +742,20 @@ export default function TourEditorForm({
               />
             </Field>
             <div className="grid grid-cols-2 gap-4">
-              <Field label="Pat Yisrael">
+              <Field label="פת ישראל">
                 <KashrutSelect
                   value={draft.kashrutDetails.patYisrael}
                   onChange={(v) => setKashrut("patYisrael", v)}
                 />
               </Field>
-              <Field label="Chalav Yisrael">
+              <Field label="חלב ישראל">
                 <KashrutSelect
                   value={draft.kashrutDetails.chalavYisrael}
                   onChange={(v) => setKashrut("chalavYisrael", v)}
                 />
               </Field>
             </div>
-            <Field label="Notes" hint="optional — blank lines start a new paragraph">
+            <Field label="הערות" hint="לא חובה — שורה ריקה פותחת פסקה חדשה">
               <textarea
                 className={inputClass}
                 rows={5}
@@ -756,15 +764,15 @@ export default function TourEditorForm({
               />
             </Field>
             <InfoFieldsEditor
-              label="More sub-titles"
+              label="כותרות משנה נוספות"
               fields={draft.kashrutDetails.extraFields ?? []}
               onChange={(fields) => setKashrut("extraFields", fields)}
             />
           </Section>
 
-          <Section title="More info cards">
+          <Section title="כרטיסי מידע נוספים">
             <p className="text-xs text-ink-muted">
-              Each card appears on the tour page after the Kashrut card, in this order.
+              כל כרטיס מוצג בדף הטיול אחרי כרטיס הכשרות, לפי הסדר הזה.
             </p>
             <div className="space-y-4">
               {infoCards.map((card, index) => (
@@ -785,29 +793,29 @@ export default function TourEditorForm({
               onClick={addInfoCard}
               className="rounded-lg border border-dashed border-line px-4 py-2 text-sm font-medium text-ink-muted transition-colors hover:border-navy hover:text-navy"
             >
-              + Add card
+              + הוספת כרטיס
             </button>
           </Section>
 
-          <Section title="Included / not included">
+          <Section title="כלול / לא כלול">
             <ListTextarea
-              label="Inclusions (one per line)"
+              label="כלול במחיר (פריט בכל שורה)"
               value={draft.inclusions}
               onChange={(v) => set("inclusions", v)}
             />
             <ListTextarea
-              label="Exclusions (one per line)"
+              label="לא כלול במחיר (פריט בכל שורה)"
               value={draft.exclusions}
               onChange={(v) => set("exclusions", v)}
             />
             <ListTextarea
-              label="Theme tags (one per line)"
+              label="תגיות נושא (תגית בכל שורה)"
               value={draft.themeTags}
               onChange={(v) => set("themeTags", v)}
             />
           </Section>
 
-          <Section title="Itinerary" {...req("itinerary")}>
+          <Section title="מסלול" {...req("itinerary")}>
             <div className="space-y-4">
               {draft.itineraryDays.map((day, index) => (
                 <ItineraryDayEditor
@@ -824,19 +832,19 @@ export default function TourEditorForm({
               onClick={addItineraryDay}
               className="mt-3 rounded-lg border border-dashed border-line px-4 py-2 text-sm font-medium text-ink-muted transition-colors hover:border-navy hover:text-navy"
             >
-              + Add day
+              + הוספת יום
             </button>
           </Section>
 
           <Section title="SEO">
-            <Field label="SEO title" hint="optional — defaults to tour title">
+            <Field label="כותרת SEO" hint="לא חובה — ברירת המחדל היא כותרת הטיול">
               <input
                 className={inputClass}
                 value={draft.seoTitle ?? ""}
                 onChange={(e) => set("seoTitle", e.target.value)}
               />
             </Field>
-            <Field label="SEO description" hint="optional — defaults to summary">
+            <Field label="תיאור SEO" hint="לא חובה — ברירת המחדל היא התקציר">
               <textarea
                 className={inputClass}
                 rows={2}
@@ -853,7 +861,7 @@ export default function TourEditorForm({
             <StatusBadge status={draft.status} />
             {savedAt && (
               <span className="ms-2 text-ink-muted">
-                Saved {savedAt.toLocaleTimeString("he-IL")}
+                נשמר ב-{savedAt.toLocaleTimeString("he-IL")}
               </span>
             )}
             {isDirty && <span className="ms-2"><UnsavedIndicator /></span>}
@@ -868,7 +876,7 @@ export default function TourEditorForm({
                   onClick={handleUnpublish}
                   className="rounded-lg border border-line px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-sand-warm disabled:opacity-60"
                 >
-                  Unpublish
+                  הסרה מהאתר
                 </button>
               ) : (
                 <button
@@ -877,7 +885,7 @@ export default function TourEditorForm({
                   onClick={() => (isArchived ? handleSave() : handleSave("draft"))}
                   className="rounded-lg border border-line px-4 py-2 text-sm font-semibold text-ink transition-colors hover:bg-sand-warm disabled:opacity-60"
                 >
-                  {isArchived ? "Save changes" : "Save draft"}
+                  {isArchived ? "שמירת שינויים" : "שמירת טיוטה"}
                 </button>
               )}
               {/* aria-disabled rather than disabled: a blocked click scrolls to the first missing field instead of doing nothing. */}
@@ -886,19 +894,19 @@ export default function TourEditorForm({
                 disabled={saving}
                 aria-disabled={!readyToPublish}
                 aria-describedby={!readyToPublish ? "publish-blocked-reason" : undefined}
-                title={!readyToPublish ? `Can't ${blockedWhat} yet — missing: ${missing.map((m) => m.label).join(", ")}` : undefined}
+                title={!readyToPublish ? `אי אפשר עדיין ${blockedWhat} — חסר: ${missing.map((m) => m.label).join(", ")}` : undefined}
                 onClick={() => handleGuardedSave(isPublished ? undefined : "published")}
                 className={`rounded-lg bg-olive px-4 py-2 text-sm font-semibold text-white transition-colors disabled:opacity-40 ${
                   readyToPublish ? "hover:opacity-90" : "cursor-not-allowed opacity-40"
                 }`}
               >
-                {saving ? "Saving…" : isPublished ? "Save changes" : "Publish"}
+                {saving ? "שומר…" : isPublished ? "שמירת שינויים" : "פרסום"}
               </button>
             </div>
             {!readyToPublish && (
               <p id="publish-blocked-reason" className="max-w-md text-end text-xs font-medium text-terracotta-dark">
-                Can&apos;t {blockedWhat} yet — missing: {missing.map((m) => m.label).join(", ")}.
-                {isPublished && " A live tour must stay complete; fill these in, or unpublish it to save as a draft."}
+                אי אפשר עדיין {blockedWhat} — חסר: {missing.map((m) => m.label).join(", ")}.
+                {isPublished && " טיול שמוצג באתר חייב להישאר שלם; מלאו את השדות, או הסירו אותו מהאתר כדי לשמור כטיוטה."}
               </p>
             )}
           </div>
@@ -923,11 +931,11 @@ export default function TourEditorForm({
                 key={v}
                 type="button"
                 onClick={() => setViewport(v)}
-                className={`rounded-md px-3 py-1.5 text-xs font-semibold capitalize transition-colors ${
+                className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${
                   viewport === v ? "bg-navy text-white" : "text-ink-muted hover:text-ink"
                 }`}
               >
-                {v}
+                {VIEWPORT_LABEL[v]}
               </button>
             ))}
           </div>
@@ -938,11 +946,11 @@ export default function TourEditorForm({
               rel="noreferrer"
               className="text-sm font-medium text-navy hover:text-navy-light"
             >
-              Open full preview ↗
+              תצוגה מקדימה מלאה ↗
             </a>
           ) : (
-            <span className="text-sm text-ink-muted" title="Save the tour once to enable this.">
-              Open full preview ↗
+            <span className="text-sm text-ink-muted" title="שמרו את הטיול פעם אחת כדי להפעיל את האפשרות.">
+              תצוגה מקדימה מלאה ↗
             </span>
           )}
         </div>
@@ -954,7 +962,7 @@ export default function TourEditorForm({
             <iframe
               ref={iframeRef}
               src="/admin/preview-frame"
-              title="Tour preview"
+              title="תצוגה מקדימה של הטיול"
               className="h-full w-full border-0"
               onLoad={() => {
                 frameReady.current = false;
@@ -993,7 +1001,7 @@ function Section({
         {required && <RequiredMark />}
       </h2>
       <div className="space-y-4">{children}</div>
-      {flagged && <p className="mt-3 text-xs font-medium text-terracotta-dark">Required to publish</p>}
+      {flagged && <p className="mt-3 text-xs font-medium text-terracotta-dark">חובה לפרסום</p>}
     </section>
   );
 }
@@ -1033,7 +1041,7 @@ function Field({
         {hint && <span className="text-xs font-normal text-ink-muted">{hint}</span>}
       </label>
       {children}
-      {flagged && <p className="mt-1 text-xs font-medium text-terracotta-dark">Required to publish</p>}
+      {flagged && <p className="mt-1 text-xs font-medium text-terracotta-dark">חובה לפרסום</p>}
       {error?.map((message) => (
         <p key={message} className="mt-1 text-xs font-medium text-terracotta-dark">
           {message}
@@ -1081,9 +1089,9 @@ function KashrutSelect({
         onChange(v === "true" ? true : v === "false" ? false : "not_guaranteed");
       }}
     >
-      <option value="true">Guaranteed</option>
-      <option value="not_guaranteed">Not guaranteed at every destination</option>
-      <option value="false">Not offered</option>
+      <option value="true">מובטח</option>
+      <option value="not_guaranteed">לא מובטח בכל היעדים</option>
+      <option value="false">לא מוצע</option>
     </select>
   );
 }
@@ -1101,19 +1109,19 @@ function InfoFieldsEditor({
     onChange(fields.map((f) => (f.fieldId === fieldId ? { ...f, ...patch } : f)));
   }
   return (
-    <Field label={label} hint="sub-title + text, like Pat Yisrael">
+    <Field label={label} hint="כותרת משנה + טקסט, כמו ״פת ישראל״">
       <div className="space-y-2">
         {fields.map((field) => (
           <div key={field.fieldId} className="flex items-start gap-2">
             <input
               className={`${inputClass} sm:max-w-[40%]`}
-              placeholder="Sub-title"
+              placeholder="כותרת משנה"
               value={field.label}
               onChange={(e) => update(field.fieldId, { label: e.target.value })}
             />
             <input
               className={inputClass}
-              placeholder="Text"
+              placeholder="טקסט"
               value={field.value}
               onChange={(e) => update(field.fieldId, { value: e.target.value })}
             />
@@ -1121,7 +1129,7 @@ function InfoFieldsEditor({
               type="button"
               onClick={() => onChange(fields.filter((f) => f.fieldId !== field.fieldId))}
               className="shrink-0 px-2 py-2 text-xs font-semibold text-terracotta-dark hover:underline"
-              aria-label="Remove sub-title"
+              aria-label="הסרת כותרת המשנה"
             >
               ✕
             </button>
@@ -1132,7 +1140,7 @@ function InfoFieldsEditor({
           onClick={() => onChange([...fields, newInfoField()])}
           className="text-xs font-medium text-navy hover:text-navy-light"
         >
-          + Add sub-title
+          + הוספת כותרת משנה
         </button>
       </div>
     </Field>
@@ -1161,14 +1169,14 @@ function InfoCardEditor({
   return (
     <div className="rounded-lg border border-line p-4">
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm font-bold text-navy">{card.title.trim() || `Card ${index + 1}`}</span>
+        <span className="text-sm font-bold text-navy">{card.title.trim() || `כרטיס ${index + 1}`}</span>
         <div className="flex items-center gap-2">
           <button
             type="button"
             disabled={index === 0}
             onClick={() => onMove(-1)}
             className={moveClass}
-            aria-label="Move card up"
+            aria-label="הזזת הכרטיס למעלה"
           >
             ↑
           </button>
@@ -1177,7 +1185,7 @@ function InfoCardEditor({
             disabled={index === count - 1}
             onClick={() => onMove(1)}
             className={moveClass}
-            aria-label="Move card down"
+            aria-label="הזזת הכרטיס למטה"
           >
             ↓
           </button>
@@ -1186,15 +1194,15 @@ function InfoCardEditor({
             onClick={onRemove}
             className="text-xs font-semibold text-terracotta-dark hover:underline"
           >
-            Remove
+            הסרה
           </button>
         </div>
       </div>
       <div className="space-y-3">
-        <Field label="Card title" error={titleError}>
+        <Field label="כותרת הכרטיס" error={titleError}>
           <input
             className={inputClass}
-            placeholder="e.g. Important to Know"
+            placeholder="למשל: חשוב לדעת"
             value={card.title}
             onChange={(e) => onChange({ title: e.target.value })}
           />
@@ -1204,7 +1212,7 @@ function InfoCardEditor({
           fields={card.fields}
           onChange={(fields) => onChange({ fields })}
         />
-        <Field label="Notes" hint="optional — blank lines start a new paragraph">
+        <Field label="הערות" hint="לא חובה — שורה ריקה פותחת פסקה חדשה">
           <textarea
             className={inputClass}
             rows={3}
@@ -1213,7 +1221,7 @@ function InfoCardEditor({
           />
         </Field>
         <ListTextarea
-          label="Bullet points (one per line)"
+          label="נקודות (נקודה בכל שורה)"
           value={card.items}
           onChange={(items) => onChange({ items })}
         />
@@ -1236,32 +1244,32 @@ function ItineraryDayEditor({
   return (
     <div className="rounded-lg border border-line p-4">
       <div className="mb-3 flex items-center justify-between">
-        <span className="text-sm font-bold text-navy">Day {index + 1}</span>
+        <span className="text-sm font-bold text-navy">יום {index + 1}</span>
         <button
           type="button"
           onClick={onRemove}
           className="text-xs font-semibold text-terracotta-dark hover:underline"
         >
-          Remove
+          הסרה
         </button>
       </div>
       <div className="space-y-3">
         <input
           className={inputClass}
-          placeholder="Day title"
+          placeholder="כותרת היום"
           value={day.title}
           onChange={(e) => onChange({ title: e.target.value })}
         />
         <textarea
           className={inputClass}
           rows={2}
-          placeholder="Description"
+          placeholder="תיאור"
           value={day.description}
           onChange={(e) => onChange({ description: e.target.value })}
         />
         <input
           className={inputClass}
-          placeholder="Attractions (comma-separated)"
+          placeholder="אטרקציות (מופרדות בפסיקים)"
           value={(day.attractions ?? []).join(", ")}
           onChange={(e) =>
             onChange({ attractions: e.target.value.split(",").map((s) => s.trim()) })
@@ -1270,13 +1278,13 @@ function ItineraryDayEditor({
         <div className="grid grid-cols-2 gap-3">
           <input
             className={inputClass}
-            placeholder="Meals (comma-separated)"
+            placeholder="ארוחות (מופרדות בפסיקים)"
             value={day.meals.join(", ")}
             onChange={(e) => onChange({ meals: e.target.value.split(",").map((s) => s.trim()) })}
           />
           <input
             className={inputClass}
-            placeholder="Accommodation"
+            placeholder="לינה"
             value={day.accommodation ?? ""}
             onChange={(e) => onChange({ accommodation: e.target.value })}
           />
@@ -1290,7 +1298,7 @@ function PublishChecklist({ items }: { items: { label: string; ok: boolean }[] }
   return (
     <div className="mb-6 rounded-xl border border-line bg-white p-4">
       <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">
-        Publish checklist
+        רשימת בדיקה לפרסום
       </p>
       <ul className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm">
         {items.map((item) => (
@@ -1316,9 +1324,9 @@ const STATUS_STYLES: Record<TourStatus, string> = {
 function StatusBadge({ status }: { status: TourStatus }) {
   return (
     <span
-      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${STATUS_STYLES[status]}`}
+      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLES[status]}`}
     >
-      {status}
+      {TOUR_STATUS_LABELS[status]}
     </span>
   );
 }

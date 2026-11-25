@@ -54,24 +54,24 @@ export default function ReviewForm({
       result = await saveReview(draft, reviewId);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
     if (!result.ok) {
       setErrors(result.errors);
       setSaving(false);
-      toast.error({ title: "Review not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "ההמלצה לא נשמרה", description: "תקנו את השדות המסומנים ונסו שוב." });
       return;
     }
 
-    toast.success(reviewId ? "Review updated" : { title: "Review added", description: "The new review was saved." });
+    toast.success(reviewId ? "ההמלצה עודכנה" : { title: "ההמלצה נוספה", description: "ההמלצה החדשה נשמרה." });
     await navigate("/admin/reviews", { skipConfirm: true });
     router.refresh();
   }
 
   return (
     <div className="max-w-2xl space-y-4 rounded-xl border border-line bg-white p-6">
-      <Field label="Tour" required error={errors.tourId}>
+      <Field label="טיול" required error={errors.tourId}>
         <select
           value={draft.tourId}
           onChange={(e) => set("tourId", e.target.value)}
@@ -86,20 +86,20 @@ export default function ReviewForm({
       </Field>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Customer name" required error={errors.customerName}>
+        <Field label="שם הלקוח/ה" required error={errors.customerName}>
           <input
             value={draft.customerName}
             onChange={(e) => set("customerName", e.target.value)}
             className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
           />
         </Field>
-        <Field label="Rating" error={errors.rating}>
+        <Field label="דירוג" error={errors.rating}>
           <select
             value={draft.rating ?? ""}
             onChange={(e) => set("rating", e.target.value ? Number(e.target.value) : undefined)}
             className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
           >
-            <option value="">No rating given</option>
+            <option value="">ללא דירוג</option>
             {[5, 4, 3, 2, 1].map((n) => (
               <option key={n} value={n}>
                 {n} star{n === 1 ? "" : "s"}
@@ -109,12 +109,12 @@ export default function ReviewForm({
         </Field>
       </div>
 
-      <Field label="Destination" error={errors.destination}>
+      <Field label="יעד" error={errors.destination}>
         <input
           value={draft.destination ?? ""}
           onChange={(e) => set("destination", e.target.value || undefined)}
           list="review-destinations"
-          placeholder="e.g. China, Spain & Portugal — blank uses the tour's first country"
+          placeholder="למשל: סין, ספרד ופורטוגל — ריק = המדינה הראשונה של הטיול"
           maxLength={60}
           className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
         />
@@ -124,11 +124,11 @@ export default function ReviewForm({
           ))}
         </datalist>
         <p className="mt-1 text-xs text-ink-muted">
-          Groups the letter on the Testimonials page and shows it on tours visiting that destination.
+          מקבץ את ההמלצה בדף ההמלצות ומציג אותה בטיולים שמבקרים ביעד הזה.
         </p>
       </Field>
 
-      <Field label="Review text" required error={errors.body}>
+      <Field label="טקסט ההמלצה" required error={errors.body}>
         <textarea
           value={draft.body}
           onChange={(e) => set("body", e.target.value)}
@@ -137,19 +137,19 @@ export default function ReviewForm({
         />
       </Field>
 
-      <Field label="Photo">
-        <ImageField shape="round" noun="photo" folder="reviews" value={draft.photo} onChange={(url) => set("photo", url)} />
+      <Field label="תמונה">
+        <ImageField shape="round" noun="תמונה" folder="reviews" value={draft.photo} onChange={(url) => set("photo", url)} />
       </Field>
 
-      <Field label="Status">
+      <Field label="סטטוס">
         <select
           value={draft.status}
           onChange={(e) => set("status", e.target.value as Review["status"])}
           className="w-full max-w-xs rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
         >
-          <option value="pending">Pending</option>
-          <option value="approved">Approved</option>
-          <option value="rejected">Rejected</option>
+          <option value="pending">ממתינה לאישור</option>
+          <option value="approved">מאושרת</option>
+          <option value="rejected">נדחתה</option>
         </select>
       </Field>
 
@@ -159,7 +159,7 @@ export default function ReviewForm({
         onClick={handleSave}
         className="rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light disabled:opacity-60"
       >
-        {saving ? "Saving…" : reviewId ? "Save changes" : "Save review"}
+        {saving ? "שומר…" : reviewId ? "שמירת שינויים" : "שמירת ההמלצה"}
       </button>
     </div>
   );

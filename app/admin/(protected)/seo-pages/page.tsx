@@ -3,8 +3,9 @@ import type { Metadata } from "next";
 import { getAllSeoPagesAdmin } from "@/lib/data/admin/seoPages";
 import type { SeoLandingPage } from "@/lib/types";
 import { IconLink } from "@/components/admin/IconAction";
+import { PUBLISH_STATUS_LABELS } from "@/lib/adminLabels";
 
-export const metadata: Metadata = { title: "SEO Landing Pages" };
+export const metadata: Metadata = { title: "דפי נחיתה (SEO)" };
 
 export default async function AdminSeoPagesPage() {
   const pages = await getAllSeoPagesAdmin();
@@ -14,31 +15,31 @@ export default async function AdminSeoPagesPage() {
     <div>
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">SEO Landing Pages</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">דפי נחיתה (SEO)</h1>
           <p className="mt-1 text-sm text-ink-muted">
-            {pages.length} page{pages.length === 1 ? "" : "s"}
+            {pages.length === 1 ? "דף אחד" : `${pages.length} דפים`}
           </p>
         </div>
         <Link
           href="/admin/seo-pages/new"
           className="shrink-0 rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
         >
-          + New page
+          + דף חדש
         </Link>
       </div>
 
       {pages.length === 0 ? (
         <p className="rounded-xl border border-dashed border-line bg-white p-10 text-center text-ink-muted">
-          No landing pages yet.
+          עדיין אין דפי נחיתה.
         </p>
       ) : (
         <div className="overflow-hidden overflow-x-auto rounded-xl border border-line bg-white">
           <table className="w-full min-w-[600px] text-start text-sm">
             <thead className="border-b border-line bg-sand-warm/60 text-xs font-semibold uppercase tracking-wide text-ink-muted">
               <tr>
-                <th className="px-4 py-3">Page</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Linked tours</th>
+                <th className="px-4 py-3">דף</th>
+                <th className="px-4 py-3">סטטוס</th>
+                <th className="px-4 py-3">טיולים מקושרים</th>
                 <th className="px-4 py-3" />
               </tr>
             </thead>
@@ -54,7 +55,7 @@ export default async function AdminSeoPagesPage() {
                   </td>
                   <td className="px-4 py-3 text-ink-muted">{page.tourIds.length}</td>
                   <td className="px-4 py-3 text-end">
-                    <IconLink href={`/admin/seo-pages/${page.pageId}`} icon="edit" label="Edit" />
+                    <IconLink href={`/admin/seo-pages/${page.pageId}`} icon="edit" label="עריכה" />
                   </td>
                 </tr>
               ))}
@@ -74,9 +75,9 @@ const STATUS_STYLES: Record<SeoLandingPage["status"], string> = {
 function StatusBadge({ status }: { status: SeoLandingPage["status"] }) {
   return (
     <span
-      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold capitalize ${STATUS_STYLES[status]}`}
+      className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${STATUS_STYLES[status]}`}
     >
-      {status}
+      {PUBLISH_STATUS_LABELS[status]}
     </span>
   );
 }

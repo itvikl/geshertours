@@ -15,9 +15,9 @@ export default function DeleteAdminAccountButton({ uid, email }: { uid: string; 
 
   async function handleDelete() {
     const ok = await confirm({
-      title: `Delete ${email ?? "this account"}?`,
-      description: "The login is removed entirely — they won't be able to sign in to the admin anymore.",
-      confirmLabel: "Delete account",
+      title: `למחוק את ${email ?? "החשבון"}?`,
+      description: "החשבון יוסר לגמרי — לא תהיה יותר אפשרות להיכנס איתו לניהול.",
+      confirmLabel: "מחיקת החשבון",
       tone: "danger",
     });
     if (!ok) return;
@@ -25,12 +25,12 @@ export default function DeleteAdminAccountButton({ uid, email }: { uid: string; 
     const result = await deleteAdminAccount(uid).catch(() => ({ ok: false, error: "Couldn't delete — try again." }));
     setDeleting(false);
     if (!result.ok) {
-      toast.error({ title: "Couldn't delete account", description: result.error ?? "Couldn't delete — try again." });
+      toast.error({ title: "מחיקת החשבון נכשלה", description: result.error ?? "המחיקה נכשלה — נסו שוב." });
       return;
     }
-    toast.success({ title: "Account deleted", description: `${email ?? "The account"} can no longer sign in.` });
+    toast.success({ title: "החשבון נמחק", description: `${email ?? "החשבון"} כבר לא יכול להיכנס.` });
     router.refresh();
   }
 
-  return <IconButton icon="trash" label="Delete account" tone="danger" disabled={deleting} onClick={handleDelete} />;
+  return <IconButton icon="trash" label="מחיקת החשבון" tone="danger" disabled={deleting} onClick={handleDelete} />;
 }

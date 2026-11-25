@@ -1,4 +1,5 @@
 import * as z from "zod";
+import "@/lib/validation/zodLocale";
 
 /** Converts an empty-string form field to undefined before the rest of the schema runs. */
 function optionalText() {

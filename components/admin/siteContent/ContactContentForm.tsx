@@ -30,18 +30,18 @@ export default function ContactContentForm({
       result = await saveContactContent(draft);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
     setSaving(false);
     if (!result.ok) {
       setErrors(result.errors);
-      toast.error({ title: "Not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "לא נשמר", description: "תקנו את השדות המסומנים ונסו שוב." });
       return;
     }
     setErrors({});
     markSaved(draft);
-    toast.success({ title: "Changes saved", description: "The page content was updated successfully." });
+    toast.success({ title: "השינויים נשמרו", description: "תוכן הדף עודכן בהצלחה." });
   }
 
   return (
@@ -49,24 +49,24 @@ export default function ContactContentForm({
       <div className="space-y-4">
         <HeroImageField value={draft.heroImage} onChange={(url) => setDraft((d) => ({ ...d, heroImage: url }))} />
         <TextField required
-          label="Title"
+          label="כותרת"
           value={draft.title}
           onChange={(v) => setDraft((d) => ({ ...d, title: v }))}
           error={errors.title}
         />
         <TextField required
-          label="Lede (subtitle)"
+          label="כותרת משנה"
           value={draft.lede}
           onChange={(v) => setDraft((d) => ({ ...d, lede: v }))}
           error={errors.lede}
         />
 
         <p className="rounded-lg border border-dashed border-line bg-sand-warm/40 p-3 text-xs text-ink-muted">
-          The phone numbers shown on this page come from{" "}
+          מספרי הטלפון בדף הזה מגיעים מ
           <Link href="/admin/settings" className="font-medium text-navy hover:underline">
-            Settings
+            ״הגדרות״
           </Link>
-          , not from here — that way Header, Footer, and Contact always show the same number.
+          , לא מכאן — כך הכותרת העליונה, התחתית ודף צור קשר תמיד מציגים אותו מספר.
         </p>
 
         <SaveBar saving={saving} dirty={isDirty} onSave={handleSave} />
@@ -79,10 +79,10 @@ export default function ContactContentForm({
         <div className="px-6 py-8">
           <div className="glass-panel flex flex-col items-center gap-2 rounded-2xl p-8 text-center">
             <p className="text-sm font-semibold uppercase tracking-[0.2em] text-[#7dd3fc]">
-              Prefer to talk?
+              מעדיפים לדבר?
             </p>
             <span className="font-display text-3xl font-bold text-[#e0e8f0]">{primaryPhone}</span>
-            {secondaryPhone && <span className="text-sm text-[#a0b4c4]">or {secondaryPhone}</span>}
+            {secondaryPhone && <span className="text-sm text-[#a0b4c4]">או {secondaryPhone}</span>}
           </div>
         </div>
       </PreviewFrame>

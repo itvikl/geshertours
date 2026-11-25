@@ -61,10 +61,10 @@ const FeedbackContext = createContext<FeedbackContextValue | null>(null);
 const GUARD_KEY = "__adminUnsavedGuard";
 
 const LEAVE_DIALOG: ConfirmOptions = {
-  title: "Unsaved changes",
-  description: "You have changes that haven't been saved. If you leave now, they will be lost.",
-  confirmLabel: "Leave without saving",
-  cancelLabel: "Stay on page",
+  title: "שינויים שלא נשמרו",
+  description: "יש שינויים שלא נשמרו. אם תצאו עכשיו, הם יאבדו.",
+  confirmLabel: "יציאה בלי לשמור",
+  cancelLabel: "הישארות בדף",
   tone: "danger",
 };
 
@@ -378,7 +378,7 @@ function ToastCard({ toast, onDismiss }: { toast: Toast; onDismiss: (id: number)
         <button
           type="button"
           onClick={() => setLeavingOut(true)}
-          aria-label="Dismiss"
+          aria-label="סגירה"
           className="-me-1 rounded-md p-1 text-ink-muted transition-colors hover:bg-sand-warm hover:text-ink"
         >
           <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
@@ -397,8 +397,8 @@ function ToastCard({ toast, onDismiss }: { toast: Toast; onDismiss: (id: number)
 function ConfirmDialog({
   title,
   description,
-  confirmLabel = "Confirm",
-  cancelLabel = "Cancel",
+  confirmLabel = "אישור",
+  cancelLabel = "ביטול",
   tone = "default",
   onClose,
 }: ConfirmOptions & { onClose: (ok: boolean) => void }) {

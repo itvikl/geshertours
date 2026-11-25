@@ -14,22 +14,22 @@ export interface ChecklistItem {
  */
 export function getPublishChecklist(tour: Tour): ChecklistItem[] {
   return [
-    { key: "title", label: "Title", ok: tour.title.trim().length > 0 },
-    { key: "slug", label: "Slug", ok: tour.slug.trim().length > 0 },
-    { key: "summary", label: "Summary", ok: tour.summary.trim().length > 0 },
-    { key: "heroImage", label: "Hero image", ok: tour.heroImage.trim().length > 0 },
-    { key: "countries", label: "Countries", ok: tour.countries.length > 0 },
+    { key: "title", label: "כותרת", ok: tour.title.trim().length > 0 },
+    { key: "slug", label: "כתובת (slug)", ok: tour.slug.trim().length > 0 },
+    { key: "summary", label: "תקציר", ok: tour.summary.trim().length > 0 },
+    { key: "heroImage", label: "תמונה ראשית", ok: tour.heroImage.trim().length > 0 },
+    { key: "countries", label: "מדינות", ok: tour.countries.length > 0 },
     {
       key: "pricePerPersonDouble",
-      label: "Price per person (double)",
+      label: "מחיר לאדם (בחדר זוגי)",
       ok: tour.pricing.pricePerPersonDouble > 0,
     },
     {
       key: "supervisionLevel",
-      label: "Kashrut supervision level",
+      label: "רמת הכשרות",
       ok: tour.kashrutDetails.supervisionLevel.trim().length > 0,
     },
-    { key: "itinerary", label: "At least one itinerary day", ok: tour.itineraryDays.length > 0 },
+    { key: "itinerary", label: "לפחות יום אחד במסלול", ok: tour.itineraryDays.length > 0 },
   ];
 }
 

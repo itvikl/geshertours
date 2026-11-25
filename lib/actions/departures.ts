@@ -75,12 +75,12 @@ export async function saveDeparture(
 
   const tour = await getTourByIdAdmin(tourId);
   if (!tour) {
-    return { ok: false, errors: { startDate: ["This tour no longer exists."] } };
+    return { ok: false, errors: { startDate: ["הטיול הזה כבר לא קיים."] } };
   }
 
   const existing = departureId ? await getDepartureByIdAdmin(departureId) : null;
   if (departureId && !existing) {
-    return { ok: false, errors: { startDate: ["This departure no longer exists."] } };
+    return { ok: false, errors: { startDate: ["מועד היציאה הזה כבר לא קיים."] } };
   }
 
   // Only reject a past startDate for genuinely new/moved-back dates — a
@@ -89,7 +89,7 @@ export async function saveDeparture(
   const today = new Date().toISOString().slice(0, 10);
   const wasAlreadyPast = existing ? existing.startDate < today : false;
   if (data.startDate < today && !wasAlreadyPast) {
-    return { ok: false, errors: { startDate: ["Start date can't be in the past."] } };
+    return { ok: false, errors: { startDate: ["תאריך ההתחלה לא יכול להיות בעבר."] } };
   }
 
   const balanceDueDate = subtractDays(data.startDate, tour.pricing.balanceDueDaysBeforeDeparture);
@@ -103,7 +103,7 @@ export async function saveDeparture(
         ok: false,
         errors: {
           capacityTotal: [
-            `Can't be lower than ${alreadyCommitted} — that many seats are already booked or held.`,
+            `לא יכול להיות פחות מ-${alreadyCommitted} — כבר יש כמות כזו של מקומות רשומים או שמורים.`,
           ],
         },
       };

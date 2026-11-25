@@ -15,22 +15,22 @@ export default function ArchiveTourButton({ tourId, title }: { tourId: string; t
 
   async function handleClick() {
     const ok = await confirm({
-      title: `Archive “${title}”?`,
-      description: "The tour will be hidden from the site. You can restore it later from the archive.",
-      confirmLabel: "Archive",
+      title: `להעביר את ״${title}״ לארכיון?`,
+      description: "הטיול יוסתר מהאתר. אפשר לשחזר אותו מהארכיון בהמשך.",
+      confirmLabel: "העברה לארכיון",
       tone: "danger",
     });
     if (!ok) return;
     startTransition(async () => {
       try {
         await archiveTour(tourId);
-        toast.success({ title: "Tour archived", description: `“${title}” is no longer shown on the site.` });
+        toast.success({ title: "הטיול הועבר לארכיון", description: `״${title}״ כבר לא מוצג באתר.` });
         router.refresh();
       } catch {
-        toast.error({ title: "Couldn't archive tour", description: "Something went wrong — please try again." });
+        toast.error({ title: "ההעברה לארכיון נכשלה", description: "משהו השתבש — נסו שוב." });
       }
     });
   }
 
-  return <IconButton icon="archive" label="Archive" tone="danger" disabled={pending} onClick={handleClick} />;
+  return <IconButton icon="archive" label="העברה לארכיון" tone="danger" disabled={pending} onClick={handleClick} />;
 }

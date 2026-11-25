@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { getAllToursAdmin } from "@/lib/data/admin/tours";
 import SeoPageEditorForm from "@/components/admin/SeoPageEditorForm";
 
-export const metadata: Metadata = { title: "New SEO landing page" };
+export const metadata: Metadata = { title: "דף נחיתה חדש" };
 
 export default async function NewSeoPagePage() {
   const tours = await getAllToursAdmin();
@@ -11,7 +11,7 @@ export default async function NewSeoPagePage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-ink">New SEO landing page</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-ink">דף נחיתה חדש</h1>
       </div>
       <SeoPageEditorForm mode="create" tours={tours} />
     </div>

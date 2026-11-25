@@ -14,7 +14,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { postId } = await params;
   const post = await getBlogPostByIdAdmin(postId);
-  return { title: post ? `Edit — ${post.title}` : "Post" };
+  return { title: post ? `עריכה — ${post.title}` : "פוסט" };
 }
 
 export default async function EditBlogPostPage({
@@ -31,7 +31,7 @@ export default async function EditBlogPostPage({
     <div>
       {isAdmin && (
         <div className="mb-4 flex justify-end">
-          <DeleteButton action={deleteBlogPost.bind(null, postId)} what="this blog post" redirectTo="/admin/blog" />
+          <DeleteButton action={deleteBlogPost.bind(null, postId)} what="את הפוסט הזה" redirectTo="/admin/blog" />
         </div>
       )}
       <div className="mb-6">

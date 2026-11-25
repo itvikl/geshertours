@@ -7,7 +7,7 @@
  * that's lib/firebase/admin.ts, server-only.
  */
 import { initializeApp, getApps, getApp, type FirebaseOptions } from "firebase/app";
-import { getAuth } from "firebase/auth";
+import { connectAuthEmulator, getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
@@ -22,5 +22,13 @@ const firebaseConfig: FirebaseOptions = {
 
 export const firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
 export const auth = getAuth(firebaseApp);
+
+// Local testing only: NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST (e.g.
+// "127.0.0.1:9099") points sign-in at the Firebase Auth emulator. Never set
+// in production, where this does nothing.
+const authEmulatorHost = process.env.NEXT_PUBLIC_FIREBASE_AUTH_EMULATOR_HOST;
+if (authEmulatorHost && !(auth as { emulatorConfig?: unknown }).emulatorConfig) {
+  connectAuthEmulator(auth, `http://${authEmulatorHost}`, { disableWarnings: true });
+}
 export const db = getFirestore(firebaseApp);
 export const storage = getStorage(firebaseApp);

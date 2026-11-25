@@ -40,18 +40,18 @@ export default function FaqContentForm({ initialContent }: { initialContent: Sit
       result = await saveFaqContent(draft);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
     setSaving(false);
     if (!result.ok) {
       setErrors(result.errors);
-      toast.error({ title: "Not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "לא נשמר", description: "תקנו את השדות המסומנים ונסו שוב." });
       return;
     }
     setErrors({});
     markSaved(draft);
-    toast.success({ title: "Changes saved", description: "The page content was updated successfully." });
+    toast.success({ title: "השינויים נשמרו", description: "תוכן הדף עודכן בהצלחה." });
   }
 
   return (
@@ -59,13 +59,13 @@ export default function FaqContentForm({ initialContent }: { initialContent: Sit
       <div className="space-y-4">
         <HeroImageField value={draft.heroImage} onChange={(url) => setDraft((d) => ({ ...d, heroImage: url }))} />
         <TextField
-          label="Title" required
+          label="כותרת" required
           value={draft.title}
           onChange={(v) => setDraft((d) => ({ ...d, title: v }))}
           error={errors.title}
         />
         <TextField
-          label="Lede (subtitle, optional)"
+          label="כותרת משנה (לא חובה)"
           value={draft.lede ?? ""}
           onChange={(v) => setDraft((d) => ({ ...d, lede: v }))}
           error={errors.lede}
@@ -76,24 +76,24 @@ export default function FaqContentForm({ initialContent }: { initialContent: Sit
             <div key={item.itemId} className="rounded-lg border border-line bg-white p-4">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-                  Question {index + 1}
+                  שאלה {index + 1}
                 </p>
                 <button
                   type="button"
                   onClick={() => removeItem(item.itemId)}
                   className="text-xs font-medium text-terracotta-dark hover:underline"
                 >
-                  Remove
+                  הסרה
                 </button>
               </div>
               <div className="mt-2 space-y-2">
                 <TextField
-                  label="Question" required
+                  label="שאלה" required
                   value={item.question}
                   onChange={(v) => updateItem(item.itemId, { question: v })}
                 />
                 <TextAreaField
-                  label="Answer" required
+                  label="תשובה" required
                   value={item.answer}
                   onChange={(v) => updateItem(item.itemId, { answer: v })}
                   rows={3}
@@ -107,7 +107,7 @@ export default function FaqContentForm({ initialContent }: { initialContent: Sit
             onClick={addItem}
             className="rounded-lg border border-dashed border-line px-4 py-2 text-sm font-medium text-ink-muted transition-colors hover:border-navy/40 hover:text-navy"
           >
-            + Add question
+            + הוספת שאלה
           </button>
         </div>
 

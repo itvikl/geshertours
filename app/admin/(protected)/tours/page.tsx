@@ -9,7 +9,7 @@ import SortableToursTable, { type UpcomingCapacity } from "@/components/admin/So
 import { getAdminSession } from "@/lib/auth/dal";
 import { canTakeTourOffline } from "@/lib/auth/roles";
 
-export const metadata: Metadata = { title: "Tours" };
+export const metadata: Metadata = { title: "טיולים" };
 
 function upcomingCapacity(departures: Departure[]): UpcomingCapacity {
   const upcoming = departures.filter(isDeparturePlanned);
@@ -36,22 +36,22 @@ export default async function AdminToursPage() {
     <div>
       <div className="mb-6 flex items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight text-ink">Tours</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-ink">טיולים</h1>
           <p className="mt-1 text-sm text-ink-muted">
-            {tours.length} {tours.length === 1 ? "tour" : "tours"} — drag the handle to reorder
+            {tours.length === 1 ? "טיול אחד" : `${tours.length} טיולים`} — גררו את הידית כדי לשנות את הסדר
           </p>
         </div>
         <Link
           href="/admin/tours/new"
           className="shrink-0 rounded-lg bg-navy px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light"
         >
-          + New tour
+          + טיול חדש
         </Link>
       </div>
 
       {rows.length === 0 ? (
         <p className="rounded-xl border border-dashed border-line bg-white p-10 text-center text-ink-muted">
-          No tours yet. Create the first one to get started.
+          עדיין אין טיולים. צרו את הטיול הראשון כדי להתחיל.
         </p>
       ) : (
         <SortableToursTable rows={rows} limited={limited} />

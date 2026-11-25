@@ -7,7 +7,7 @@ import { DEFAULT_ADMIN_FEE, DEFAULT_CANCELLATION_TIERS } from "@/lib/cancellatio
 import { createBooking } from "@/lib/actions/bookings";
 import { createDepositPaymentIntent } from "@/lib/actions/payments";
 import { uploadPassportScan } from "@/lib/actions/uploads";
-import { sanitizeName, sanitizePassport, sanitizePhone, PASSPORT_MAX_LENGTH, NAME_MAX_LENGTH, PHONE_MAX_LENGTH } from "@/lib/validation/fields";
+import { sanitizeLatinName, sanitizeName, sanitizePassport, sanitizePhone, PASSPORT_MAX_LENGTH, NAME_MAX_LENGTH, PHONE_MAX_LENGTH } from "@/lib/validation/fields";
 import DepositPaymentForm from "@/components/marketing/DepositPaymentForm";
 import { ONLINE_PAYMENTS_ENABLED } from "@/lib/onlinePayments";
 import { PhoneLink } from "@/components/marketing/SitePhone";
@@ -17,6 +17,8 @@ import { fillCopy, type BookingCopy, type DepartureStatusCopy } from "@/lib/site
 interface TravelerDraft {
   firstName: string;
   lastName: string;
+  passportFirstName: string;
+  passportLastName: string;
   dob: string;
   passport: string;
   passportScanPath: string;
@@ -29,6 +31,8 @@ interface TravelerDraft {
 const BLANK_TRAVELER: Omit<TravelerDraft, "occupancy"> = {
   firstName: "",
   lastName: "",
+  passportFirstName: "",
+  passportLastName: "",
   dob: "",
   passport: "",
   passportScanPath: "",
@@ -137,7 +141,9 @@ export default function BookingForm({
   }
 
   const travelersValid =
-    travelers.length > 0 && travelers.every((t) => t.firstName.trim() && t.lastName.trim());
+    travelers.length > 0 && travelers.every(
+      (t) => t.firstName.trim() && t.lastName.trim() && t.passportFirstName.trim() && t.passportLastName.trim()
+    );
 
   async function handleSubmit() {
     setSubmitting(true);
@@ -151,6 +157,8 @@ export default function BookingForm({
       travelers: travelers.map((t) => ({
         firstName: t.firstName,
         lastName: t.lastName,
+        passportFirstName: t.passportFirstName.trim(),
+        passportLastName: t.passportLastName.trim(),
         dob: t.dob || undefined,
         passport: t.passport || undefined,
         passportScanPath: t.passportScanPath || undefined,
@@ -366,6 +374,38 @@ export default function BookingForm({
                     }
                     name={`traveler-${index}-lastName`}
                     autoComplete={`section-traveler-${index} family-name`}
+                    required
+                  />
+                  <TextField
+                    label={copy.passportFirstName}
+                    value={traveler.passportFirstName}
+                    onChange={(v) => updateTraveler(index, { passportFirstName: sanitizeLatinName(v) })}
+                    onBlur={() => touch(`traveler-${index}-passportFirstName`)}
+                    error={
+                      touched[`traveler-${index}-passportFirstName`] && !traveler.passportFirstName.trim()
+                        ? "יש למלא שם פרטי באנגלית, כמו בדרכון."
+                        : undefined
+                    }
+                    name={`traveler-${index}-passportFirstName`}
+                    autoComplete="off"
+                    dir="ltr"
+                    maxLength={NAME_MAX_LENGTH}
+                    required
+                  />
+                  <TextField
+                    label={copy.passportLastName}
+                    value={traveler.passportLastName}
+                    onChange={(v) => updateTraveler(index, { passportLastName: sanitizeLatinName(v) })}
+                    onBlur={() => touch(`traveler-${index}-passportLastName`)}
+                    error={
+                      touched[`traveler-${index}-passportLastName`] && !traveler.passportLastName.trim()
+                        ? "יש למלא שם משפחה באנגלית, כמו בדרכון."
+                        : undefined
+                    }
+                    name={`traveler-${index}-passportLastName`}
+                    autoComplete="off"
+                    dir="ltr"
+                    maxLength={NAME_MAX_LENGTH}
                     required
                   />
                   <TextField
@@ -820,6 +860,7 @@ function TextField({
   max,
   maxLength,
   inputMode,
+  dir,
 }: {
   label: string;
   value: string;
@@ -837,6 +878,8 @@ function TextField({
   max?: string;
   maxLength?: number;
   inputMode?: React.HTMLAttributes<HTMLInputElement>["inputMode"];
+  /** "ltr" for fields typed in English (passport name) inside the RTL page. */
+  dir?: "ltr" | "rtl";
 }) {
   const id = useId();
   const fieldId = name ?? id;
@@ -863,6 +906,7 @@ function TextField({
         max={max}
         maxLength={maxLength}
         inputMode={inputMode}
+        dir={dir}
         aria-invalid={!!error}
         className="glacier-field w-full"
       />

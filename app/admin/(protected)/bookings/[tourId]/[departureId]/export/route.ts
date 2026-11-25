@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { requireAdminSession } from "@/lib/auth/dal";
 import { getBookingsForDepartureAdmin } from "@/lib/data/admin/bookings";
 import { getTourByIdAdmin } from "@/lib/data/admin/tours";
+import { getDepartureRegistrantsAdmin } from "@/lib/data/admin/history";
 import { buildBookingsWorkbook } from "@/lib/export/bookingsWorkbook";
 
 /**
@@ -18,10 +19,13 @@ export async function GET(
 
   const { tourId, departureId } = await params;
   const tour = await getTourByIdAdmin(tourId);
-  if (!tour) return new NextResponse("Tour not found", { status: 404 });
+  if (!tour) return new NextResponse("הטיול לא נמצא", { status: 404 });
 
-  const rows = await getBookingsForDepartureAdmin(tourId, departureId);
-  const buffer = await buildBookingsWorkbook(tour, rows);
+  const [rows, { registrants }] = await Promise.all([
+    getBookingsForDepartureAdmin(tourId, departureId),
+    getDepartureRegistrantsAdmin(departureId),
+  ]);
+  const buffer = await buildBookingsWorkbook(tour, rows, registrants);
 
   const departureLabel = rows[0]?.departure?.startDate ?? departureId;
   return new NextResponse(new Uint8Array(buffer), {

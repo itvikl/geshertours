@@ -5,7 +5,7 @@ export default function RequiredMark() {
       <span aria-hidden="true" className="ms-0.5 text-terracotta">
         *
       </span>
-      <span className="sr-only"> (required)</span>
+      <span className="sr-only"> (חובה)</span>
     </>
   );
 }

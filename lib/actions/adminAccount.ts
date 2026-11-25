@@ -25,7 +25,7 @@ export type RequestPasswordResetResult = { ok: true } | { ok: false; error: stri
  */
 export async function requestAdminPasswordReset(email: unknown): Promise<RequestPasswordResetResult> {
   const parsed = z.email().safeParse(typeof email === "string" ? email.trim() : email);
-  if (!parsed.success) return { ok: false, error: "Enter a valid email." };
+  if (!parsed.success) return { ok: false, error: "יש להזין כתובת אימייל תקינה." };
 
   try {
     const user = await adminAuth().getUserByEmail(parsed.data).catch(() => null);

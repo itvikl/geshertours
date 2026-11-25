@@ -36,24 +36,24 @@ export default function HomeContentForm({ initialContent }: { initialContent: Si
       result = await saveHomeContent(draft);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
     setSaving(false);
     if (!result.ok) {
       setErrors(result.errors);
-      toast.error({ title: "Not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "לא נשמר", description: "תקנו את השדות המסומנים ונסו שוב." });
       return;
     }
     setErrors({});
     markSaved(draft);
-    toast.success({ title: "Changes saved", description: "The page content was updated successfully." });
+    toast.success({ title: "השינויים נשמרו", description: "תוכן הדף עודכן בהצלחה." });
   }
 
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       <div className="space-y-6">
-        <FieldGroup title="Hero">
+        <FieldGroup title="החלק העליון">
           <HeroImageField
             required
             value={draft.heroImage}
@@ -61,27 +61,27 @@ export default function HomeContentForm({ initialContent }: { initialContent: Si
             error={errors.heroImage}
             defaultImage={DEFAULT_HOME_HERO_IMAGE}
           />
-          <TextField required label="Eyebrow" value={draft.heroEyebrow} onChange={(v) => set("heroEyebrow", v)} error={errors.heroEyebrow} />
-          <TextField required label="Title — line 1" value={draft.heroTitleLine1} onChange={(v) => set("heroTitleLine1", v)} error={errors.heroTitleLine1} />
-          <TextField required label="Title — highlighted line" value={draft.heroTitleHighlight} onChange={(v) => set("heroTitleHighlight", v)} error={errors.heroTitleHighlight} />
-          <TextAreaField required label="Subtitle" value={draft.heroSubtitle} onChange={(v) => set("heroSubtitle", v)} rows={2} error={errors.heroSubtitle} />
-          <TextField required label="Primary button" value={draft.heroPrimaryCta} onChange={(v) => set("heroPrimaryCta", v)} error={errors.heroPrimaryCta} />
+          <TextField required label="טקסט קטן מעל הכותרת" value={draft.heroEyebrow} onChange={(v) => set("heroEyebrow", v)} error={errors.heroEyebrow} />
+          <TextField required label="כותרת — שורה 1" value={draft.heroTitleLine1} onChange={(v) => set("heroTitleLine1", v)} error={errors.heroTitleLine1} />
+          <TextField required label="כותרת — השורה המודגשת" value={draft.heroTitleHighlight} onChange={(v) => set("heroTitleHighlight", v)} error={errors.heroTitleHighlight} />
+          <TextAreaField required label="כותרת משנה" value={draft.heroSubtitle} onChange={(v) => set("heroSubtitle", v)} rows={2} error={errors.heroSubtitle} />
+          <TextField required label="כפתור ראשי" value={draft.heroPrimaryCta} onChange={(v) => set("heroPrimaryCta", v)} error={errors.heroPrimaryCta} />
         </FieldGroup>
 
-        <FieldGroup title="Trust signals">
+        <FieldGroup title="כרטיסי אמון">
           {([0, 1, 2] as const).map((index) => (
             <div key={index} className="rounded-lg border border-line bg-white p-4">
               <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-muted">
-                Card {index + 1}
+                כרטיס {index + 1}
               </p>
               <div className="space-y-2">
                 <TextField required
-                  label="Title"
+                  label="כותרת"
                   value={draft.trustSignals[index].title}
                   onChange={(v) => setTrustSignal(index, { title: v })}
                 />
                 <TextAreaField required
-                  label="Body"
+                  label="תוכן"
                   value={draft.trustSignals[index].body}
                   onChange={(v) => setTrustSignal(index, { body: v })}
                   rows={2}
@@ -91,12 +91,12 @@ export default function HomeContentForm({ initialContent }: { initialContent: Si
           ))}
         </FieldGroup>
 
-        <FieldGroup title="Closing call-to-action">
-          <TextField required label="Heading" value={draft.ctaHeading} onChange={(v) => set("ctaHeading", v)} error={errors.ctaHeading} />
-          <TextField required label="Heading — highlighted part" value={draft.ctaHeadingHighlight} onChange={(v) => set("ctaHeadingHighlight", v)} error={errors.ctaHeadingHighlight} />
-          <TextAreaField required label="Body" value={draft.ctaBody} onChange={(v) => set("ctaBody", v)} rows={3} error={errors.ctaBody} />
-          <TextField required label="Primary button" value={draft.ctaPrimaryButton} onChange={(v) => set("ctaPrimaryButton", v)} error={errors.ctaPrimaryButton} />
-          <TextField required label="Secondary button" value={draft.ctaSecondaryButton} onChange={(v) => set("ctaSecondaryButton", v)} error={errors.ctaSecondaryButton} />
+        <FieldGroup title="קריאה לפעולה בסוף הדף">
+          <TextField required label="כותרת" value={draft.ctaHeading} onChange={(v) => set("ctaHeading", v)} error={errors.ctaHeading} />
+          <TextField required label="כותרת — החלק המודגש" value={draft.ctaHeadingHighlight} onChange={(v) => set("ctaHeadingHighlight", v)} error={errors.ctaHeadingHighlight} />
+          <TextAreaField required label="תוכן" value={draft.ctaBody} onChange={(v) => set("ctaBody", v)} rows={3} error={errors.ctaBody} />
+          <TextField required label="כפתור ראשי" value={draft.ctaPrimaryButton} onChange={(v) => set("ctaPrimaryButton", v)} error={errors.ctaPrimaryButton} />
+          <TextField required label="כפתור משני" value={draft.ctaSecondaryButton} onChange={(v) => set("ctaSecondaryButton", v)} error={errors.ctaSecondaryButton} />
         </FieldGroup>
 
         <SaveBar saving={saving} dirty={isDirty} onSave={handleSave} />

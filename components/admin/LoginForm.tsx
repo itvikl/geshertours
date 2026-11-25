@@ -86,13 +86,13 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
       const session = await multiFactor(user).getSession();
       const secret = await TotpMultiFactorGenerator.generateSecret(session);
       const qrDataUrl = await QRCode.toDataURL(
-        secret.generateQrCodeUrl(user.email ?? email, "Keshertours Admin"),
+        secret.generateQrCodeUrl(user.email ?? email, "Gesher Tours Admin"),
         { margin: 1, width: 200 }
       );
       setCode("");
       setStep({ kind: "enroll", user, secret, qrDataUrl });
     } catch {
-      setError("Couldn't start authenticator setup. Sign in again and retry.");
+      setError("לא הצלחנו להתחיל את הגדרת אפליקציית האימות. היכנסו שוב ונסו שנית.");
     }
     setSubmitting(false);
   }
@@ -106,10 +106,10 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
       await finishSignIn(step.user, code.trim());
     } catch (err) {
       if ((err as Error).message === EMAIL_CODE_INVALID) {
-        setError("That code is wrong or expired. Check the email, or send a new code.");
+        setError("הקוד שגוי או שפג תוקפו. בדקו את המייל או שלחו קוד חדש.");
       } else {
         setStep({ kind: "password" });
-        setError("Sign-in expired. Sign in again.");
+        setError("תוקף הכניסה פג. היכנסו שוב.");
       }
       setSubmitting(false);
     }
@@ -124,7 +124,7 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
       setNotice(null);
     } catch {
       setStep({ kind: "password" });
-      setError("Couldn't send a new code. Sign in again.");
+      setError("לא הצלחנו לשלוח קוד חדש. היכנסו שוב.");
       setSubmitting(false);
     }
   }
@@ -147,8 +147,8 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
       }
       setError(
         (err as Error).message === EMAIL_CODE_UNDELIVERABLE
-          ? "Couldn't email your sign-in code. Try again in a minute, or ask an admin."
-          : "Invalid email/password, or this account isn't authorized for admin access."
+          ? "לא הצלחנו לשלוח את קוד הכניסה למייל. נסו שוב בעוד דקה, או פנו למנהל/ת."
+          : "אימייל או סיסמה שגויים, או שלחשבון אין הרשאת ניהול."
       );
       setSubmitting(false);
     }
@@ -162,7 +162,7 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
 
     const hint = step.resolver.hints.find((h) => h.factorId === TotpMultiFactorGenerator.FACTOR_ID);
     if (!hint) {
-      setError("This account's second factor isn't an authenticator app. Ask an admin to reset it.");
+      setError("אמצעי האימות השני של החשבון אינו אפליקציית אימות. בקשו ממנהל/ת לאפס אותו.");
       setSubmitting(false);
       return;
     }
@@ -171,7 +171,7 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
       const credential = await step.resolver.resolveSignIn(assertion);
       await finishSignIn(credential.user);
     } catch {
-      setError("That code didn't work. Check your authenticator app and try again.");
+      setError("הקוד לא התקבל. בדקו את אפליקציית האימות ונסו שוב.");
       setSubmitting(false);
     }
   }
@@ -184,13 +184,13 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
 
     try {
       const assertion = TotpMultiFactorGenerator.assertionForEnrollment(step.secret, code.trim());
-      await multiFactor(step.user).enroll(assertion, "Authenticator app");
+      await multiFactor(step.user).enroll(assertion, "אפליקציית אימות");
     } catch (err) {
       const errCode = (err as { code?: string }).code;
       setError(
         errCode === "auth/unverified-email"
-          ? "This account's email isn't verified, so 2FA can't be set up. Ask an admin to fix the account."
-          : "That code didn't work. Check your authenticator app and try again."
+          ? "כתובת המייל של החשבון לא אומתה, ולכן אי אפשר להגדיר אימות דו-שלבי. בקשו ממנהל/ת לתקן את החשבון."
+          : "הקוד לא התקבל. בדקו את אפליקציית האימות ונסו שוב."
       );
       setSubmitting(false);
       return;
@@ -201,7 +201,7 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
     setPassword("");
     setCode("");
     setStep({ kind: "password" });
-    setNotice("Two-factor authentication is set up. Sign in again and enter a code from your app.");
+    setNotice("האימות הדו-שלבי הוגדר. היכנסו שוב והזינו קוד מהאפליקציה.");
     setSubmitting(false);
   }
 
@@ -212,7 +212,7 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
     const result = await requestAdminPasswordReset(email).catch(() => null);
     setSubmitting(false);
     if (!result) {
-      setError("Couldn't send the reset email. Try again in a minute.");
+      setError("לא הצלחנו לשלוח את מייל האיפוס. נסו שוב בעוד דקה.");
       return;
     }
     if (!result.ok) {
@@ -222,7 +222,7 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
     setPassword("");
     setStep({ kind: "password" });
     setNotice(
-      "If that email belongs to an admin account, a password reset link is on its way. Check your inbox (and spam)."
+      "אם הכתובת שייכת לחשבון ניהול, נשלח אליה קישור לאיפוס הסיסמה. בדקו את תיבת הדואר (וגם את הספאם)."
     );
   }
 
@@ -241,7 +241,7 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
   const codeInput = (
     <div>
       <label htmlFor="code" className="mb-1.5 block text-sm font-medium text-ink">
-        6-digit code
+        קוד בן 6 ספרות
       </label>
       <input
         id="code"
@@ -262,15 +262,15 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
     return (
       <form onSubmit={handleCode} className="space-y-5">
         <p className="text-sm text-ink-muted">
-          Enter the code from your authenticator app for <strong className="text-ink">{email}</strong>.
+          הזינו את הקוד מאפליקציית האימות עבור <strong className="text-ink">{email}</strong>.
         </p>
         {codeInput}
         {errorBlock}
         <button type="submit" disabled={submitting || code.length !== 6} className={buttonClass}>
-          {submitting ? "Verifying…" : "Verify"}
+          {submitting ? "מאמת…" : "אימות"}
         </button>
         <button type="button" onClick={backToPassword} className="w-full text-sm text-ink-muted hover:text-ink">
-          Back
+          חזרה
         </button>
       </form>
     );
@@ -280,17 +280,17 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
     return (
       <form onSubmit={handleEmailCode} className="space-y-5">
         <p className="text-sm text-ink-muted">
-          We emailed a 6-digit sign-in code to <strong className="text-ink">{step.sentTo}</strong>. It expires in 10
-          minutes.
+          שלחנו קוד כניסה בן 6 ספרות אל <strong className="text-ink">{step.sentTo}</strong>. הקוד בתוקף ל-10
+          דקות.
         </p>
         {codeInput}
         {errorBlock}
         <button type="submit" disabled={submitting || code.length !== 6} className={buttonClass}>
-          {submitting ? "Verifying…" : "Verify"}
+          {submitting ? "מאמת…" : "אימות"}
         </button>
         <div className="flex flex-wrap justify-between gap-2 text-sm">
           <button type="button" disabled={submitting} onClick={resendEmailCode} className="text-ink-muted hover:text-ink">
-            Send a new code
+            שליחת קוד חדש
           </button>
           <button
             type="button"
@@ -298,11 +298,11 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
             onClick={() => startEnrollment(step.user)}
             className="text-ink-muted hover:text-ink"
           >
-            Use an authenticator app instead
+            שימוש באפליקציית אימות במקום
           </button>
         </div>
         <button type="button" onClick={backToPassword} className="w-full text-sm text-ink-muted hover:text-ink">
-          Back
+          חזרה
         </button>
       </form>
     );
@@ -312,11 +312,11 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
     return (
       <form onSubmit={handleForgot} className="space-y-5">
         <p className="text-sm text-ink-muted">
-          Enter your admin email and we&apos;ll send you a link to choose a new password.
+          הזינו את כתובת המייל של חשבון הניהול ונשלח קישור לבחירת סיסמה חדשה.
         </p>
         <div>
           <label htmlFor="reset-email" className="mb-1.5 block text-sm font-medium text-ink">
-            Email
+            אימייל
           </label>
           <input
             id="reset-email"
@@ -331,10 +331,10 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
         </div>
         {errorBlock}
         <button type="submit" disabled={submitting} className={buttonClass}>
-          {submitting ? "Sending…" : "Send reset link"}
+          {submitting ? "שולח…" : "שליחת קישור לאיפוס"}
         </button>
         <button type="button" onClick={backToPassword} className="w-full text-sm text-ink-muted hover:text-ink">
-          Back to sign in
+          חזרה לכניסה
         </button>
       </form>
     );
@@ -344,16 +344,16 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
     return (
       <form onSubmit={handleEnroll} className="space-y-5">
         <div className="space-y-2 text-sm text-ink-muted">
-          <p className="font-semibold text-ink">Set up two-factor authentication</p>
+          <p className="font-semibold text-ink">הגדרת אימות דו-שלבי</p>
           <p>
-            Admin access requires an authenticator app (Google Authenticator, Microsoft Authenticator, 1Password…).
-            Scan this code with the app, then enter the 6-digit code it shows.
+            הגישה לניהול מחייבת אפליקציית אימות (Google Authenticator,‏ Microsoft Authenticator,‏ 1Password…).
+            סרקו את הקוד באפליקציה והזינו את הקוד בן 6 הספרות שמופיע בה.
           </p>
         </div>
         {/* eslint-disable-next-line @next/next/no-img-element -- a local data: URL, nothing for next/image to optimize */}
-        <img src={step.qrDataUrl} alt="Authenticator setup QR code" width={200} height={200} className="mx-auto" />
+        <img src={step.qrDataUrl} alt="קוד QR להגדרת אפליקציית האימות" width={200} height={200} className="mx-auto" />
         <details className="text-xs text-ink-muted">
-          <summary className="cursor-pointer">Can&apos;t scan? Enter this key instead</summary>
+          <summary className="cursor-pointer">לא מצליחים לסרוק? הזינו את המפתח הזה במקום</summary>
           <code className="mt-2 block break-all rounded bg-sand-warm px-2 py-1.5 font-mono text-ink">
             {step.secret.secretKey}
           </code>
@@ -361,10 +361,10 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
         {codeInput}
         {errorBlock}
         <button type="submit" disabled={submitting || code.length !== 6} className={buttonClass}>
-          {submitting ? "Turning on…" : "Turn on 2FA"}
+          {submitting ? "מפעיל…" : "הפעלת אימות דו-שלבי"}
         </button>
         <button type="button" onClick={backToPassword} className="w-full text-sm text-ink-muted hover:text-ink">
-          Cancel
+          ביטול
         </button>
       </form>
     );
@@ -375,7 +375,7 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
       {notice && <p className="rounded-lg bg-sand-warm px-3 py-2 text-sm text-ink">{notice}</p>}
       <div>
         <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-ink">
-          Email
+          אימייל
         </label>
         <input
           id="email"
@@ -390,7 +390,7 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
       <div>
         <div className="mb-1.5 flex items-baseline justify-between gap-2">
           <label htmlFor="password" className="block text-sm font-medium text-ink">
-            Password
+            סיסמה
           </label>
           <button
             type="button"
@@ -401,7 +401,7 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
             }}
             className="text-sm text-ink-muted hover:text-ink hover:underline"
           >
-            Forgot password?
+            שכחתם סיסמה?
           </button>
         </div>
         <input
@@ -418,7 +418,7 @@ export default function LoginForm({ initialNotice = null }: { initialNotice?: st
       {errorBlock}
 
       <button type="submit" disabled={submitting} className={buttonClass}>
-        {submitting ? "Signing in…" : "Sign in"}
+        {submitting ? "נכנס…" : "כניסה"}
       </button>
     </form>
   );

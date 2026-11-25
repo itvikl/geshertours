@@ -1,4 +1,5 @@
 import * as z from "zod";
+import "@/lib/validation/zodLocale";
 
 /**
  * Admin-editable subset of lib/types.ts Departure. Deliberately excludes
@@ -9,9 +10,9 @@ import * as z from "zod";
  */
 export const DepartureInputSchema = z
   .object({
-    startDate: z.string().min(1, { error: "Start date is required." }),
-    endDate: z.string().min(1, { error: "End date is required." }),
-    capacityTotal: z.number().int().min(0, { error: "Capacity must be 0 or more." }),
+    startDate: z.string().min(1, { error: "יש לבחור תאריך התחלה." }),
+    endDate: z.string().min(1, { error: "יש לבחור תאריך סיום." }),
+    capacityTotal: z.number().int().min(0, { error: "מספר המקומות חייב להיות 0 או יותר." }),
     status: z.enum(["open", "closed", "soldout", "cancelled"]),
     // Internal-only signal (see keshertour-trip-validation-plan) — never shown to customers.
     minGroupSizeMet: z.boolean(),
@@ -21,7 +22,7 @@ export const DepartureInputSchema = z
     bookingAssurance: z.enum(["conditional", "guaranteed"]).optional(),
   })
   .refine((data) => data.endDate >= data.startDate, {
-    error: "End date must be on or after the start date.",
+    error: "תאריך הסיום חייב להיות באותו יום או אחרי תאריך ההתחלה.",
     path: ["endDate"],
   });
 

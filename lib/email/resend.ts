@@ -1,5 +1,6 @@
 import "server-only";
 import { Resend } from "resend";
+import { DEFAULT_SITE_EMAIL } from "@/lib/siteContact";
 
 /**
  * Resend SDK — server-only. Free tier for now (PRD email confirmations);
@@ -20,11 +21,11 @@ export function resendClient(): Resend {
 }
 
 export function emailFrom(): string {
-  return process.env.EMAIL_FROM ?? "Keshertours <onboarding@resend.dev>";
+  return process.env.EMAIL_FROM ?? "טיולי גשר <onboarding@resend.dev>";
 }
 
 /** Where customer replies go (EMAIL_REPLY_TO) — spread into an emails.send() call. */
 export function emailReplyTo(): { replyTo?: string } {
-  const replyTo = process.env.EMAIL_REPLY_TO?.trim();
-  return replyTo ? { replyTo } : {};
+  const replyTo = process.env.EMAIL_REPLY_TO?.trim() || DEFAULT_SITE_EMAIL;
+  return { replyTo };
 }

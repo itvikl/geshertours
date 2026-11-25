@@ -10,22 +10,22 @@ function formatDate(iso: string) {
 /** Leads export — one row per lead, newest first (same order as the admin table). */
 export async function buildLeadsWorkbook(rows: AdminLeadRow[]): Promise<Buffer> {
   const workbook = new ExcelJS.Workbook();
-  const sheet = workbook.addWorksheet("Leads");
+  const sheet = workbook.addWorksheet("פניות", { views: [{ rightToLeft: true }] });
   sheet.columns = [
-    { header: "Received", key: "received", width: 12 },
-    { header: "Name", key: "name", width: 24 },
-    { header: "Email", key: "email", width: 28 },
-    { header: "Phone", key: "phone", width: 18 },
-    { header: "Country", key: "country", width: 16 },
-    { header: "Tour", key: "tour", width: 32 },
-    { header: "Destination", key: "destination", width: 20 },
-    { header: "Group size", key: "groupSize", width: 11 },
-    { header: "Travel from", key: "travelStartDate", width: 12 },
-    { header: "Travel until", key: "travelEndDate", width: 12 },
-    { header: "Source", key: "source", width: 14 },
-    { header: "Status", key: "status", width: 12 },
-    { header: "Message", key: "message", width: 50 },
-    { header: "Notes", key: "notes", width: 50 },
+    { header: "התקבלה", key: "received", width: 12 },
+    { header: "שם", key: "name", width: 24 },
+    { header: "אימייל", key: "email", width: 28 },
+    { header: "טלפון", key: "phone", width: 18 },
+    { header: "מדינה", key: "country", width: 16 },
+    { header: "טיול", key: "tour", width: 32 },
+    { header: "יעד", key: "destination", width: 20 },
+    { header: "גודל הקבוצה", key: "groupSize", width: 11 },
+    { header: "מתאריך", key: "travelStartDate", width: 12 },
+    { header: "עד תאריך", key: "travelEndDate", width: 12 },
+    { header: "מקור", key: "source", width: 14 },
+    { header: "סטטוס", key: "status", width: 12 },
+    { header: "הודעה", key: "message", width: 50 },
+    { header: "הערות", key: "notes", width: 50 },
   ];
   sheet.getRow(1).font = { bold: true };
 

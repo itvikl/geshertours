@@ -14,7 +14,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { staffId } = await params;
   const staff = await getStaffByIdAdmin(staffId);
-  return { title: staff ? `Edit — ${staff.name}` : "Team member" };
+  return { title: staff ? `עריכה — ${staff.name}` : "איש/אשת צוות" };
 }
 
 export default async function EditStaffMemberPage({
@@ -31,7 +31,7 @@ export default async function EditStaffMemberPage({
     <div>
       {isAdmin && (
         <div className="mb-4 flex justify-end">
-          <DeleteButton action={deleteStaffMember.bind(null, staffId)} what="this team member" redirectTo="/admin/staff/team" />
+          <DeleteButton action={deleteStaffMember.bind(null, staffId)} what="את איש/אשת הצוות" redirectTo="/admin/staff/team" />
         </div>
       )}
       <div className="mb-6">

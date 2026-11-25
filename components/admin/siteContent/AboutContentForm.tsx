@@ -40,18 +40,18 @@ export default function AboutContentForm({ initialContent }: { initialContent: S
       result = await saveAboutContent(draft);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
     setSaving(false);
     if (!result.ok) {
       setErrors(result.errors);
-      toast.error({ title: "Not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "לא נשמר", description: "תקנו את השדות המסומנים ונסו שוב." });
       return;
     }
     setErrors({});
     markSaved(draft);
-    toast.success({ title: "Changes saved", description: "The page content was updated successfully." });
+    toast.success({ title: "השינויים נשמרו", description: "תוכן הדף עודכן בהצלחה." });
   }
 
   return (
@@ -59,19 +59,19 @@ export default function AboutContentForm({ initialContent }: { initialContent: S
       <div className="space-y-4">
         <HeroImageField value={draft.heroImage} onChange={(url) => setDraft((d) => ({ ...d, heroImage: url }))} />
         <TextField required
-          label="Eyebrow"
+          label="טקסט קטן מעל הכותרת"
           value={draft.eyebrow}
           onChange={(v) => setDraft((d) => ({ ...d, eyebrow: v }))}
           error={errors.eyebrow}
         />
         <TextField required
-          label="Title"
+          label="כותרת"
           value={draft.title}
           onChange={(v) => setDraft((d) => ({ ...d, title: v }))}
           error={errors.title}
         />
         <TextField required
-          label="Lede (subtitle)"
+          label="כותרת משנה"
           value={draft.lede}
           onChange={(v) => setDraft((d) => ({ ...d, lede: v }))}
           error={errors.lede}
@@ -82,24 +82,24 @@ export default function AboutContentForm({ initialContent }: { initialContent: S
             <div key={section.sectionId} className="rounded-lg border border-line bg-white p-4">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-semibold uppercase tracking-wide text-ink-muted">
-                  Section {index + 1}
+                  מקטע {index + 1}
                 </p>
                 <button
                   type="button"
                   onClick={() => removeSection(section.sectionId)}
                   className="text-xs font-medium text-terracotta-dark hover:underline"
                 >
-                  Remove
+                  הסרה
                 </button>
               </div>
               <div className="mt-2 space-y-2">
                 <TextField required
-                  label="Heading"
+                  label="כותרת"
                   value={section.heading}
                   onChange={(v) => updateSection(section.sectionId, { heading: v })}
                 />
                 <TextAreaField required
-                  label="Body"
+                  label="תוכן"
                   value={section.body}
                   onChange={(v) => updateSection(section.sectionId, { body: v })}
                   rows={4}
@@ -113,7 +113,7 @@ export default function AboutContentForm({ initialContent }: { initialContent: S
             onClick={addSection}
             className="rounded-lg border border-dashed border-line px-4 py-2 text-sm font-medium text-ink-muted transition-colors hover:border-navy/40 hover:text-navy"
           >
-            + Add section
+            + הוספת מקטע
           </button>
         </div>
 

@@ -31,7 +31,7 @@ export default function LeadMessagePreview({ message }: { message?: string }) {
           onClick={() => setExpanded((v) => !v)}
           className="mt-1 text-xs font-medium text-navy hover:text-navy-light"
         >
-          {expanded ? "Show less" : "Show more"}
+          {expanded ? "פחות" : "עוד"}
         </button>
       )}
     </div>

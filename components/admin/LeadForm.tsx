@@ -27,14 +27,14 @@ export default function LeadForm({ tours, lead }: { tours: Tour[]; lead?: Lead }
       markSaved();
       toast.success(
         lead
-          ? { title: "Lead updated", description: "Your changes were saved." }
-          : { title: "Lead added", description: "The new lead was saved to the list." }
+          ? { title: "הפנייה עודכנה", description: "השינויים נשמרו." }
+          : { title: "הפנייה נוספה", description: "הפנייה החדשה נשמרה ברשימה." }
       );
       void navigate("/admin/leads", { skipConfirm: true });
     } else {
       toast.error({
-        title: "Lead not saved",
-        description: state.errors.form?.[0] ?? "Please fix the highlighted fields and try again.",
+        title: "הפנייה לא נשמרה",
+        description: state.errors.form?.[0] ?? "תקנו את השדות המסומנים ונסו שוב.",
       });
     }
   }, [state, lead, markSaved, toast, navigate]);
@@ -48,32 +48,32 @@ export default function LeadForm({ tours, lead }: { tours: Tour[]; lead?: Lead }
       )}
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Name" name="name" defaultValue={lead?.name} error={errors.name} />
-        <Field label="Email" name="email" type="email" defaultValue={lead?.email} error={errors.email} />
-        <Field label="Phone" name="phone" type="tel" defaultValue={lead?.phone} error={errors.phone} />
-        <Field label="Country" name="country" defaultValue={lead?.country} error={errors.country} />
+        <Field label="שם" name="name" defaultValue={lead?.name} error={errors.name} />
+        <Field label="אימייל" name="email" type="email" defaultValue={lead?.email} error={errors.email} />
+        <Field label="טלפון" name="phone" type="tel" defaultValue={lead?.phone} error={errors.phone} />
+        <Field label="מדינה" name="country" defaultValue={lead?.country} error={errors.country} />
         <Field
-          label="Destination"
+          label="יעד"
           name="destination"
           defaultValue={lead?.destination}
           error={errors.destination}
         />
         <Field
-          label="Group size"
+          label="גודל הקבוצה"
           name="groupSize"
           type="number"
           defaultValue={lead?.groupSize?.toString()}
           error={errors.groupSize}
         />
         <Field
-          label="Travel from"
+          label="מתאריך"
           name="travelStartDate"
           type="date"
           defaultValue={lead?.travelStartDate}
           error={errors.travelStartDate}
         />
         <Field
-          label="Travel until"
+          label="עד תאריך"
           name="travelEndDate"
           type="date"
           defaultValue={lead?.travelEndDate}
@@ -83,7 +83,7 @@ export default function LeadForm({ tours, lead }: { tours: Tour[]; lead?: Lead }
 
       <div>
         <label className="block text-sm font-medium text-ink" htmlFor="tourId">
-          Tour (optional)
+          טיול (לא חובה)
         </label>
         <select
           id="tourId"
@@ -91,7 +91,7 @@ export default function LeadForm({ tours, lead }: { tours: Tour[]; lead?: Lead }
           defaultValue={lead?.tourId ?? ""}
           className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
         >
-          <option value="">— None —</option>
+          <option value="">— ללא —</option>
           {tours.map((tour) => (
             <option key={tour.tourId} value={tour.tourId}>
               {tour.title}
@@ -102,7 +102,7 @@ export default function LeadForm({ tours, lead }: { tours: Tour[]; lead?: Lead }
 
       <div>
         <label className="block text-sm font-medium text-ink" htmlFor="message">
-          Message
+          הודעה
         </label>
         <textarea
           id="message"
@@ -116,14 +116,14 @@ export default function LeadForm({ tours, lead }: { tours: Tour[]; lead?: Lead }
 
       <div>
         <label className="block text-sm font-medium text-ink" htmlFor="notes">
-          Notes
+          הערות
         </label>
         <textarea
           id="notes"
           name="notes"
           rows={4}
           defaultValue={lead?.notes}
-          placeholder="Internal only — calls, follow-ups, what was discussed…"
+          placeholder="פנימי בלבד — שיחות, מעקב, מה סוכם…"
           className="mt-1.5 w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
         />
         {errors.notes && <p className="mt-1 text-xs text-terracotta-dark">{errors.notes[0]}</p>}
@@ -131,7 +131,7 @@ export default function LeadForm({ tours, lead }: { tours: Tour[]; lead?: Lead }
 
       <div>
         <label className="block text-sm font-medium text-ink" htmlFor="status">
-          Status
+          סטטוס
         </label>
         <select
           id="status"
@@ -139,10 +139,10 @@ export default function LeadForm({ tours, lead }: { tours: Tour[]; lead?: Lead }
           defaultValue={lead?.status ?? "new"}
           className="mt-1.5 w-full max-w-xs rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
         >
-          <option value="new">New</option>
-          <option value="contacted">Contacted</option>
-          <option value="converted">Converted</option>
-          <option value="closed">Closed</option>
+          <option value="new">חדשה</option>
+          <option value="contacted">נוצר קשר</option>
+          <option value="converted">הפכה להזמנה</option>
+          <option value="closed">סגורה</option>
         </select>
         {errors.status && <p className="mt-1 text-xs text-terracotta-dark">{errors.status[0]}</p>}
       </div>
@@ -152,7 +152,7 @@ export default function LeadForm({ tours, lead }: { tours: Tour[]; lead?: Lead }
         disabled={pending}
         className="justify-self-start rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light disabled:opacity-60"
       >
-        {pending ? "Saving…" : lead ? "Save changes" : "Save lead"}
+        {pending ? "שומר…" : lead ? "שמירת שינויים" : "שמירת הפנייה"}
       </button>
     </form>
   );

@@ -42,7 +42,7 @@ export async function listMediaPage(categoryId: string, cursor?: string | null):
 export async function createMediaCategory(name: string): Promise<MediaCategoryResult> {
   await requireContentSession();
   const clean = cleanName(name);
-  if (!clean) return { ok: false, error: "Enter a category name (up to 60 characters)." };
+  if (!clean) return { ok: false, error: "יש להזין שם לקטגוריה (עד 60 תווים)." };
 
   if (await mediaCategoryNameTaken(clean)) {
     return { ok: false, error: "A category with this name already exists." };
@@ -58,10 +58,10 @@ export async function renameMediaCategory(
 ): Promise<MediaCategoryResult> {
   await requireContentSession();
   if (isCountryCategoryId(categoryId)) {
-    return { ok: false, error: "Country categories are named after the country." };
+    return { ok: false, error: "שם של קטגוריית מדינה הוא שם המדינה." };
   }
   const clean = cleanName(name);
-  if (!clean) return { ok: false, error: "Enter a category name (up to 60 characters)." };
+  if (!clean) return { ok: false, error: "יש להזין שם לקטגוריה (עד 60 תווים)." };
   if (await mediaCategoryNameTaken(clean, categoryId)) {
     return { ok: false, error: "A category with this name already exists." };
   }

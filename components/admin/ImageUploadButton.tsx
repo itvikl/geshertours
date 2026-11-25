@@ -39,23 +39,23 @@ export default function ImageUploadButton({
       formData.append("file", file);
       const result = await uploadImage(formData, folder).catch(() => ({
         ok: false as const,
-        error: "The upload didn't go through — check your connection and try again.",
+        error: "ההעלאה לא הצליחה — בדקו את החיבור ונסו שוב.",
       }));
       if (result.ok) {
         urls.push(result.url);
       } else {
-        toast.error({ title: `Couldn't upload ${original.name}`, description: result.error });
+        toast.error({ title: `ההעלאה של ${original.name} נכשלה`, description: result.error });
       }
     }
 
     if (urls.length > 0) {
       onUploaded(urls);
       toast.success({
-        title: urls.length === 1 ? "Image uploaded" : `${urls.length} images uploaded`,
+        title: urls.length === 1 ? "התמונה הועלתה" : `הועלו ${urls.length} תמונות`,
         description:
           bytesSaved > 200 * 1024
-            ? `Resized for the web (${(bytesSaved / (1024 * 1024)).toFixed(1)} MB smaller). Remember to save to keep this change.`
-            : "Remember to save to keep this change.",
+            ? `הוקטנה לאתר (קטנה ב-${(bytesSaved / (1024 * 1024)).toFixed(1)} MB). אל תשכחו לשמור כדי שהשינוי יישאר.`
+            : "אל תשכחו לשמור כדי שהשינוי יישאר.",
       });
     }
     setUploading(false);
@@ -66,7 +66,7 @@ export default function ImageUploadButton({
     <div>
       <div className="flex flex-wrap items-center gap-2">
         <label className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-sand-warm has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-60">
-          {uploading ? "Uploading…" : label}
+          {uploading ? "מעלה…" : label}
           <input
             ref={inputRef}
             type="file"
@@ -83,7 +83,7 @@ export default function ImageUploadButton({
           onClick={() => setLibraryOpen(true)}
           className="inline-flex items-center gap-2 rounded-lg border border-line bg-white px-3.5 py-2 text-sm font-medium text-ink transition-colors hover:bg-sand-warm disabled:cursor-not-allowed disabled:opacity-60"
         >
-          Choose from library
+          בחירה מהספרייה
         </button>
       </div>
       {libraryOpen && (

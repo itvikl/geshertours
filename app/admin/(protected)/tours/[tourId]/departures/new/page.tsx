@@ -4,7 +4,7 @@ import { getTourByIdAdmin } from "@/lib/data/admin/tours";
 import { getAllStaffAdmin } from "@/lib/data/admin/staff";
 import DepartureEditorForm from "@/components/admin/DepartureEditorForm";
 
-export const metadata: Metadata = { title: "New departure" };
+export const metadata: Metadata = { title: "מועד יציאה חדש" };
 
 export default async function NewDeparturePage({
   params,
@@ -18,7 +18,7 @@ export default async function NewDeparturePage({
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-ink">New departure — {tour.title}</h1>
+        <h1 className="text-2xl font-bold tracking-tight text-ink">מועד יציאה חדש — {tour.title}</h1>
       </div>
       <DepartureEditorForm mode="create" tourId={tourId} tour={tour} staff={staff} />
     </div>

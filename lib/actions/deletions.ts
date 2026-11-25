@@ -42,17 +42,17 @@ export async function deleteTour(tourId: string): Promise<DeleteResult> {
   if (bookings > 0) {
     return {
       ok: false,
-      error: `This tour has ${bookings} booking${bookings === 1 ? "" : "s"} — archive it instead so those records stay intact.`,
+      error: `לטיול יש ${bookings === 1 ? "הזמנה אחת" : `${bookings} הזמנות`} — העבירו אותו לארכיון במקום, כדי שהרשומות יישמרו.`,
     };
   }
 
   const tourSnap = await db().collection("tours").doc(tourId).get();
-  if (!tourSnap.exists) return { ok: false, error: "Tour not found." };
+  if (!tourSnap.exists) return { ok: false, error: "הטיול לא נמצא." };
   const { slug, status } = tourSnap.data() as { slug?: string; status?: string };
   if (!canDeleteTour(session.role, status)) {
     return {
       ok: false,
-      error: status === "published" ? "This tour is live — only an admin can delete it." : "You can't delete tours.",
+      error: status === "published" ? "הטיול מוצג באתר — רק מנהל/ת יכול/ה למחוק אותו." : "אין לכם הרשאה למחוק טיולים.",
     };
   }
 
@@ -82,7 +82,7 @@ export async function deleteDeparture(departureId: string, tourId: string): Prom
   if (bookings > 0) {
     return {
       ok: false,
-      error: `This date has ${bookings} booking${bookings === 1 ? "" : "s"} — cancel it instead so those records stay intact.`,
+      error: `למועד יש ${bookings === 1 ? "הזמנה אחת" : `${bookings} הזמנות`} — בטלו אותו במקום, כדי שהרשומות יישמרו.`,
     };
   }
 

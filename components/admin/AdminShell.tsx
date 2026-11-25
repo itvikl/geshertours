@@ -9,32 +9,32 @@ const NAV_SECTIONS: {
   items: { label: string; href: string; comingSoon?: boolean }[];
 }[] = [
   {
-    title: "Catalog",
+    title: "קטלוג",
     items: [
-      { label: "Tours", href: "/admin/tours" },
-      { label: "Bookings", href: "/admin/bookings" },
-      { label: "History", href: "/admin/history" },
-      { label: "Leads", href: "/admin/leads" },
-      { label: "Reviews", href: "/admin/reviews" },
+      { label: "טיולים", href: "/admin/tours" },
+      { label: "הזמנות", href: "/admin/bookings" },
+      { label: "היסטוריה", href: "/admin/history" },
+      { label: "פניות", href: "/admin/leads" },
+      { label: "המלצות", href: "/admin/reviews" },
     ],
   },
   {
-    title: "Content",
+    title: "תוכן",
     items: [
-      { label: "Site Content", href: "/admin/site-content" },
-      { label: "Blog", href: "/admin/blog" },
-      { label: "Special Offers", href: "/admin/offers" },
-      { label: "SEO Landing Pages", href: "/admin/seo-pages" },
-      { label: "Image Library", href: "/admin/media" },
+      { label: "תוכן האתר", href: "/admin/site-content" },
+      { label: "בלוג", href: "/admin/blog" },
+      { label: "מבצעים", href: "/admin/offers" },
+      { label: "דפי נחיתה (SEO)", href: "/admin/seo-pages" },
+      { label: "ספריית תמונות", href: "/admin/media" },
     ],
   },
   {
-    title: "Admin",
+    title: "ניהול",
     items: [
-      { label: "Team", href: "/admin/staff/team" },
-      { label: "Admin accounts", href: "/admin/staff/accounts" },
-      { label: "Settings", href: "/admin/settings" },
-      { label: "My account", href: "/admin/account" },
+      { label: "הצוות", href: "/admin/staff/team" },
+      { label: "חשבונות ניהול", href: "/admin/staff/accounts" },
+      { label: "הגדרות", href: "/admin/settings" },
+      { label: "החשבון שלי", href: "/admin/account" },
     ],
   },
 ];
@@ -75,7 +75,7 @@ export default function AdminShell({
                         <span className="flex items-center justify-between rounded-lg px-2.5 py-2 text-[15px] text-ink-muted/50">
                           {item.label}
                           <span className="text-[10px] font-semibold uppercase tracking-wide">
-                            Soon
+                            בקרוב
                           </span>
                         </span>
                       </li>
@@ -99,7 +99,7 @@ export default function AdminShell({
               <Link
                 href="/admin/account"
                 className="mb-2 block truncate text-xs text-ink-muted hover:text-ink hover:underline"
-                title={`${email} — My account`}
+                title={`${email} — החשבון שלי`}
               >
                 {email}
               </Link>

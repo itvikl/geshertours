@@ -15,20 +15,20 @@ export const ADMIN_ROLES = ["developer", "super_admin", "admin", "staff", "seo_a
 export type AdminRole = (typeof ADMIN_ROLES)[number];
 
 export const ROLE_LABELS: Record<AdminRole, string> = {
-  developer: "Developer",
-  super_admin: "Super admin",
-  admin: "Admin",
-  staff: "Staff",
-  seo_admin: "SEO admin",
+  developer: "מפתח/ת",
+  super_admin: "מנהל/ת על",
+  admin: "מנהל/ת",
+  staff: "צוות",
+  seo_admin: "מנהל/ת SEO",
 };
 
 export const ROLE_DESCRIPTIONS: Record<AdminRole, string> = {
-  developer: "Full access, including admin accounts. Can't be changed by super admins.",
-  super_admin: "Full access, including creating and deleting admin accounts.",
-  admin: "All sections, can delete content. Can't see or manage accounts.",
-  staff: "All sections, can't delete anything.",
+  developer: "גישה מלאה, כולל חשבונות הניהול. מנהלי על לא יכולים לשנות אותו.",
+  super_admin: "גישה מלאה, כולל יצירה ומחיקה של חשבונות ניהול.",
+  admin: "כל האזורים, כולל מחיקת תוכן. אין גישה לחשבונות.",
+  staff: "כל האזורים, בלי אפשרות למחוק.",
   seo_admin:
-    "Site Content, Blog, SEO Landing Pages, Image Library and Tours (not departure dates). Can delete blog posts, SEO pages and tours that aren't live.",
+    "תוכן האתר, בלוג, דפי נחיתה, ספריית תמונות וטיולים (בלי מועדי יציאה). יכול/ה למחוק פוסטים, דפי נחיתה וטיולים שאינם מפורסמים.",
 };
 
 export function isAdminRole(role: unknown): role is AdminRole {

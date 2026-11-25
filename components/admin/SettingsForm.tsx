@@ -22,9 +22,9 @@ export default function SettingsForm({ settings }: { settings: SiteSettings }) {
     lastState.current = state;
     if (state.ok) {
       markSaved();
-      toast.success({ title: "Settings saved", description: "Your site settings were updated successfully." });
+      toast.success({ title: "ההגדרות נשמרו", description: "הגדרות האתר עודכנו בהצלחה." });
     } else {
-      toast.error({ title: "Settings not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "ההגדרות לא נשמרו", description: "תקנו את השדות המסומנים ונסו שוב." });
     }
   }, [state, markSaved, toast]);
 
@@ -32,42 +32,42 @@ export default function SettingsForm({ settings }: { settings: SiteSettings }) {
     <form action={formAction} {...formProps} className="max-w-xl space-y-4 rounded-xl border border-line bg-white p-6">
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Phone" required name="phone" defaultValue={settings.phone} error={errors.phone} />
-        <Field label="Alternate phone" name="phoneAlt" defaultValue={settings.phoneAlt} error={errors.phoneAlt} />
-        <Field label="Email" name="email" type="email" defaultValue={settings.email} error={errors.email} />
+        <Field label="טלפון" required name="phone" defaultValue={settings.phone} error={errors.phone} />
+        <Field label="טלפון נוסף" name="phoneAlt" defaultValue={settings.phoneAlt} error={errors.phoneAlt} />
+        <Field label="אימייל" name="email" type="email" defaultValue={settings.email} error={errors.email} />
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <Field
-          label="Default deposit ($/person)"
+          label="מקדמה ברירת מחדל ($ לאדם)"
           name="defaultDepositAmount"
           type="number"
           defaultValue={String(settings.defaultDepositAmount)}
           error={errors.defaultDepositAmount}
         />
         <Field
-          label="Default minimum group size"
+          label="מינימום משתתפים ברירת מחדל"
           name="defaultMinGroupSize"
           type="number"
           defaultValue={String(settings.defaultMinGroupSize)}
           error={errors.defaultMinGroupSize}
         />
         <Field
-          label="Default balance due (days before departure)"
+          label="מועד תשלום היתרה ברירת מחדל (ימים לפני היציאה)"
           name="defaultBalanceDueDays"
           type="number"
           defaultValue={String(settings.defaultBalanceDueDays)}
           error={errors.defaultBalanceDueDays}
         />
         <Field
-          label="Default company cancel deadline (days)"
+          label="המועד האחרון לביטול מצד החברה (ימים)"
           name="defaultCompanyCancelDeadlineDays"
           type="number"
           defaultValue={String(settings.defaultCompanyCancelDeadlineDays)}
           error={errors.defaultCompanyCancelDeadlineDays}
         />
         <Field
-          label="Low seats threshold (customer-facing)"
+          label="סף ״מקומות אחרונים״ (מוצג ללקוחות)"
           name="lowSeatsThreshold"
           type="number"
           defaultValue={String(settings.lowSeatsThreshold)}
@@ -77,11 +77,11 @@ export default function SettingsForm({ settings }: { settings: SiteSettings }) {
 
       <div>
         <label className="block text-sm font-medium text-ink" htmlFor="adminNotifyEmails">
-          Booking &amp; lead alert emails
+          כתובות להתראות על הזמנות ופניות
         </label>
         <p className="mt-0.5 text-xs text-ink-muted">
-          New-booking and new-lead alerts go to these addresses. Separate several with commas or new lines.
-          Leave empty to use the default address set in the site configuration.
+          התראות על הזמנה חדשה ופנייה חדשה נשלחות לכתובות האלה. הפרידו בין כמה כתובות בפסיקים או בשורות.
+          השאירו ריק כדי להשתמש בכתובת ברירת המחדל של האתר.
         </p>
         <textarea
           id="adminNotifyEmails"
@@ -100,7 +100,7 @@ export default function SettingsForm({ settings }: { settings: SiteSettings }) {
         disabled={pending}
         className="rounded-lg bg-navy px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-navy-light disabled:opacity-60"
       >
-        {pending ? "Saving…" : "Save settings"}
+        {pending ? "שומר…" : "שמירת ההגדרות"}
       </button>
       {isDirty && <span className="ms-3"><UnsavedIndicator /></span>}
     </form>

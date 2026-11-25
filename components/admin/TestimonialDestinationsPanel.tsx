@@ -26,11 +26,11 @@ export default function TestimonialDestinationsPanel({
       await setTestimonialDestinationImage(name, image);
       toast.success(
         image
-          ? { title: "Photo updated", description: `New photo set for ${name}.` }
-          : { title: "Photo reset", description: `${name} uses the default photo again.` }
+          ? { title: "התמונה עודכנה", description: `נקבעה תמונה חדשה ל${name}.` }
+          : { title: "התמונה אופסה", description: `${name} חזר/ה לתמונת ברירת המחדל.` }
       );
     } catch {
-      toast.error({ title: "Couldn't save photo", description: "Something went wrong — please try again." });
+      toast.error({ title: "שמירת התמונה נכשלה", description: "משהו השתבש — נסו שוב." });
     }
     setSavingSlug(null);
     router.refresh();
@@ -38,9 +38,9 @@ export default function TestimonialDestinationsPanel({
 
   return (
     <section className="mt-10">
-      <h2 className="text-lg font-bold text-ink">Testimonial destinations</h2>
+      <h2 className="text-lg font-bold text-ink">יעדים בדף ההמלצות</h2>
       <p className="mt-1 text-sm text-ink-muted">
-        The photo on each destination card of the Testimonials page.
+        התמונה שבכרטיס של כל יעד בדף ההמלצות.
       </p>
       <ul className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {destinations.map((destination) => (
@@ -61,11 +61,11 @@ export default function TestimonialDestinationsPanel({
               </p>
               <div className="mt-2 flex flex-wrap items-center gap-2">
                 {savingSlug === destination.slug ? (
-                  <span className="text-xs text-ink-muted">Saving…</span>
+                  <span className="text-xs text-ink-muted">שומר…</span>
                 ) : (
                   <>
                     <ImageUploadButton
-                      label="Change photo"
+                      label="החלפת תמונה"
                       folder="testimonials"
                       onUploaded={(urls) => save(destination.name, destination.slug, urls[0])}
                     />
@@ -74,7 +74,7 @@ export default function TestimonialDestinationsPanel({
                       onClick={() => save(destination.name, destination.slug, undefined)}
                       className="text-xs font-medium text-ink-muted hover:text-ink"
                     >
-                      Use default
+                      ברירת מחדל
                     </button>
                   </>
                 )}

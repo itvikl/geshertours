@@ -16,7 +16,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { tourId } = await params;
   const tour = await getTourByIdAdmin(tourId);
-  return { title: tour ? `Edit — ${tour.title}` : "Tour" };
+  return { title: tour ? `עריכה — ${tour.title}` : "טיול" };
 }
 
 export default async function EditTourPage({
@@ -38,7 +38,7 @@ export default async function EditTourPage({
     <div>
       {canDelete && (
         <div className="mb-4 flex justify-end">
-          <DeleteButton action={deleteTour.bind(null, tourId)} what="this tour and its departure dates" redirectTo="/admin/tours" />
+          <DeleteButton action={deleteTour.bind(null, tourId)} what="את הטיול ואת כל מועדי היציאה שלו" redirectTo="/admin/tours" />
         </div>
       )}
       {canManageDepartures && (
@@ -47,7 +47,7 @@ export default async function EditTourPage({
             href={`/admin/tours/${tourId}/departures`}
             className="text-sm font-medium text-navy hover:text-navy-light"
           >
-            Manage departures →
+            ניהול מועדי יציאה ←
           </Link>
         </div>
       )}

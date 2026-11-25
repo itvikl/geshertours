@@ -25,6 +25,11 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "firebasestorage.googleapis.com", pathname: "/v0/b/**" },
       // Placeholder stock photography used when a tour has no uploaded image yet.
       { protocol: "https", hostname: "lh3.googleusercontent.com", pathname: "/**" },
+      // Local testing only: tours imported into the emulator with
+      // --keep-image-urls still point at the old site's photos.
+      ...(process.env.NODE_ENV === "development"
+        ? [{ protocol: "https" as const, hostname: "geshertours.co.il", pathname: "/wp-content/uploads/**" }]
+        : []),
     ],
   },
   // Old keshertours.com URLs (from the Search Console export) that still

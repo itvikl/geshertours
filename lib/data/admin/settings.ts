@@ -3,14 +3,15 @@ import type { SiteSettings } from "@/lib/types";
 import type { SiteSettingsInput } from "@/lib/validation/settings";
 import { adminDb } from "@/lib/firebase/admin";
 import { DEFAULT_SITE_PHONE } from "@/lib/sitePhone";
+import { DEFAULT_SITE_EMAIL } from "@/lib/siteContact";
 
 const SETTINGS_COLLECTION = "siteSettings";
 const SETTINGS_DOC_ID = "default";
 
 const DEFAULT_SETTINGS: SiteSettings = {
   phone: DEFAULT_SITE_PHONE,
-  phoneAlt: "1-212-481-3721",
-  email: undefined,
+  phoneAlt: "",
+  email: DEFAULT_SITE_EMAIL,
   defaultDepositAmount: 0,
   defaultMinGroupSize: 0,
   defaultBalanceDueDays: 0,

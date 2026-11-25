@@ -28,18 +28,18 @@ export default function LegalContentForm({
       result = await saveAction(draft);
     } catch {
       setSaving(false);
-      toast.error({ title: "Save failed", description: "Something went wrong on the server — please try again." });
+      toast.error({ title: "השמירה נכשלה", description: "משהו השתבש בשרת — נסו שוב." });
       return;
     }
     setSaving(false);
     if (!result.ok) {
       setErrors(result.errors);
-      toast.error({ title: "Not saved", description: "Please fix the highlighted fields and try again." });
+      toast.error({ title: "לא נשמר", description: "תקנו את השדות המסומנים ונסו שוב." });
       return;
     }
     setErrors({});
     markSaved(draft);
-    toast.success({ title: "Changes saved", description: "The page content was updated successfully." });
+    toast.success({ title: "השינויים נשמרו", description: "תוכן הדף עודכן בהצלחה." });
   }
 
   return (
@@ -47,13 +47,13 @@ export default function LegalContentForm({
       <div className="space-y-4">
         <HeroImageField value={draft.heroImage} onChange={(url) => setDraft((d) => ({ ...d, heroImage: url }))} />
         <TextField required
-          label="Title"
+          label="כותרת"
           value={draft.title}
           onChange={(v) => setDraft((d) => ({ ...d, title: v }))}
           error={errors.title}
         />
         <TextAreaField required
-          label="Body text"
+          label="הטקסט"
           value={draft.body}
           onChange={(v) => setDraft((d) => ({ ...d, body: v }))}
           rows={18}
@@ -64,7 +64,7 @@ export default function LegalContentForm({
 
       <PreviewFrame>
         <div className="-m-6">
-          <PageHeader eyebrow="Legal" title={draft.title} image={draft.heroImage} />
+          <PageHeader eyebrow="מידע משפטי" title={draft.title} image={draft.heroImage} />
         </div>
         <div className="px-6 py-8">
           <section className="glass-panel rounded-2xl p-6 sm:p-8">

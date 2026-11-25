@@ -4,7 +4,7 @@ import { adminAuth } from "@/lib/firebase/admin";
 import { isAdmin2faRequired } from "@/lib/auth/mfa";
 import AccountSettings from "@/components/admin/AccountSettings";
 
-export const metadata: Metadata = { title: "My account" };
+export const metadata: Metadata = { title: "החשבון שלי" };
 
 /**
  * The signed-in admin's own settings — password and authenticator app.
@@ -21,8 +21,8 @@ export default async function MyAccountPage() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-2xl font-bold tracking-tight text-ink">My account</h1>
-        <p className="mt-1 text-sm text-ink-muted">Your own sign-in settings. Changes here affect only your account.</p>
+        <h1 className="text-2xl font-bold tracking-tight text-ink">החשבון שלי</h1>
+        <p className="mt-1 text-sm text-ink-muted">הגדרות הכניסה שלכם. שינויים כאן משפיעים רק על החשבון שלכם.</p>
       </div>
       <AccountSettings
         email={user.email ?? session.email}
