@@ -12,6 +12,7 @@ import DepositPaymentForm from "@/components/marketing/DepositPaymentForm";
 import { ONLINE_PAYMENTS_ENABLED } from "@/lib/onlinePayments";
 import { PhoneLink } from "@/components/marketing/SitePhone";
 import DepartureStatusPill from "@/components/marketing/DepartureStatusPill";
+import { departureDays, departurePricing, hasVersions, versionLabel } from "@/lib/tourVersions";
 import { fillCopy, type BookingCopy, type DepartureStatusCopy } from "@/lib/siteCopy";
 
 interface TravelerDraft {
@@ -111,11 +112,10 @@ export default function BookingForm({
   const seatsLeft = departure ? availableSeats(departure) : 0;
   const isGuaranteed = departure?.bookingAssurance === "guaranteed";
   const totalTravelers = room.doubleRooms * 2 + room.singleRooms + room.triples * 3 + childCount;
-  const priceBreakdown = useMemo(
-    () => calculatePriceBreakdown(tour.pricing, room, childCount),
-    [tour.pricing, room, childCount]
-  );
-  const depositAmount = tour.pricing.depositAmountPerPerson * totalTravelers;
+  // The chosen date's own price (or its version's); the server recomputes it the same way.
+  const pricing = departure ? departurePricing(tour, departure) : tour.pricing;
+  const priceBreakdown = calculatePriceBreakdown(pricing, room, childCount);
+  const depositAmount = pricing.depositAmountPerPerson * totalTravelers;
   // Never trust this on the server — it's re-validated there against the
   // departure's bookingAssurance and [depositAmount, grandTotal] range. This
   // is just the UI's live value.
@@ -259,6 +259,16 @@ export default function BookingForm({
                         year: "numeric",
                       })}
                     </span>
+                    <span className="text-xs text-[var(--color-slate)]">
+                      {[
+                        hasVersions(tour) ? versionLabel(tour, d.versionId) : "",
+                        `${departureDays(d)} ימים`,
+                        formatUsd(departurePricing(tour, d).pricePerPersonDouble),
+                        d.note ?? "",
+                      ]
+                        .filter(Boolean)
+                        .join(" · ")}
+                    </span>
                     <AssuranceBadge assurance={d.bookingAssurance ?? "conditional"} copy={copy} />
                   </span>
                   <DepartureStatusPill
@@ -289,8 +299,8 @@ export default function BookingForm({
               <NumberField
                 label={copy.singleRooms}
                 hint={
-                  singleSupplementOf(tour.pricing) > 0
-                    ? fillCopy(copy.singleHintSupplement, { supplement: formatUsd(singleSupplementOf(tour.pricing)) })
+                  singleSupplementOf(pricing) > 0
+                    ? fillCopy(copy.singleHintSupplement, { supplement: formatUsd(singleSupplementOf(pricing)) })
                     : copy.singleHint
                 }
                 value={room.singleRooms}
@@ -538,7 +548,7 @@ export default function BookingForm({
                 label={copy.reviewBalance}
                 value={fillCopy(copy.reviewBalanceValue, {
                   amount: formatUsd(priceBreakdown.grandTotal - paymentAmount),
-                  days: tour.pricing.balanceDueDaysBeforeDeparture,
+                  days: pricing.balanceDueDaysBeforeDeparture,
                 })}
               />
             </dl>

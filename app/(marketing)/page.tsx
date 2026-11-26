@@ -15,6 +15,7 @@ import {
   getCountrySearchOptions,
 } from "@/lib/data/tours";
 import { getSiteContent } from "@/lib/data/siteContent";
+import { getSiteSettings } from "@/lib/data/admin/settings";
 import { getLatestBlogPosts } from "@/lib/data/blog";
 import { isDeparturePlanned } from "@/lib/departureAvailability";
 import { DEFAULT_HOME_HERO_IMAGE } from "@/lib/homeHero";
@@ -100,7 +101,7 @@ const getHomeData = unstable_cache(
 export default async function HomePage() {
   const { countries, content, toursWithDepartures, latestPosts } = await getHomeData();
 
-  const blogCopy = await getSiteContent("blog");
+  const [blogCopy, settings] = await Promise.all([getSiteContent("blog"), getSiteSettings()]);
 
   return (
     <TourFilterProvider countries={countries} tours={toursWithDepartures}>
@@ -192,8 +193,8 @@ export default async function HomePage() {
           id="featured-tours"
           className="scroll-mt-24 bg-[var(--color-glacier)] px-4 py-20 text-[var(--color-mist)] sm:px-6 lg:px-8 transition-colors"
         >
-          <div className="mx-auto max-w-7xl">
-            <FeaturedToursGrid />
+          <div className="mx-auto max-w-6xl">
+            <FeaturedToursGrid lowSeatsThreshold={settings.lowSeatsThreshold} />
           </div>
         </section>
 

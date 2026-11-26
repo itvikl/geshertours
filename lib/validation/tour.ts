@@ -41,6 +41,35 @@ export const TourDocumentSchema = z.object({
   fileName: z.string().max(200),
 });
 
+const KashrutDetailsSchema = z.object({
+  title: z.string().optional(),
+  supervisionLevel: z.string().min(1, { error: "יש למלא את רמת הכשרות." }),
+  patYisrael: KashrutBooleanOrNotGuaranteed,
+  chalavYisrael: KashrutBooleanOrNotGuaranteed,
+  extraFields: z.array(TourInfoFieldSchema).optional(),
+  notes: z.string().optional(),
+});
+
+/** A version only stores what differs from the tour (lib/tourVersions.ts). */
+export const TourVersionSchema = z.object({
+  versionId: z.string().min(1),
+  label: z.string().trim().min(1, { error: "יש לתת שם לכל גרסה." }).max(80),
+  airline: z.string().trim().max(60).optional(),
+  durationDays: z.number().int().min(1).optional(),
+  pricing: z
+    .object({
+      pricePerPersonDouble: z.number().min(0).optional(),
+      pricePerPersonSingle: z.number().min(0).optional(),
+      depositAmountPerPerson: z.number().min(0).optional(),
+    })
+    .optional(),
+  itineraryDays: z.array(ItineraryDayInputSchema).optional(),
+  inclusions: z.array(z.string()).optional(),
+  exclusions: z.array(z.string()).optional(),
+  kashrutDetails: KashrutDetailsSchema.optional(),
+  notes: z.string().max(1000).optional(),
+});
+
 /**
  * Mirrors lib/types.ts Tour, minus tourId/slugHistory (both are assigned by
  * the data layer, not editable in the form — see lib/data/admin/tours.ts).
@@ -81,14 +110,10 @@ export const TourInputSchema = z.object({
     depositAmountPerPerson: z.number().min(0),
     balanceDueDaysBeforeDeparture: z.number().int().min(0),
   }),
-  kashrutDetails: z.object({
-    title: z.string().optional(),
-    supervisionLevel: z.string().min(1, { error: "יש למלא את רמת הכשרות." }),
-    patYisrael: KashrutBooleanOrNotGuaranteed,
-    chalavYisrael: KashrutBooleanOrNotGuaranteed,
-    extraFields: z.array(TourInfoFieldSchema).optional(),
-    notes: z.string().optional(),
-  }),
+  kashrutDetails: KashrutDetailsSchema,
+  airline: z.string().trim().max(60).optional(),
+  mainVersionLabel: z.string().trim().max(80).optional(),
+  versions: z.array(TourVersionSchema).optional(),
   itineraryDays: z.array(ItineraryDayInputSchema),
   status: z.enum(["draft", "published", "archived"]),
   cancellationPolicy: z.string().optional(),

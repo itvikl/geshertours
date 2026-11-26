@@ -12,6 +12,7 @@ import type {
   TourInfoCard,
   TourInfoField,
   TourStatus,
+  TourVersion,
 } from "@/lib/types";
 import { COUNTRIES } from "@/lib/countries";
 import { countryLabel } from "@/lib/countryNames";
@@ -28,6 +29,7 @@ import UnsavedIndicator from "@/components/admin/feedback/UnsavedIndicator";
 import RequiredMark from "@/components/admin/RequiredMark";
 import { DEFAULT_CANCELLATION_POLICY_TEXT } from "@/lib/cancellationPolicy";
 import { formatUsd, singleSupplementOf } from "@/lib/pricing";
+import { newVersionId, versionDifferences } from "@/lib/tourVersions";
 
 const BLANK_TOUR: Tour = {
   tourId: "",
@@ -120,13 +122,34 @@ function cleanTour(tour: Tour): Tour {
       items: clean(card.items),
     })),
     documents: (tour.documents ?? []).map((doc) => ({ ...doc, title: doc.title.trim() })),
-    itineraryDays: tour.itineraryDays.map((day, index) => ({
+    itineraryDays: cleanDays(tour.itineraryDays),
+    airline: tour.airline?.trim() || undefined,
+    mainVersionLabel: tour.mainVersionLabel?.trim() || undefined,
+    versions: (tour.versions ?? []).map((version) => {
+      const kashrut = version.kashrutDetails;
+      return {
+        ...version,
+        label: version.label.trim(),
+        airline: version.airline?.trim() || undefined,
+        notes: version.notes?.trim() || undefined,
+        inclusions: clean(version.inclusions ?? []),
+        exclusions: clean(version.exclusions ?? []),
+        itineraryDays: version.itineraryDays?.length ? cleanDays(version.itineraryDays) : undefined,
+        kashrutDetails: kashrut?.supervisionLevel.trim()
+          ? { ...kashrut, notes: kashrut.notes?.trim() || undefined }
+          : undefined,
+      };
+    }),
+  };
+
+  function cleanDays(days: ItineraryDay[]): ItineraryDay[] {
+    return days.map((day, index) => ({
       ...day,
       dayNumber: index + 1,
       meals: clean(day.meals),
       attractions: clean(day.attractions ?? []),
-    })),
-  };
+    }));
+  }
 }
 
 /**
@@ -836,6 +859,15 @@ export default function TourEditorForm({
             </button>
           </Section>
 
+          <Section title="גרסאות">
+            <VersionsSection
+              draft={draft}
+              departures={departures}
+              errors={errors}
+              onChange={(patch) => setDraft((prev) => ({ ...prev, ...patch }))}
+            />
+          </Section>
+
           <Section title="SEO">
             <Field label="כותרת SEO" hint="לא חובה — ברירת המחדל היא כותרת הטיול">
               <input
@@ -1290,6 +1322,330 @@ function ItineraryDayEditor({
           />
         </div>
       </div>
+    </div>
+  );
+}
+
+/** "" → undefined, else a whole non-negative number. */
+function optionalNumber(value: string): number | undefined {
+  return value.trim() === "" ? undefined : Math.max(0, Math.round(Number(value)));
+}
+
+function copyDays(days: ItineraryDay[]): ItineraryDay[] {
+  return days.map((day) => ({ ...day, dayId: crypto.randomUUID() }));
+}
+
+/**
+ * Tour versions (lib/tourVersions.ts): variants that share this tour's page
+ * and photos. Each version stores only what differs; a blank field means
+ * "same as the main tour". Each date picks its version in the date editor.
+ */
+function VersionsSection({
+  draft,
+  departures,
+  onChange,
+  errors,
+}: {
+  draft: Tour;
+  departures: Departure[];
+  onChange: (patch: Partial<Tour>) => void;
+  errors: Record<string, string[] | undefined>;
+}) {
+  const versions = draft.versions ?? [];
+
+  function setVersions(next: TourVersion[]) {
+    onChange({ versions: next });
+  }
+  function update(versionId: string, patch: Partial<TourVersion>) {
+    setVersions(versions.map((v) => (v.versionId === versionId ? { ...v, ...patch } : v)));
+  }
+  function updatePricing(version: TourVersion, key: "pricePerPersonDouble" | "pricePerPersonSingle" | "depositAmountPerPerson", value: string) {
+    update(version.versionId, { pricing: { ...version.pricing, [key]: optionalNumber(value) } });
+  }
+  function moveDay(version: TourVersion, index: number, delta: -1 | 1) {
+    const days = [...(version.itineraryDays ?? [])];
+    const target = index + delta;
+    if (target < 0 || target >= days.length) return;
+    [days[index], days[target]] = [days[target], days[index]];
+    update(version.versionId, { itineraryDays: days });
+  }
+
+  return (
+    <div className="space-y-5">
+      <p className="text-sm text-ink-muted">
+        גרסה היא אותו טיול עם שינויים קטנים, כמו חברת תעופה אחרת, יום יציאה אחר, אורך שונה, סדר ימים
+        שונה או מחיר אחר. הגרסאות חולקות את הדף, התמונות והתיאור של הטיול. כל שדה שנשאר ריק נלקח
+        מהטיול הראשי. בעריכת כל מועד בוחרים לאיזו גרסה הוא שייך.
+      </p>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <Field label="חברת התעופה (הגרסה הראשית)" hint="לא חובה, למשל ״ארקיע״.">
+          <input
+            className={inputClass}
+            value={draft.airline ?? ""}
+            onChange={(e) => onChange({ airline: e.target.value || undefined })}
+          />
+        </Field>
+        <Field
+          label="שם הגרסה הראשית בטבלת המועדים"
+          hint="מוצג רק כשיש גרסאות, למשל ״טיסת ארקיע · יציאה ביום ג׳״."
+        >
+          <input
+            className={inputClass}
+            value={draft.mainVersionLabel ?? ""}
+            onChange={(e) => onChange({ mainVersionLabel: e.target.value || undefined })}
+          />
+        </Field>
+      </div>
+
+      {versions.map((version, vIndex) => {
+        const datesInVersion = departures.filter((d) => d.versionId === version.versionId).length;
+        const differences = versionDifferences(draft, version.versionId);
+        const days = version.itineraryDays ?? [];
+        return (
+          <div key={version.versionId} className="space-y-4 rounded-xl border border-line bg-sand-warm/40 p-4">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <span className="text-sm font-bold text-navy">
+                גרסה {vIndex + 1}
+                {datesInVersion > 0 && (
+                  <span className="ms-2 font-normal text-ink-muted">({datesInVersion} מועדים)</span>
+                )}
+              </span>
+              <button
+                type="button"
+                disabled={datesInVersion > 0}
+                title={datesInVersion > 0 ? "יש מועדים בגרסה הזו. העבירו אותם לגרסה אחרת לפני המחיקה." : undefined}
+                onClick={() => setVersions(versions.filter((v) => v.versionId !== version.versionId))}
+                className="text-xs font-semibold text-terracotta-dark hover:underline disabled:cursor-not-allowed disabled:opacity-40 disabled:no-underline"
+              >
+                מחיקת הגרסה
+              </button>
+            </div>
+
+            <Field
+              label="שם הגרסה"
+              required
+              hint="מוצג ללקוחות בטבלת המועדים, למשל ״טיסת אל על · יציאה ביום ה׳״."
+              error={errors[`versions.${vIndex}.label`]}
+            >
+              <input
+                className={inputClass}
+                value={version.label}
+                onChange={(e) => update(version.versionId, { label: e.target.value })}
+              />
+            </Field>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="חברת תעופה" hint={draft.airline ? `ריק = ${draft.airline}` : undefined}>
+                <input
+                  className={inputClass}
+                  value={version.airline ?? ""}
+                  onChange={(e) => update(version.versionId, { airline: e.target.value || undefined })}
+                />
+              </Field>
+              <Field label="מספר ימים" hint={`ריק = ${draft.durationDays}`}>
+                <input
+                  type="number"
+                  min={1}
+                  className={inputClass}
+                  value={version.durationDays ?? ""}
+                  onChange={(e) => update(version.versionId, { durationDays: optionalNumber(e.target.value) || undefined })}
+                />
+              </Field>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-3">
+              <Field label="מחיר זוגי לאדם ($)" hint={`ריק = ${draft.pricing.pricePerPersonDouble}`}>
+                <input
+                  type="number"
+                  min={0}
+                  className={inputClass}
+                  value={version.pricing?.pricePerPersonDouble ?? ""}
+                  onChange={(e) => updatePricing(version, "pricePerPersonDouble", e.target.value)}
+                />
+              </Field>
+              <Field label="מחיר יחיד לאדם ($)" hint={`ריק = ${draft.pricing.pricePerPersonSingle}`}>
+                <input
+                  type="number"
+                  min={0}
+                  className={inputClass}
+                  value={version.pricing?.pricePerPersonSingle ?? ""}
+                  onChange={(e) => updatePricing(version, "pricePerPersonSingle", e.target.value)}
+                />
+              </Field>
+              <Field label="מקדמה לאדם ($)" hint={`ריק = ${draft.pricing.depositAmountPerPerson}`}>
+                <input
+                  type="number"
+                  min={0}
+                  className={inputClass}
+                  value={version.pricing?.depositAmountPerPerson ?? ""}
+                  onChange={(e) => updatePricing(version, "depositAmountPerPerson", e.target.value)}
+                />
+              </Field>
+            </div>
+
+            <Field label="הערה לגרסה" hint="מוצגת בדף הטיול כשבוחרים בגרסה הזו.">
+              <textarea
+                className={inputClass}
+                rows={2}
+                value={version.notes ?? ""}
+                onChange={(e) => update(version.versionId, { notes: e.target.value || undefined })}
+              />
+            </Field>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              <ListTextarea
+                label="כלול במחיר (ריק = כמו בטיול)"
+                value={version.inclusions ?? []}
+                onChange={(v) => update(version.versionId, { inclusions: v })}
+              />
+              <ListTextarea
+                label="לא כלול במחיר (ריק = כמו בטיול)"
+                value={version.exclusions ?? []}
+                onChange={(v) => update(version.versionId, { exclusions: v })}
+              />
+            </div>
+
+            <div className="space-y-2">
+              {version.kashrutDetails ? (
+                <>
+                  <Field label="כשרות בגרסה הזו" error={errors[`versions.${vIndex}.kashrutDetails.supervisionLevel`]}>
+                    <input
+                      className={inputClass}
+                      value={version.kashrutDetails.supervisionLevel}
+                      onChange={(e) =>
+                        update(version.versionId, {
+                          kashrutDetails: { ...version.kashrutDetails!, supervisionLevel: e.target.value },
+                        })
+                      }
+                    />
+                  </Field>
+                  <textarea
+                    className={inputClass}
+                    rows={2}
+                    placeholder="הערות כשרות"
+                    value={version.kashrutDetails.notes ?? ""}
+                    onChange={(e) =>
+                      update(version.versionId, {
+                        kashrutDetails: { ...version.kashrutDetails!, notes: e.target.value },
+                      })
+                    }
+                  />
+                  <button
+                    type="button"
+                    onClick={() => update(version.versionId, { kashrutDetails: undefined })}
+                    className="text-xs font-semibold text-ink-muted hover:underline"
+                  >
+                    חזרה לכשרות של הטיול
+                  </button>
+                </>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => update(version.versionId, { kashrutDetails: { ...draft.kashrutDetails } })}
+                  className="rounded-lg border border-dashed border-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:border-navy hover:text-navy"
+                >
+                  כשרות שונה בגרסה הזו
+                </button>
+              )}
+            </div>
+
+            <div className="space-y-3">
+              <p className="text-sm font-medium text-ink">מסלול</p>
+              {days.length === 0 ? (
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-xs text-ink-muted">אותו מסלול כמו בטיול הראשי.</span>
+                  <button
+                    type="button"
+                    onClick={() => update(version.versionId, { itineraryDays: copyDays(draft.itineraryDays) })}
+                    className="rounded-lg border border-dashed border-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:border-navy hover:text-navy"
+                  >
+                    מסלול שונה (מתחיל כהעתק של המסלול הראשי)
+                  </button>
+                </div>
+              ) : (
+                <>
+                  {days.map((day, index) => (
+                    <div key={day.dayId} className="flex gap-2">
+                      <div className="flex flex-col gap-1 pt-4">
+                        <button
+                          type="button"
+                          aria-label="הזזה למעלה"
+                          disabled={index === 0}
+                          onClick={() => moveDay(version, index, -1)}
+                          className="rounded border border-line px-1.5 text-xs disabled:opacity-30"
+                        >
+                          ▲
+                        </button>
+                        <button
+                          type="button"
+                          aria-label="הזזה למטה"
+                          disabled={index === days.length - 1}
+                          onClick={() => moveDay(version, index, 1)}
+                          className="rounded border border-line px-1.5 text-xs disabled:opacity-30"
+                        >
+                          ▼
+                        </button>
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <ItineraryDayEditor
+                          day={day}
+                          index={index}
+                          onChange={(patch) =>
+                            update(version.versionId, {
+                              itineraryDays: days.map((d) => (d.dayId === day.dayId ? { ...d, ...patch } : d)),
+                            })
+                          }
+                          onRemove={() =>
+                            update(version.versionId, { itineraryDays: days.filter((d) => d.dayId !== day.dayId) })
+                          }
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <div className="flex flex-wrap gap-3">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        update(version.versionId, {
+                          itineraryDays: [
+                            ...days,
+                            { dayId: crypto.randomUUID(), dayNumber: days.length + 1, title: "", description: "", meals: [] },
+                          ],
+                        })
+                      }
+                      className="rounded-lg border border-dashed border-line px-3 py-1.5 text-xs font-medium text-ink-muted hover:border-navy hover:text-navy"
+                    >
+                      + הוספת יום
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => update(version.versionId, { itineraryDays: undefined })}
+                      className="text-xs font-semibold text-ink-muted hover:underline"
+                    >
+                      חזרה למסלול הראשי
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {differences.length > 0 && (
+              <p className="text-xs text-ink-muted">
+                מה שונה בגרסה: {differences.join(" · ")}
+              </p>
+            )}
+          </div>
+        );
+      })}
+
+      <button
+        type="button"
+        onClick={() => setVersions([...versions, { versionId: newVersionId(), label: "" }])}
+        className="rounded-lg border border-dashed border-line px-4 py-2 text-sm font-medium text-ink-muted transition-colors hover:border-navy hover:text-navy"
+      >
+        + הוספת גרסה
+      </button>
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { adminDb } from "@/lib/firebase/admin";
 import { requireAdminSession } from "@/lib/auth/dal";
 import { calculatePriceBreakdown } from "@/lib/pricing";
+import { departurePricing } from "@/lib/tourVersions";
 import { sendBookingConfirmationEmail, sendBookingNotificationEmail } from "@/lib/email/send";
 import { travelerDisplayName } from "@/lib/travelerName";
 import { ManualBookingInputSchema, PublicBookingInputSchema } from "@/lib/validation/booking";
@@ -82,13 +83,15 @@ async function createBookingCore(
   }
   const tour = tourSnap.data() as Tour;
 
+  // The date's own price, else its version's, else the tour's.
+  const pricing = departurePricing(tour, departurePreview);
   const priceBreakdown = calculatePriceBreakdown(
-    tour.pricing,
+    pricing,
     data.roomConfiguration,
     data.childCount
   );
   const travelerCount = data.travelers.length;
-  const depositAmount = tour.pricing.depositAmountPerPerson * travelerCount;
+  const depositAmount = pricing.depositAmountPerPerson * travelerCount;
 
   let status: BookingStatus;
   let initialPaymentAmount: number;

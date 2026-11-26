@@ -12,6 +12,7 @@ import {
   type Staff,
   type Tour,
 } from "@/lib/types";
+import { MAIN_VERSION_ID, resolvePricing, versionOf } from "@/lib/tourVersions";
 
 interface DepartureDraft {
   startDate: string;
@@ -22,6 +23,10 @@ interface DepartureDraft {
   guideId?: string;
   kashrutSupervisorId?: string;
   bookingAssurance: BookingAssurance;
+  versionId?: string;
+  note?: string;
+  /** This date's own prices; blank uses the version's or the tour's. */
+  pricingOverride?: { pricePerPersonDouble?: number; pricePerPersonSingle?: number };
 }
 
 const BLANK: DepartureDraft = {
@@ -34,6 +39,11 @@ const BLANK: DepartureDraft = {
   kashrutSupervisorId: undefined,
   bookingAssurance: "conditional",
 };
+
+/** "" → undefined, else a non-negative number. */
+function priceInput(value: string): number | undefined {
+  return value.trim() === "" ? undefined : Math.max(0, Number(value));
+}
 
 export default function DepartureEditorForm({
   mode,
@@ -64,6 +74,16 @@ export default function DepartureEditorForm({
 
   const guides = staff.filter((s) => s.role === "guide");
   const kashrutSupervisors = staff.filter((s) => s.role === "kashrutSupervisor");
+
+  const versions = tour.versions ?? [];
+  const basePricing = resolvePricing(tour, versionOf(tour, draft.versionId));
+
+  function setPrice(key: "pricePerPersonDouble" | "pricePerPersonSingle", value: string) {
+    setDraft((prev) => ({
+      ...prev,
+      pricingOverride: { ...prev.pricingOverride, [key]: priceInput(value) },
+    }));
+  }
 
   function set<K extends keyof DepartureDraft>(key: K, value: DepartureDraft[K]) {
     setDraft((prev) => ({ ...prev, [key]: value }));
@@ -202,6 +222,76 @@ export default function DepartureEditorForm({
             />
           </Field>
         </div>
+
+        {versions.length > 0 && (
+          <Field
+            label="גרסה"
+            hint="המסלול, הטיסה והמחיר של המועד נלקחים מהגרסה שנבחרה."
+            error={errors.versionId}
+          >
+            <select
+              value={draft.versionId ?? MAIN_VERSION_ID}
+              onChange={(e) =>
+                set("versionId", e.target.value === MAIN_VERSION_ID ? undefined : e.target.value)
+              }
+              className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
+            >
+              <option value={MAIN_VERSION_ID}>
+                {tour.mainVersionLabel?.trim() || "הגרסה הראשית"}
+              </option>
+              {versions.map((v) => (
+                <option key={v.versionId} value={v.versionId}>
+                  {v.label}
+                </option>
+              ))}
+            </select>
+          </Field>
+        )}
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <Field
+            label="מחיר לאדם בחדר זוגי ($)"
+            hint={`ריק = ${basePricing.pricePerPersonDouble} (המחיר של ${draft.versionId ? "הגרסה" : "הטיול"})`}
+            error={errors["pricingOverride.pricePerPersonDouble"]}
+          >
+            <input
+              type="number"
+              min={0}
+              value={draft.pricingOverride?.pricePerPersonDouble ?? ""}
+              placeholder={String(basePricing.pricePerPersonDouble)}
+              onChange={(e) => setPrice("pricePerPersonDouble", e.target.value)}
+              className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
+            />
+          </Field>
+          <Field
+            label="מחיר לאדם בחדר יחיד ($)"
+            hint={`ריק = ${basePricing.pricePerPersonSingle}`}
+            error={errors["pricingOverride.pricePerPersonSingle"]}
+          >
+            <input
+              type="number"
+              min={0}
+              value={draft.pricingOverride?.pricePerPersonSingle ?? ""}
+              placeholder={String(basePricing.pricePerPersonSingle)}
+              onChange={(e) => setPrice("pricePerPersonSingle", e.target.value)}
+              className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
+            />
+          </Field>
+        </div>
+
+        <Field
+          label="הערה בטבלת המועדים"
+          hint="מוצגת ללקוחות ליד המועד, למשל ״המחיר לנרשמים הראשונים בלבד״ או ״טיול מובטח!״."
+          error={errors.note}
+        >
+          <input
+            type="text"
+            maxLength={200}
+            value={draft.note ?? ""}
+            onChange={(e) => set("note", e.target.value || undefined)}
+            className="w-full rounded-lg border border-line bg-white px-3 py-2 text-sm text-ink"
+          />
+        </Field>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <Field label="מספר מקומות מרבי" required error={errors.capacityTotal}>

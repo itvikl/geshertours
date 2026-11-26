@@ -25,11 +25,10 @@ function CalendarIcon() {
   );
 }
 
-function SwapIcon() {
+function ClearIcon() {
   return (
-    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M4 8h14M14 4l4 4-4 4" />
-      <path d="M20 16H6M10 12l-4 4 4 4" />
+    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M6 6l12 12M18 6L6 18" />
     </svg>
   );
 }
@@ -37,10 +36,10 @@ function SwapIcon() {
 /**
  * Client-side destination search — two segments (destination, date) side by
  * side on one line, each just an icon and a value (no header text — an
- * sr-only label keeps them accessible). Only one can hold a value at a
- * time: picking a destination clears and dims the date field (and vice
- * versa) rather than switching modes with a separate control — reopening
- * the active field's "Any…" option clears it and un-dims the other.
+ * sr-only label keeps them accessible). They combine: a destination and
+ * months together show that destination's tours in those months. The
+ * button between them clears both (length and trip type are filtered
+ * above the tour list, in TourListFilters).
  *
  * Scroll timing differs by field: the destination dropdown closes itself
  * the instant you pick one, so it applies and scrolls right away. The date
@@ -56,11 +55,9 @@ export default function DestinationSearch() {
     scrollToResults,
     countries,
   } = useTourFilter();
-  const dateActive = selectedMonths.length > 0;
-  const countryActive = selectedCountries.length > 0;
-  const anyActive = dateActive || countryActive;
+  const anyActive = selectedMonths.length > 0 || selectedCountries.length > 0;
 
-  function clearAndSwitch() {
+  function clearBoth() {
     applyFilters({ countries: [], months: [] }, { scroll: false });
   }
 
@@ -69,24 +66,15 @@ export default function DestinationSearch() {
       id={SEARCH_ANCHOR_ID}
       className="destination-search glass-card relative mx-auto flex w-full max-w-3xl flex-col items-stretch rounded-[28px] p-1.5 shadow-2xl backdrop-blur-lg sm:flex-row sm:rounded-full"
     >
-      <div
-        className={[
-          "flex flex-1 items-center rounded-full px-5 py-2.5 transition-opacity",
-          dateActive
-            ? "pointer-events-none opacity-40"
-            : "hover:bg-[var(--color-surface-hover-a)]",
-        ].join(" ")}
-        title={dateActive ? "נקו את המועד כדי לחפש לפי יעד" : undefined}
-      >
+      <div className="flex flex-1 items-center rounded-full px-5 py-2.5 hover:bg-[var(--color-surface-hover-a)]">
         <CountrySelect
           countries={countries}
           value={selectedCountries}
           multiple={false}
-          disabled={dateActive}
           icon={<PinIcon />}
           label="יעד"
           hideLabel
-          onChange={(next) => applyFilters({ countries: next, months: [] })}
+          onChange={(next) => applyFilters({ countries: next })}
         />
       </div>
 
@@ -94,39 +82,31 @@ export default function DestinationSearch() {
         {anyActive ? (
           <button
             type="button"
-            onClick={clearAndSwitch}
-            title="ניקוי וחיפוש בדרך השנייה"
+            onClick={clearBoth}
+            title="ניקוי החיפוש"
+            aria-label="ניקוי החיפוש"
             className="flex h-7 w-9 items-center justify-center rounded-full border border-[var(--color-border-ice-strong)] bg-[var(--color-surface-hover-a)] text-[var(--color-ice)] transition-colors hover:bg-[var(--color-ice)] hover:text-[var(--color-ice-ink)]"
           >
-            <SwapIcon />
+            <ClearIcon />
           </button>
         ) : (
           <span
             aria-hidden="true"
             className="flex h-7 w-9 items-center justify-center rounded-full border border-[var(--color-border-hairline)] text-[10px] font-bold uppercase tracking-widest text-[var(--color-slate)]"
           >
-            או
+            ·
           </span>
         )}
       </div>
 
-      <div
-        className={[
-          "flex flex-1 items-center rounded-full px-5 py-2.5 transition-opacity",
-          countryActive
-            ? "pointer-events-none opacity-40"
-            : "hover:bg-[var(--color-surface-hover-a)]",
-        ].join(" ")}
-        title={countryActive ? "נקו את היעד כדי לחפש לפי מועד" : undefined}
-      >
+      <div className="flex flex-1 items-center rounded-full px-5 py-2.5 hover:bg-[var(--color-surface-hover-a)]">
         <MonthSelect
           value={selectedMonths}
-          disabled={countryActive}
           icon={<CalendarIcon />}
           label="מועד"
           hideLabel
           onChange={(next) =>
-            applyFilters({ countries: [], months: next }, { scroll: false })
+            applyFilters({ months: next }, { scroll: false })
           }
           onClose={() => {
             if (selectedMonths.length > 0) scrollToResults();

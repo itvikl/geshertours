@@ -131,8 +131,38 @@ export interface Tour {
   seoDescription?: string;
   /** Display order in the admin list and the public homepage grid, set via drag-and-drop. */
   sortOrder?: number;
+  /** Airline of the main version, e.g. "אל על" — shown in the dates table when the tour has versions. */
+  airline?: string;
+  /** Dates-table label for the main version when the tour has versions, e.g. "טיסת ארקיע · יציאה ביום ג'". */
+  mainVersionLabel?: string;
+  /**
+   * Variants of this tour that share its page, photos and description but
+   * differ in some details (flight, length, day order, price, kashrut…).
+   * Each departure picks one via versionId; none means the main version.
+   */
+  versions?: TourVersion[];
   /** Set only by scripts/migrate-legacy-tours.ts — distinguishes scraped-from-old-site tours (pricing/dates not yet verified) from hand-curated ones, so staff know which need review before ever publishing. */
   isLegacyMigrated?: boolean;
+}
+
+/**
+ * A variant of a tour (see Tour.versions). Every field but versionId and
+ * label is optional: left out, the tour's own value applies.
+ */
+export interface TourVersion {
+  versionId: string;
+  /** Short name shown in the dates table, e.g. "טיסת אל על · יציאה ביום ה'". */
+  label: string;
+  airline?: string;
+  durationDays?: number;
+  pricing?: Partial<TourPricing>;
+  /** Its own day-by-day plan; empty or missing uses the tour's. */
+  itineraryDays?: ItineraryDay[];
+  inclusions?: string[];
+  exclusions?: string[];
+  kashrutDetails?: KashrutDetails;
+  /** Shown with this version on the tour page. */
+  notes?: string;
 }
 
 export interface Departure {
@@ -140,7 +170,12 @@ export interface Departure {
   tourId: string;
   startDate: string; // ISO date
   endDate: string; // ISO date
+  /** Price for this date only, over the version's and the tour's. */
   pricingOverride?: Partial<TourPricing>;
+  /** Tour.versions entry this date belongs to; missing means the main version. */
+  versionId?: string;
+  /** Public note in the dates table, e.g. "המחיר לנרשמים הראשונים בלבד". */
+  note?: string;
   capacityTotal: number;
   capacityBooked: number;
   capacityHeld: number;

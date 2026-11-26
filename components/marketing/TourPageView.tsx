@@ -9,6 +9,18 @@ import TestimonialCard from "@/components/marketing/TestimonialCard";
 import DepartureStatusPill from "@/components/marketing/DepartureStatusPill";
 import GuideAvatar from "@/components/marketing/GuideAvatar";
 import { formatUsd, singleSupplementOf } from "@/lib/pricing";
+import {
+  MAIN_VERSION_ID,
+  departureDays,
+  departurePricing,
+  departureVersionId,
+  hasVersions,
+  lowestPrice,
+  tourAsVersion,
+  versionDifferences,
+  versionLabel,
+  versionOf,
+} from "@/lib/tourVersions";
 import { countryLabel } from "@/lib/countryNames";
 import TextReveal from "@/components/ui/TextReveal";
 import { PhoneLink } from "@/components/marketing/SitePhone";
@@ -43,7 +55,8 @@ function kashrutStatusLabel(value: boolean | "not_guaranteed", copy: TourPageCop
  * Visual language: Glacier glassmorphism (stich_files/DESIGN.md + code.html).
  */
 export default function TourPageView({
-  tour,
+  tour: baseTour,
+  versionId,
   departures,
   guides = [],
   testimonials = [],
@@ -52,6 +65,8 @@ export default function TourPageView({
   copy = TOUR_PAGE_COPY_DEFAULTS,
 }: {
   tour: Tour;
+  /** The version whose itinerary, price and details are shown (?v=); none = the main version. */
+  versionId?: string;
   departures: Departure[];
   /** Staff records for the guides assigned (Departure.guideId) to this tour's departures. */
   guides?: Staff[];
@@ -64,7 +79,24 @@ export default function TourPageView({
   /** Admin-editable wording (Site Content → Tour Page). */
   copy?: TourPageCopy;
 }) {
+  const versioned = hasVersions(baseTour);
+  const shownVersionId = versioned && versionOf(baseTour, versionId) ? versionId! : MAIN_VERSION_ID;
+  // Everything below reads the chosen version's itinerary, length, price, kashrut and inclusions.
+  const tour = tourAsVersion(baseTour, shownVersionId);
+  const shownVersion = versionOf(baseTour, shownVersionId);
+  const versionOptions = versioned
+    ? [
+        { id: MAIN_VERSION_ID, label: versionLabel(baseTour) || "המסלול הראשי" },
+        ...(baseTour.versions ?? []).map((v) => ({ id: v.versionId, label: v.label })),
+      ]
+    : [];
+  const versionHref = (id: string) =>
+    id === MAIN_VERSION_ID ? `/tours/${baseTour.slug}#itinerary` : `/tours/${baseTour.slug}?v=${encodeURIComponent(id)}#itinerary`;
   const upcoming = departures.filter(isDeparturePlanned);
+  const shownVersionDates = upcoming.filter((dep) => departureVersionId(baseTour, dep) === shownVersionId);
+  // "From" price of the shown version: its cheapest upcoming date, else its list price.
+  const headlinePrice =
+    shownVersionDates.length > 0 ? lowestPrice(baseTour, shownVersionDates) : tour.pricing.pricePerPersonDouble;
   const guideById = new Map(guides.map((guide) => [guide.staffId, guide]));
   // Only guides leading an upcoming date are shown — past departures' guides aren't relevant to a buyer.
   const upcomingGuides = Array.from(
@@ -85,6 +117,7 @@ export default function TourPageView({
   const documents = (tour.documents ?? []).filter((doc) => doc.url && doc.title.trim());
   const sections: TourSectionLink[] = [
     { id: "overview", label: copy.navOverview },
+    ...(versioned ? [{ id: "versions", label: "גרסאות" }] : []),
     ...(hasItinerary ? [{ id: "itinerary", label: copy.navItinerary }] : []),
     ...(upcomingGuides.length > 0 ? [{ id: "guides", label: copy.navGuides }] : []),
     { id: "kashrut", label: kashrutTitle },
@@ -160,6 +193,57 @@ export default function TourPageView({
               />
             </div>
           </div>
+
+          {/* Versions: same tour, different flight / length / day order / price */}
+          {versioned && (
+            <div id="versions" className="glass-panel space-y-4 rounded-2xl p-6 sm:p-8">
+              <h2 className="text-xl font-bold text-[var(--color-mist)]">גרסאות הטיול</h2>
+              <p className="text-[15px] text-[var(--color-slate)]">
+                הטיול יוצא בכמה גרסאות. בחרו גרסה כדי לראות את המסלול, הטיסה והמחיר שלה.
+              </p>
+              <div className="flex flex-wrap gap-2" role="tablist" aria-label="גרסאות הטיול">
+                {versionOptions.map((option) => {
+                  const active = option.id === shownVersionId;
+                  const className = `rounded-full border px-4 py-2 text-sm font-bold transition-colors ${
+                    active
+                      ? "border-[var(--color-ice)] bg-[var(--color-ice)] text-[var(--color-ice-ink)]"
+                      : "border-[var(--color-border-ice)] text-[var(--color-mist)] hover:border-[var(--color-ice)]"
+                  }`;
+                  return previewMode ? (
+                    <span key={option.id} className={className}>
+                      {option.label}
+                    </span>
+                  ) : (
+                    <a
+                      key={option.id}
+                      href={versionHref(option.id)}
+                      role="tab"
+                      aria-selected={active}
+                      className={className}
+                    >
+                      {option.label}
+                    </a>
+                  );
+                })}
+              </div>
+              {(shownVersion || tour.airline) && (
+                <ul className="flex flex-wrap gap-x-5 gap-y-1 text-sm font-semibold text-[var(--color-ice)]/90">
+                  {tour.airline && <li>טיסה: {tour.airline}</li>}
+                  <li>{fillCopy(copy.heroDays, { days: tour.durationDays })}</li>
+                  {versionDifferences(baseTour, shownVersionId)
+                    .filter((d) => !d.startsWith("טיסת") && !d.endsWith("ימים"))
+                    .map((d) => (
+                      <li key={d}>{d}</li>
+                    ))}
+                </ul>
+              )}
+              {shownVersion?.notes && (
+                <p className="whitespace-pre-line text-[15px] leading-relaxed text-[var(--color-slate)]">
+                  {shownVersion.notes}
+                </p>
+              )}
+            </div>
+          )}
 
           {/* Itinerary */}
           {hasItinerary && (
@@ -388,7 +472,7 @@ export default function TourPageView({
               </p>
               <div className="flex items-baseline gap-2">
                 <span className="text-4xl font-bold text-[var(--color-mist)] lg:text-3xl">
-                  {formatUsd(tour.pricing.pricePerPersonDouble)}
+                  {formatUsd(headlinePrice)}
                 </span>
                 <span className="text-sm text-[var(--color-slate)]">{copy.perPersonLabel}</span>
               </div>
@@ -423,6 +507,13 @@ export default function TourPageView({
               {upcoming.map((dep) => {
                 const seats = availableSeats(dep);
                 const guide = dep.guideId ? guideById.get(dep.guideId) : undefined;
+                const depVersionId = departureVersionId(baseTour, dep);
+                const depPrice = departurePricing(baseTour, dep).pricePerPersonDouble;
+                const details = [
+                  versioned ? versionLabel(baseTour, depVersionId) || "המסלול הראשי" : "",
+                  `${departureDays(dep)} ימים`,
+                  depPrice !== headlinePrice || versioned ? formatUsd(depPrice) : "",
+                ].filter(Boolean);
                 return (
                   <li
                     key={dep.departureId}
@@ -437,6 +528,18 @@ export default function TourPageView({
                           year: "numeric",
                         })}
                       </p>
+                      <p className="text-xs text-[var(--color-slate)]">
+                        {versioned && depVersionId !== shownVersionId && !previewMode ? (
+                          <a href={versionHref(depVersionId)} className="underline-offset-2 hover:text-[var(--color-ice)] hover:underline">
+                            {details.join(" · ")}
+                          </a>
+                        ) : (
+                          details.join(" · ")
+                        )}
+                      </p>
+                      {dep.note && (
+                        <p className="text-xs font-semibold text-[var(--color-ice)]">{dep.note}</p>
+                      )}
                       {guide && (
                         <p className="flex min-w-0 items-center gap-2 text-xs text-[var(--color-slate)]">
                           <GuideAvatar guide={guide} className="h-7 w-7" sizes="28px" />

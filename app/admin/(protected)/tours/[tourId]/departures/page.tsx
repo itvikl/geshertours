@@ -8,6 +8,7 @@ import { getAllStaffAdmin } from "@/lib/data/admin/staff";
 import { availableSeats, type Departure } from "@/lib/types";
 import CancelDepartureButton from "@/components/admin/CancelDepartureButton";
 import { IconLink } from "@/components/admin/IconAction";
+import { departurePricing, hasVersions, versionLabel } from "@/lib/tourVersions";
 
 export async function generateMetadata({
   params,
@@ -89,6 +90,16 @@ export default async function TourDeparturesPage({
                       month: "short",
                       day: "numeric",
                     })}
+                    {(hasVersions(tour) || departure.pricingOverride?.pricePerPersonDouble !== undefined) && (
+                      <span className="block text-xs text-ink-muted">
+                        {[
+                          hasVersions(tour) ? versionLabel(tour, departure.versionId) || "הגרסה הראשית" : "",
+                          `${departurePricing(tour, departure).pricePerPersonDouble}$`,
+                        ]
+                          .filter(Boolean)
+                          .join(" · ")}
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-3">
                     <StatusBadge status={departure.status} />

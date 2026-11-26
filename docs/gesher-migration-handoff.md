@@ -120,6 +120,32 @@ npx tsx scripts/migrate/index-media-library.ts   # adds the copied photos to the
   `output/gesher-testimonials-redirects.json` (old letter →
   `/testimonials#<destination>`), next to the tours' `gesher-redirects.json`.
 
+## Tour versions, home page rows and filters (2026-11-26)
+
+The old site copied a tour page for every variant (North Italy Arkia/El Al,
+Portugal ×4, US coast to coast/Washington…). Now one tour can have
+**versions** (`Tour.versions`, logic in `lib/tourVersions.ts`):
+
+- A version stores only what differs: label, airline, length, prices,
+  its own day order, inclusions, kashrut, a note. Blank = the tour's value.
+- Each date picks its version (`Departure.versionId`) and can have its own
+  price (`pricingOverride`) and a public note (`note`). Bookings are charged
+  date → version → tour (`departurePricing`), on the server and in the form.
+- Admin: "גרסאות" section in the tour editor; version, price and note in the
+  date editor.
+- Tour page: version switcher (`?v=<versionId>`, canonical stays the plain
+  URL); the dates list shows each date's version, length, price and note.
+- Home page: full-width tour rows; "פרטים נוספים ומועדים" opens a table of
+  every upcoming date (version, what differs, dates, days, price, single
+  supplement, status, note, register).
+- Filters: destination and month now combine; new length (עד 6 / 7–9 /
+  10+ days) and trip-type chips (from the tours' theme tags).
+
+Still open: which old pages merge into one tour with versions (asked the
+client), and refreshing the imported dates — the old site's all-tours table
+now has 33 dates on 12 tours vs the 23 on 10 imported (missing "יוון לעומק",
+"ארה"ב מחוף לחוף וושינגטון", a Portugal and a US date, new India prices).
+
 ## Tour import: `scripts/migrate/import-gesher-tours.ts`
 
 Written and dry-run tested on 2026-11-22. It reads all 56 tour pages

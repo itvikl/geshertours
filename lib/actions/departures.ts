@@ -14,6 +14,7 @@ import {
 import { getTourByIdAdmin } from "@/lib/data/admin/tours";
 import { HOME_TOURS_CACHE_TAG } from "@/lib/data/homeCacheTags";
 import type { Booking } from "@/lib/types";
+import { MAIN_VERSION_ID, resolvePricing, versionOf } from "@/lib/tourVersions";
 
 export interface BalancePaymentLink {
   bookingId: string;
@@ -72,6 +73,12 @@ export async function saveDeparture(
     return { ok: false, errors: zodIssuesToFieldErrors(parsed.error.issues) };
   }
   const data = parsed.data;
+  if (!data.versionId || data.versionId === MAIN_VERSION_ID) data.versionId = undefined;
+  if (!data.note) data.note = undefined;
+  const override = data.pricingOverride;
+  if (override && override.pricePerPersonDouble === undefined && override.pricePerPersonSingle === undefined) {
+    data.pricingOverride = undefined;
+  }
 
   const tour = await getTourByIdAdmin(tourId);
   if (!tour) {
@@ -92,7 +99,11 @@ export async function saveDeparture(
     return { ok: false, errors: { startDate: ["תאריך ההתחלה לא יכול להיות בעבר."] } };
   }
 
-  const balanceDueDate = subtractDays(data.startDate, tour.pricing.balanceDueDaysBeforeDeparture);
+  if (data.versionId && !versionOf(tour, data.versionId)) {
+    return { ok: false, errors: { versionId: ["הגרסה הזו כבר לא קיימת בטיול."] } };
+  }
+  const pricing = resolvePricing(tour, versionOf(tour, data.versionId));
+  const balanceDueDate = subtractDays(data.startDate, pricing.balanceDueDaysBeforeDeparture);
 
   let savedId: string;
   let justBecameGuaranteed = false;

@@ -14,6 +14,7 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import type { Departure, Tour } from "@/lib/types";
 import type { CountryOption } from "@/lib/data/tours";
 import { hasBookableDeparture, pickNextDepartures } from "@/lib/departureAvailability";
+import { departureDays } from "@/lib/tourVersions";
 import { smoothScrollTo } from "@/lib/smoothScroll";
 
 /** Id of the DestinationSearch root, so results and "Change Search" can scroll to each other. */
@@ -27,8 +28,29 @@ export type FeaturedTourItem = {
   image: string;
 };
 
+/** Trip-length buckets for the length filter (?length=). */
+export const LENGTH_OPTIONS = [
+  { id: "short", label: "עד 6 ימים", min: 1, max: 6 },
+  { id: "week", label: "7–9 ימים", min: 7, max: 9 },
+  { id: "long", label: "10 ימים ומעלה", min: 10, max: Infinity },
+] as const;
+
+export type TourFilters = {
+  countries: string[];
+  months: string[];
+  /** LENGTH_OPTIONS ids. */
+  lengths: string[];
+  /** Tour.themeTags values. */
+  tags: string[];
+};
+
+const FILTER_KEYS = { countries: "country", months: "month", lengths: "length", tags: "tag" } as const;
+const NO_FILTERS: TourFilters = { countries: [], months: [], lengths: [], tags: [] };
+
 export type FilteredTourItem = {
   tour: Tour;
+  /** Every upcoming date that matches the month/length filters, soonest first. */
+  departures: Departure[];
   /** Up to two upcoming dates to advertise on the card; empty means flexible dates. */
   nextDepartures: Departure[];
   image: string;
@@ -39,10 +61,12 @@ export type FilteredTourItem = {
 type TourFilterContextValue = {
   selectedCountries: string[];
   selectedMonths: string[];
-  applyFilters: (
-    next: { countries: string[]; months: string[] },
-    opts?: { scroll?: boolean }
-  ) => void;
+  selectedLengths: string[];
+  selectedTags: string[];
+  /** Theme tags used by at least one listed tour, for the type filter. */
+  availableTags: string[];
+  /** Merges `next` into the current filters (a key left out keeps its value). */
+  applyFilters: (next: Partial<TourFilters>, opts?: { scroll?: boolean }) => void;
   scrollToResults: () => void;
   scrollToSearch: () => void;
   countries: CountryOption[];
@@ -67,29 +91,30 @@ function monthKey(iso: string): string {
   return `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}`;
 }
 
-/**
- * A tour "matches" a set of months if it has a planned departure starting in one of them.
- * Of those, the two soonest with room are returned (else the soonest, if all are full).
- * An empty result means the tour doesn't match.
- */
-function matchingDepartures(departures: Departure[], months: string[]): Departure[] {
-  const wanted = new Set(months);
-  return pickNextDepartures(
-    departures.filter((departure) => wanted.size === 0 || wanted.has(monthKey(departure.startDate)))
-  );
+/** A departure matches when it starts in one of the months and its length is in one of the buckets. */
+function departureMatches(departure: Departure, months: Set<string>, lengths: string[]): boolean {
+  if (months.size > 0 && !months.has(monthKey(departure.startDate))) return false;
+  if (lengths.length === 0) return true;
+  const days = departureDays(departure);
+  return LENGTH_OPTIONS.some((o) => lengths.includes(o.id) && days >= o.min && days <= o.max);
 }
 
 /**
- * Mirrors ?country=&month= into the provider's state (initial load, footer
- * destination links, back/forward). Isolated in its own tiny Suspense
- * boundary because useSearchParams opts its boundary out of static
+ * Mirrors ?country=&month=&length=&tag= into the provider's state (initial
+ * load, footer destination links, back/forward). Isolated in its own tiny
+ * Suspense boundary because useSearchParams opts its boundary out of static
  * prerendering — kept here, it lets the rest of the homepage be prebuilt
  * HTML instead of a per-request render (the cold-start cost on "/").
  */
-function UrlFilterSync({ onChange }: { onChange: (countries: string[], months: string[]) => void }) {
+function UrlFilterSync({ onChange }: { onChange: (filters: TourFilters) => void }) {
   const searchParams = useSearchParams();
   useEffect(() => {
-    onChange(parseListParam(searchParams, "country"), parseListParam(searchParams, "month"));
+    onChange({
+      countries: parseListParam(searchParams, FILTER_KEYS.countries),
+      months: parseListParam(searchParams, FILTER_KEYS.months),
+      lengths: parseListParam(searchParams, FILTER_KEYS.lengths),
+      tags: parseListParam(searchParams, FILTER_KEYS.tags),
+    });
   }, [searchParams, onChange]);
   return null;
 }
@@ -109,13 +134,13 @@ export function TourFilterProvider({
 }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [selectedCountries, setSelectedCountries] = useState(initialCountries);
-  const [selectedMonths, setSelectedMonths] = useState(initialMonths);
+  const [filters, setFilters] = useState<TourFilters>({
+    ...NO_FILTERS,
+    countries: initialCountries,
+    months: initialMonths,
+  });
 
-  const syncFromUrl = useCallback((countries: string[], months: string[]) => {
-    setSelectedCountries(countries);
-    setSelectedMonths(months);
-  }, []);
+  const syncFromUrl = useCallback((next: TourFilters) => setFilters(next), []);
 
   // Leave room for the sticky header (and a bit of breathing room) instead
   // of flushing the target flat to the very top of the viewport.
@@ -140,26 +165,19 @@ export function TourFilterProvider({
   }, []);
 
   const applyFilters = useCallback(
-    (
-      next: { countries: string[]; months: string[] },
-      opts?: { scroll?: boolean }
-    ) => {
-      const nextCountries = [...new Set(next.countries.filter(Boolean))];
-      const nextMonths = [...new Set(next.months.filter(Boolean))];
-      setSelectedCountries(nextCountries);
-      setSelectedMonths(nextMonths);
+    (next: Partial<TourFilters>, opts?: { scroll?: boolean }) => {
+      const merged = { ...filters };
+      for (const key of Object.keys(FILTER_KEYS) as (keyof TourFilters)[]) {
+        if (next[key]) merged[key] = [...new Set(next[key]!.filter(Boolean))];
+      }
+      setFilters(merged);
 
       // Only runs on user interaction, so reading the live URL is safe here.
       const params = new URLSearchParams(window.location.search);
-      params.delete("country");
-      for (const country of nextCountries) {
-        params.append("country", country);
+      for (const key of Object.keys(FILTER_KEYS) as (keyof TourFilters)[]) {
+        params.delete(FILTER_KEYS[key]);
+        for (const value of merged[key]) params.append(FILTER_KEYS[key], value);
       }
-      params.delete("month");
-      for (const month of nextMonths) {
-        params.append("month", month);
-      }
-
       const qs = params.toString();
       router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
 
@@ -167,46 +185,44 @@ export function TourFilterProvider({
         scrollToResults();
       }
     },
-    [pathname, router, scrollToResults]
+    [filters, pathname, router, scrollToResults]
+  );
+
+  const availableTags = useMemo(
+    () => [...new Set(tours.flatMap((item) => item.tour.themeTags.map((t) => t.trim()).filter(Boolean)))].sort(),
+    [tours]
   );
 
   const filteredTours = useMemo(() => {
-    const selected = new Set(selectedCountries);
-    const hasMonthFilter = selectedMonths.length > 0;
-
-    const inCountry = tours.filter(
-      (item) =>
-        selected.size === 0 || item.tour.countries.some((c) => selected.has(c))
-    );
-
-    if (!hasMonthFilter) {
-      return inCountry.map(({ tour, departures, image }) => ({
-        tour,
-        nextDepartures: pickNextDepartures(departures),
-        image,
-        soldOut: !hasBookableDeparture(departures),
-      }));
-    }
+    const selectedCountries = new Set(filters.countries);
+    const selectedTags = new Set(filters.tags);
+    const months = new Set(filters.months);
+    const dateFiltered = months.size > 0 || filters.lengths.length > 0;
 
     const matched: FilteredTourItem[] = [];
-    for (const { tour, departures, image } of inCountry) {
-      const inMonths = matchingDepartures(departures, selectedMonths);
-      if (inMonths.length > 0) {
-        matched.push({
-          tour,
-          nextDepartures: inMonths,
-          image,
-          soldOut: !hasBookableDeparture(departures),
-        });
-      }
+    for (const { tour, departures, image } of tours) {
+      if (selectedCountries.size > 0 && !tour.countries.some((c) => selectedCountries.has(c))) continue;
+      if (selectedTags.size > 0 && !tour.themeTags.some((t) => selectedTags.has(t.trim()))) continue;
+      const inRange = departures.filter((d) => departureMatches(d, months, filters.lengths));
+      if (dateFiltered && inRange.length === 0) continue;
+      matched.push({
+        tour,
+        departures: inRange,
+        nextDepartures: pickNextDepartures(inRange),
+        image,
+        soldOut: !hasBookableDeparture(departures),
+      });
     }
     return matched;
-  }, [selectedCountries, selectedMonths, tours]);
+  }, [filters, tours]);
 
   const value = useMemo(
     () => ({
-      selectedCountries,
-      selectedMonths,
+      selectedCountries: filters.countries,
+      selectedMonths: filters.months,
+      selectedLengths: filters.lengths,
+      selectedTags: filters.tags,
+      availableTags,
       applyFilters,
       scrollToResults,
       scrollToSearch,
@@ -214,16 +230,7 @@ export function TourFilterProvider({
       tours,
       filteredTours,
     }),
-    [
-      selectedCountries,
-      selectedMonths,
-      applyFilters,
-      scrollToResults,
-      scrollToSearch,
-      countries,
-      tours,
-      filteredTours,
-    ]
+    [filters, availableTags, applyFilters, scrollToResults, scrollToSearch, countries, tours, filteredTours]
   );
 
   return (

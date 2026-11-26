@@ -44,10 +44,15 @@ export async function generateMetadata({
 
 export default async function TourDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  /** ?v= picks the tour version whose itinerary and price are shown. */
+  searchParams: Promise<{ v?: string | string[] }>;
 }) {
   const { slug } = await params;
+  const { v } = await searchParams;
+  const versionId = Array.isArray(v) ? v[0] : v;
   const tour = await getTourBySlug(slug);
   if (!tour) notFound();
 
@@ -92,6 +97,7 @@ export default async function TourDetailPage({
       />
       <TourPageView
         tour={tour}
+        versionId={versionId}
         departures={departures}
         guides={guides}
         testimonials={testimonials}

@@ -6,7 +6,7 @@ import "@/lib/validation/zodLocale";
  * departureId/tourId (assigned by the data layer), capacityBooked/
  * capacityHeld (system-managed via the booking transaction — never form
  * input), balanceDueDate (derived server-side from startDate + the tour's
- * pricing), and pricingOverride (deferred — not exposed in this editor yet).
+ * pricing). pricingOverride holds only the date's own double/single price.
  */
 export const DepartureInputSchema = z
   .object({
@@ -20,6 +20,15 @@ export const DepartureInputSchema = z
     kashrutSupervisorId: z.string().optional(),
     // Customer-facing trust badge — missing/undefined is treated as "conditional".
     bookingAssurance: z.enum(["conditional", "guaranteed"]).optional(),
+    /** Tour.versions id; blank = the main version. */
+    versionId: z.string().optional(),
+    note: z.string().trim().max(200).optional(),
+    pricingOverride: z
+      .object({
+        pricePerPersonDouble: z.number().min(0).optional(),
+        pricePerPersonSingle: z.number().min(0).optional(),
+      })
+      .optional(),
   })
   .refine((data) => data.endDate >= data.startDate, {
     error: "תאריך הסיום חייב להיות באותו יום או אחרי תאריך ההתחלה.",

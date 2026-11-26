@@ -10,6 +10,21 @@ import { storageDownloadUrl } from "../../lib/media/assets";
 export const UA = "Mozilla/5.0 (compatible; SiteMigration/1.0)";
 const MAX_EDGE = 2000;
 
+/**
+ * The local-dev .env.local points Firestore at the emulator with a fake key;
+ * Storage then goes to real Google with that key and every photo fails with
+ * invalid_grant. Stop a --commit run before it writes anything half-way.
+ */
+export function assertRealProject(projectId: string) {
+  if (projectId.startsWith("demo-") || process.env.FIRESTORE_EMULATOR_HOST) {
+    throw new Error(
+      `.env.local is set up for the local emulator (project ${projectId}${
+        process.env.FIRESTORE_EMULATOR_HOST ? ", FIRESTORE_EMULATOR_HOST set" : ""
+      }). For --commit, put in the gesher-tours service-account key and remove the *_EMULATOR_HOST lines.`
+    );
+  }
+}
+
 /** Firebase Admin from .env.local; only --commit runs need it. */
 export function firebase() {
   const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
@@ -18,6 +33,7 @@ export function firebase() {
   if (!projectId || !clientEmail || !privateKey) {
     throw new Error("--commit needs the gesher-tours Firebase Admin key in .env.local.");
   }
+  assertRealProject(projectId);
   const app = initializeApp({
     credential: cert({ projectId, clientEmail, privateKey }),
     storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || `${projectId}.firebasestorage.app`,

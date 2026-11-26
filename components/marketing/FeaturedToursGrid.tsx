@@ -1,12 +1,33 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useTourFilter } from "@/components/marketing/TourFilterProvider";
-import TourCard from "@/components/marketing/TourCard";
+import { useState } from "react";
+import { LENGTH_OPTIONS, useTourFilter } from "@/components/marketing/TourFilterProvider";
+import TourRow from "@/components/marketing/TourRow";
 import { PhoneLink } from "@/components/marketing/SitePhone";
 import { countryLabel } from "@/lib/countryNames";
 
-const INITIAL_VISIBLE = 12;
+const INITIAL_VISIBLE = 8;
+
+function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={`rounded-full border px-3.5 py-1.5 text-sm font-semibold transition-colors ${
+        active
+          ? "border-[var(--color-ice)] bg-[var(--color-ice)] text-[var(--color-ice-ink)]"
+          : "border-[var(--color-border-hairline)] text-[var(--color-slate)] hover:border-[var(--color-border-ice-strong)] hover:text-[var(--color-ice)]"
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
+function toggle(list: string[], value: string): string[] {
+  return list.includes(value) ? list.filter((v) => v !== value) : [...list, value];
+}
 
 function ChangeSearchIcon() {
   return (
@@ -16,20 +37,24 @@ function ChangeSearchIcon() {
   );
 }
 
-export default function FeaturedToursGrid() {
+export default function FeaturedToursGrid({ lowSeatsThreshold = 5 }: { lowSeatsThreshold?: number }) {
   const {
     selectedCountries,
     selectedMonths,
+    selectedLengths,
+    selectedTags,
+    availableTags,
+    applyFilters,
     filteredTours: tours,
     scrollToSearch,
   } = useTourFilter();
-  const [expanded, setExpanded] = useState(false);
+  // "Show more" belongs to one search: changing any filter collapses the list again.
+  const filterKey = JSON.stringify([selectedCountries, selectedMonths, selectedLengths, selectedTags]);
+  const [expandedFor, setExpandedFor] = useState<string | null>(null);
+  const expanded = expandedFor === filterKey;
   const hasMonthFilter = selectedMonths.length > 0;
-  const isFiltered = selectedCountries.length > 0 || hasMonthFilter;
-
-  useEffect(() => {
-    setExpanded(false);
-  }, [selectedCountries, selectedMonths]);
+  const hasListFilter = selectedLengths.length > 0 || selectedTags.length > 0;
+  const isFiltered = selectedCountries.length > 0 || hasMonthFilter || hasListFilter;
 
   const visible = expanded ? tours : tours.slice(0, INITIAL_VISIBLE);
   const canExpand = tours.length > INITIAL_VISIBLE;
@@ -73,7 +98,7 @@ export default function FeaturedToursGrid() {
           {canExpand && (
             <button
               type="button"
-              onClick={() => setExpanded((v) => !v)}
+              onClick={() => setExpandedFor(expanded ? null : filterKey)}
               className="text-sm font-bold text-[var(--color-ice)] transition hover:brightness-110"
             >
               {expanded ? "הצג פחות" : `הצג עוד (${tours.length - INITIAL_VISIBLE})`}
@@ -82,26 +107,63 @@ export default function FeaturedToursGrid() {
         </div>
       </div>
 
+      <div className="mt-8 flex flex-wrap items-center gap-x-6 gap-y-3">
+        <div className="flex flex-wrap items-center gap-2" role="group" aria-label="משך הטיול">
+          <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-slate)]">משך</span>
+          {LENGTH_OPTIONS.map((option) => (
+            <Chip
+              key={option.id}
+              active={selectedLengths.includes(option.id)}
+              onClick={() => applyFilters({ lengths: toggle(selectedLengths, option.id) }, { scroll: false })}
+            >
+              {option.label}
+            </Chip>
+          ))}
+        </div>
+        {availableTags.length > 0 && (
+          <div className="flex flex-wrap items-center gap-2" role="group" aria-label="סוג הטיול">
+            <span className="text-xs font-bold uppercase tracking-widest text-[var(--color-slate)]">סוג</span>
+            {availableTags.map((tag) => (
+              <Chip
+                key={tag}
+                active={selectedTags.includes(tag)}
+                onClick={() => applyFilters({ tags: toggle(selectedTags, tag) }, { scroll: false })}
+              >
+                {tag}
+              </Chip>
+            ))}
+          </div>
+        )}
+        {isFiltered && (
+          <button
+            type="button"
+            onClick={() => applyFilters({ countries: [], months: [], lengths: [], tags: [] }, { scroll: false })}
+            className="text-sm font-semibold text-[var(--color-ice)] hover:underline"
+          >
+            ניקוי כל הסינונים
+          </button>
+        )}
+      </div>
+
       {tours.length === 0 ? (
         <p className="mt-12 text-[var(--color-slate)]">
-          {hasMonthFilter
-            ? "אין כרגע טיולים שיוצאים בחודשים האלה"
-            : "אין כרגע טיולים ליעד הזה"} — התקשרו אלינו{" "}
+          {isFiltered ? "אין כרגע טיולים שמתאימים לחיפוש" : "אין כרגע טיולים מתוכננים"} — התקשרו אלינו{" "}
           <PhoneLink className="font-semibold text-[var(--color-ice)]" />
           .
         </p>
       ) : (
-        <div className="mt-12 grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-          {/* Lazy, not eager: this grid sits below the full-screen home hero,
-              and eager cards were preloaded alongside it — competing with the
+        <div className="mt-8 space-y-6">
+          {/* Lazy, not eager: this list sits below the full-screen home hero,
+              and eager photos were preloaded alongside it — competing with the
               LCP image for bandwidth on mobile. */}
-          {visible.map(({ tour, nextDepartures, image, soldOut }) => (
-            <TourCard
+          {visible.map(({ tour, departures, image, soldOut }) => (
+            <TourRow
               key={tour.tourId}
               tour={tour}
-              nextDepartures={nextDepartures}
+              departures={departures}
               image={image}
               soldOut={soldOut}
+              lowSeatsThreshold={lowSeatsThreshold}
             />
           ))}
         </div>

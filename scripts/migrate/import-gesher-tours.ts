@@ -45,7 +45,7 @@ const COMMIT = process.argv.includes("--commit");
 const REFRESH = process.argv.includes("--refresh");
 const arg = (name: string) => process.argv.find((a) => a.startsWith(`--${name}=`))?.split("=")[1];
 const LIMIT = arg("limit") ? parseInt(arg("limit")!, 10) : undefined;
-const EUR_RATE = arg("eur-rate") ? parseFloat(arg("eur-rate")!) : 1.08;
+export const EUR_RATE = arg("eur-rate") ? parseFloat(arg("eur-rate")!) : 1.08;
 /**
  * Local testing against the emulators only: keep the old site's image URLs
  * instead of copying them to Storage (next.config.ts allows them in dev).
@@ -96,7 +96,7 @@ function linesOf(html: string): string[] {
 }
 
 /** "07.12.26" → "2026-12-07". */
-function isoFromOldDate(value: string): string | null {
+export function isoFromOldDate(value: string): string | null {
   const m = value.trim().match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})$/);
   if (!m) return null;
   const year = m[3].length === 2 ? 2000 + parseInt(m[3], 10) : parseInt(m[3], 10);
@@ -104,7 +104,7 @@ function isoFromOldDate(value: string): string | null {
 }
 
 /** "3290 $" / "€2,450" → { amount, currency }. */
-function parseMoney(value: string): { amount: number; currency: "USD" | "EUR" } | null {
+export function parseMoney(value: string): { amount: number; currency: "USD" | "EUR" } | null {
   const digits = value.replace(/[^\d.]/g, "");
   if (!digits) return null;
   const currency = /€|eur|יורו/i.test(value) ? "EUR" : "USD";
@@ -121,7 +121,7 @@ function slugPart(country: string): string {
   return country.toLowerCase().replace(/&/g, "and").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-interface ParsedDeparture {
+export interface ParsedDeparture {
   startDate: string;
   endDate: string;
   pricePerPerson: number;
@@ -132,7 +132,7 @@ interface ParsedDeparture {
   guaranteed: boolean;
 }
 
-interface ParsedTour {
+export interface ParsedTour {
   oldUrl: string;
   oldPath: string;
   tour: Tour;
@@ -141,7 +141,7 @@ interface ParsedTour {
   warnings: string[];
 }
 
-function parseTourPage(oldUrl: string, html: string, today: string): ParsedTour {
+export function parseTourPage(oldUrl: string, html: string, today: string): ParsedTour {
   const $ = cheerio.load(html);
   const warnings: string[] = [];
 
@@ -476,15 +476,17 @@ async function main() {
     ),
     "utf-8"
   );
-  writeFileSync(
-    `${OUT_DIR}/gesher-redirects.json`,
-    JSON.stringify(
-      fresh.map((r) => ({ source: r.oldPath, destination: `/tours/${r.tour.slug}`, permanent: true })),
-      null,
-      2
-    ),
-    "utf-8"
-  );
+  // Every old page, including tours already in Firestore (matched by title) —
+  // a re-run that skips them must not empty the map the blog/testimonial
+  // imports read.
+  const slugByTitle = new Map((existing?.docs ?? []).map((d) => [(d.data() as Tour).title, (d.data() as Tour).slug]));
+  const redirects = results
+    .map((r) => ({ source: r.oldPath, slug: r.tour.slug || slugByTitle.get(r.tour.title) }))
+    .filter((r): r is { source: string; slug: string } => Boolean(r.slug))
+    .map((r) => ({ source: r.source, destination: `/tours/${r.slug}`, permanent: true }));
+  if (redirects.length > 0 || !existsSync(`${OUT_DIR}/gesher-redirects.json`)) {
+    writeFileSync(`${OUT_DIR}/gesher-redirects.json`, JSON.stringify(redirects, null, 2), "utf-8");
+  }
 
   // Tours with upcoming dates (drafts, or published locally with --publish-drafts).
   const drafts = fresh.filter((r) => r.departures.length > 0);
@@ -502,7 +504,10 @@ async function main() {
   if (!COMMIT) console.log("Dry run only — re-run with --commit to write.");
 }
 
-main().catch((err) => {
-  console.error(err);
-  process.exit(1);
-});
+// Only when run directly — sync-gesher-dates.ts imports the page parser.
+if (process.argv[1]?.replace(/\\/g, "/").endsWith("migrate/import-gesher-tours.ts")) {
+  main().catch((err) => {
+    console.error(err);
+    process.exit(1);
+  });
+}
